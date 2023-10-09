@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('collection_records', function (Blueprint $table) {
+        Schema::create('collection_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tower_consulting_id');
+            $table->unsignedBigInteger('tower_clinic_id');
             $table->unsignedBigInteger('residue_id');
             $table->float('weight');
             $table->timestamps();
             
-            $table->foreign('tower_consulting_id')->references('id')->on('tower_consultings')->onDelete('cascade');
+            $table->foreign('tower_clinic_id')->references('id')->on('clinic_towers')->onDelete('cascade');
             $table->foreign('residue_id')->references('id')->on('residues')->onDelete('cascade');
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('collection_records');
+        Schema::dropIfExists('collection_logs');
     }
 };

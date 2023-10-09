@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('consulting_rooms', function (Blueprint $table) {
+        Schema::create('clinics', function (Blueprint $table) {
             $table->id();
-            $table->string('number_consulting');
-            $table->unsignedBigInteger('user_id');
+            $table->string('clinic_number');
+            $table->unsignedBigInteger('user');
             $table->enum('status', ['ACTIVO', 'INACTIVO']);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('consulting_rooms');
+        Schema::dropIfExists('clinics');
     }
 };

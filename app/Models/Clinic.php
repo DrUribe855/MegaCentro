@@ -4,12 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Tower extends Model
+class Clinic extends Model
 {
     use HasFactory;
-    protected $table = 'towers';
+    protected $fillable = [
+        'id',
+        'clinic_number'
+        'user',
+        'status',
+    ];
+
+    public function user(): BelongsTo{
+        return $this->belongsTo(User::class);
+    }
 
     public function clinic_tower(): HasMany{
         return $this->hasMany(ClinicTower::class);

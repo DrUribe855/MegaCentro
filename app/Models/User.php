@@ -31,8 +31,8 @@ class User extends Authenticatable
         'status',
     ];
 
-    public function consulting_rooms(): HasMany{
-        return $this->hasMany(ConsultingRoom::class);
+    public function clinic(): HasMany{
+        return $this->hasMany(Clinic::class);
     }
 
     protected $hidden = [

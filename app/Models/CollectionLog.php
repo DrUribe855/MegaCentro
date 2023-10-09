@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CollectionRecord extends Model
+class CollectionLog extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'tower_consulting_id',
+        'tower_clinic_id',
         'residue_id',
         'weight',
     ];
@@ -19,7 +18,7 @@ class CollectionRecord extends Model
         return $this->belongsTo(Residue::class);
     }
 
-    public function tower_consultings(): BelongsTo{
-        return $this->belongsTo(TowerConsulting::class);
+    public function clinic_tower(): BelongsTo{
+        return $this->belongsTo(ClinicTower::class);
     }
 }

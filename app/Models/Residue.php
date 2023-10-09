@@ -19,7 +19,7 @@ class Residue extends Model
         return $this->belongsTo(ResidueType::class);
     }
 
-    public function collection_records(): HasMany{
-        return $this->hasMany(CollectionRecord::class);
+    public function collection_log(): HasMany{
+        return $this->hasMany(CollectionLog::class);
     }
 }
