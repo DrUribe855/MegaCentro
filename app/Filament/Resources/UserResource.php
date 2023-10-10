@@ -35,12 +35,12 @@ class UserResource extends Resource
                 ->maxLength('255')
                 ->label('Nombres'),
                 //Campo de apellidos
-                Forms\Components\TextInput::make('lastname')
+                Forms\Components\TextInput::make('last_name')
                 ->required()
                 ->maxLength('255')
                 ->label('Apellidos'),
                 //Campo de télefono
-                Forms\Components\TextInput::make('phone_number')
+                Forms\Components\TextInput::make('phone')
                 ->required()
                 ->maxLength('11')
                 ->label('Teléfono'),
@@ -55,7 +55,7 @@ class UserResource extends Resource
                 ->password()
                 ->label('Contraseña'),
                 //Campo de rol
-                Forms\Components\Select::make('role')
+                Forms\Components\Select::make('rol')
                 ->options([
                     'administrator' => 'Administrador',
                     'assistant' => 'Auxiliar contable',
@@ -64,13 +64,13 @@ class UserResource extends Resource
                 ->required()
                 ->label('Rol'),
                 //Campo de estado de usuario
-                Forms\Components\Select::make('status')
-                ->options([
-                    'enabled' => 'Activo',
-                    'disabled' => 'Inactivo',
-                ])
-                ->required()
-                ->label('Estado'),
+                // Forms\Components\Select::make('status')
+                // ->options([
+                //     'enabled' => 'Activo',
+                //     'disabled' => 'Inactivo',
+                // ])
+                // ->required()
+                // ->label('Estado'),
             ]);
     }
 
@@ -78,7 +78,17 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('document')
+                ->searchable()
+                ->label('Documento'),
+                Tables\Columns\TextColumn::make('name')
+                ->label('Nombres'),
+                Tables\Columns\TextColumn::make('last_name')
+                ->label('Apellidos'),
+                Tables\Columns\TextColumn::make('phone')
+                ->label('Teléfono'),
+                Tables\Columns\TextColumn::make('email')
+                ->label('Correo electronico'),
             ])
             ->filters([
                 //
