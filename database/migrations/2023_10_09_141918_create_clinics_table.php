@@ -14,17 +14,14 @@ return new class extends Migration
         Schema::create('clinics', function (Blueprint $table) {
             $table->id();
             $table->string('clinic_number');
-            $table->unsignedBigInteger('user');
-            $table->enum('status', ['ACTIVO', 'INACTIVO']);
+            $table->unsignedBigInteger('user_id');
+            $table->string('status');
             $table->timestamps();
 
-            $table->foreign('user')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('clinics');
