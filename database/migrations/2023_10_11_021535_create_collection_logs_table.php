@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('residue_id');
             $table->float('weight');
             $table->timestamps();
-            
+
             $table->foreign('tower_clinic_id')->references('id')->on('clinic_towers')->onDelete('cascade');
             $table->foreign('residue_id')->references('id')->on('residues')->onDelete('cascade');
         });

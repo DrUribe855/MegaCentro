@@ -11,16 +11,9 @@ class Clinic extends Model
 {
     use HasFactory;
     protected $fillable = [
-<<<<<<< HEAD
-        'id',
-        'clinic_number',
-        'user',
-=======
- 
-        'clinic_number',
+       'clinic_number',
         'user_id',
->>>>>>> origin/master
-        'status',
+        'status', 
     ];
 
    public function user() : BelongsTo{
@@ -30,9 +23,4 @@ class Clinic extends Model
     public function clinic_tower(): HasMany{
         return $this->hasMany(ClinicTower::class);
     }
- 
-        
-
-    
- 
 }
