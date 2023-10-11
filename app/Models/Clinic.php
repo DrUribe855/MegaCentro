@@ -10,7 +10,7 @@ class Clinic extends Model
     use HasFactory;
     protected $fillable = [
         'id',
-        'clinic_number'
+        'clinic_number',
         'user',
         'status',
     ];
