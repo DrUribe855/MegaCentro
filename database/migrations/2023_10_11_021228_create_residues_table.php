@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('residue_name');
             $table->unsignedBigInteger('residue_type_id');
+            $table->foreign('residue_type_id')->references('id')->on('residue_types');
             $table->timestamps();
-
-            $table->foreign('residue_type_id')->references('id')->on('residue_types')->onDelete('cascade');
         });
     }
 

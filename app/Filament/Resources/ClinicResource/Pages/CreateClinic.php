@@ -9,4 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateClinic extends CreateRecord
 {
     protected static string $resource = ClinicResource::class;
+    protected static ?string $title = 'Registrar Consultorios';
 }

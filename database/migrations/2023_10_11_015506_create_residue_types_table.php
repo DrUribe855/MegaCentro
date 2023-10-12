@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('residue_types', function (Blueprint $table) {
             $table->id();
-            $table->string('residue_category');
-            $table->string('residue_type');
+            $table->enum('residue_category', ['Residuo Peligroso', 'Residuo No Peligroso']);
+            $table->enum('residue_type', ['NO TIENE', 'INFECCIOSOS O DE RIESGO BIOLOGICO', 'QUIMICOS', 'RADIACTIVOS']);
             $table->timestamps();
         });
     }

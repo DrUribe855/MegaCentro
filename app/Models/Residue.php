@@ -15,8 +15,8 @@ class Residue extends Model
         'residue_type_id',
     ];
 
-    public function residue_types(): BelongsTo{
-        return $this->belongsTo(ResidueType::class);
+    public function residue_type() : BelongsTo{
+        return $this->belongsTo(ResidueType::class);   
     }
 
     public function collection_log(): HasMany{
