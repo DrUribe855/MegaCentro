@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['Administrador', 'Auxiliar contable', 'Recolector']);
             $table->enum('status', ['Activo', 'Inactivo']);
-            // $table->rememberToken();
+            $table->rememberToken();
             $table->timestamps();
         });
     }
