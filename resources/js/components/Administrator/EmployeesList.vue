@@ -3,10 +3,10 @@
 </head>
 <template>
     <div >
-        <div class="row justify-content-end">
-            <button type="button" class="btn btn-primary m-3">Registrar personal</button>
-        </div>
         <div v-if="visibilityEmployees">
+            <div class="row justify-content-end">
+                <button  class="btn btn-primary m-3" @click="openRegisterModal()">Registrarasd personal</button>
+            </div>
             <table class="table table-striped">
                 <thead>
                     <th class="text-center">Documento</th>
@@ -39,24 +39,36 @@
                     </tr>
                 </tbody>
             </table>
+        <register-modal v-if="visibilityRegister"></register-modal>
         </div>
            <modify-employee v-if="!visibilityEmployees" :employee="selectedEmployee"></modify-employee>    
+           
     </div>
 </template>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    import 'bootstrap/dist/css/bootstrap.css';
+    import 'bootstrap/dist/js/bootstrap.bundle';
+
+</script>
+
 <script>
 
     import ModifyEmployee from './ModifyEmployee.vue';
+    import UserRegisterModal from './UserRegisterModal';
 
     export default {
         props:[],
         components: {
             'modify-employee' : ModifyEmployee,
+            'register-modal' : UserRegisterModal,
         },
         data(){
             return {
                 employeesList: [],
                 visibilityEmployees : true,
                 selectedEmployee : [],
+                visibilityRegister: false,
             }
         },
         created(){
@@ -82,7 +94,25 @@
             goToBack(){
                 this.visibilityEmployees = true;
                 this.selectedEmployee = {};
-            }
+            },
+            openRegisterModal(){
+                console.log('Prueba de boton de registro');
+                this.visibilityRegister = true;
+                console.log(this.visibilityRegister);
+                setTimeout(() => {
+                    this.myModal = new bootstrap.Modal(document.getElementById('userRegisterModal'), {
+                      keyboard: false,
+                      backdrop: 'static',
+                    });
+                    this.myModal.show();
+                },100);
+            },
+            closeRegisterModal(){
+                this.myModal.hide();
+                setTimeout(() => {
+                    this.visibilityRegister = false;
+                },200);
+            },
         },
     }
 </script>

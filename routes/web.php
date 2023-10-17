@@ -23,6 +23,7 @@ Route::get('/', function () {
 
 Route::get('/', [ EmployeesController::class, 'index']);
 Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ]);
+Route::post('administrator/registerEmployees', [EmployeesController::class, 'store']);
 Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update']);
 
 

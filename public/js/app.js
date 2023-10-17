@@ -2168,17 +2168,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _ModifyEmployee_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModifyEmployee.vue */ "./resources/js/components/Administrator/ModifyEmployee.vue");
+/* harmony import */ var _UserRegisterModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserRegisterModal */ "./resources/js/components/Administrator/UserRegisterModal.vue");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: [],
   components: {
-    'modify-employee': _ModifyEmployee_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    'modify-employee': _ModifyEmployee_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    'register-modal': _UserRegisterModal__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
       employeesList: [],
       visibilityEmployees: true,
-      selectedEmployee: []
+      selectedEmployee: [],
+      visibilityRegister: false
     };
   },
   created: function created() {
@@ -2205,6 +2209,26 @@ __webpack_require__.r(__webpack_exports__);
     goToBack: function goToBack() {
       this.visibilityEmployees = true;
       this.selectedEmployee = {};
+    },
+    openRegisterModal: function openRegisterModal() {
+      var _this2 = this;
+      console.log('Prueba de boton de registro');
+      this.visibilityRegister = true;
+      console.log(this.visibilityRegister);
+      setTimeout(function () {
+        _this2.myModal = new bootstrap.Modal(document.getElementById('userRegisterModal'), {
+          keyboard: false,
+          backdrop: 'static'
+        });
+        _this2.myModal.show();
+      }, 100);
+    },
+    closeRegisterModal: function closeRegisterModal() {
+      var _this3 = this;
+      this.myModal.hide();
+      setTimeout(function () {
+        _this3.visibilityRegister = false;
+      }, 200);
     }
   }
 });
@@ -2270,6 +2294,62 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: [],
+  components: {},
+  data: function data() {
+    return {
+      // Si es true carga el formulario de usuario, si es false carga el de la tienda
+      visibilityForm: true,
+      documento: '',
+      name: '',
+      lastname: '',
+      phone: '',
+      email: '',
+      role: '',
+      password: ''
+    };
+  },
+  created: function created() {},
+  methods: {
+    registerEmployees: function registerEmployees() {
+      var _this = this;
+      var information = {
+        documento: this.documento,
+        name: this.name,
+        lastname: this.lastname,
+        phone: this.phone,
+        email: this.email,
+        role: this.role,
+        password: this.password
+      };
+      console.log(information.documento);
+      axios.post('administrator/registerEmployees', information).then(function (resp) {
+        console.log('Datos enviados correctamente: ', resp.data);
+        _this.$parent.getEmployees();
+        _this.$parent.closeRegisterModal();
+      })["catch"](function (error) {
+        console.log("Error en axios");
+        console.log(error);
+        console.log(error.response);
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/EmployeesList.vue?vue&type=template&id=1fe98374&":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/EmployeesList.vue?vue&type=template&id=1fe98374& ***!
@@ -2285,9 +2365,18 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_vm._m(0), _vm._v(" "), _vm.visibilityEmployees ? _c("div", [_c("table", {
+  return _c("div", [_vm.visibilityEmployees ? _c("div", [_c("div", {
+    staticClass: "row justify-content-end"
+  }, [_c("button", {
+    staticClass: "btn btn-primary m-3",
+    on: {
+      click: function click($event) {
+        return _vm.openRegisterModal();
+      }
+    }
+  }, [_vm._v("Registrarasd personal")])]), _vm._v(" "), _c("table", {
     staticClass: "table table-striped"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", _vm._l(_vm.employeesList, function (employee) {
+  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.employeesList, function (employee) {
     return _c("tr", [_c("td", {
       staticClass: "text-center p-1"
     }, [_vm._v(_vm._s(employee.document))]), _vm._v(" "), _c("td", {
@@ -2316,25 +2405,14 @@ var render = function render() {
       }
     }, [_c("i", {
       staticClass: "fas fa-edit"
-    })])]), _vm._v(" "), _vm._m(2, true)]);
-  }), 0)])]) : _vm._e(), _vm._v(" "), !_vm.visibilityEmployees ? _c("modify-employee", {
+    })])]), _vm._v(" "), _vm._m(1, true)]);
+  }), 0)]), _vm._v(" "), _vm.visibilityRegister ? _c("register-modal") : _vm._e()], 1) : _vm._e(), _vm._v(" "), !_vm.visibilityEmployees ? _c("modify-employee", {
     attrs: {
       employee: _vm.selectedEmployee
     }
   }) : _vm._e()], 1);
 };
 var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "row justify-content-end"
-  }, [_c("button", {
-    staticClass: "btn btn-primary m-3",
-    attrs: {
-      type: "button"
-    }
-  }, [_vm._v("Registrar personal")])]);
-}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("thead", [_c("th", {
@@ -2638,6 +2716,305 @@ var staticRenderFns = [function () {
       value: "collector"
     }
   }, [_vm._v("Recolector")])])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* binding */ render),
+/* harmony export */   staticRenderFns: () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "userRegisterModal",
+      tabindex: "-1",
+      role: "dialog",
+      "aria-labelledby": "registroModalLabel",
+      "aria-hidden": "true"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog",
+    attrs: {
+      role: "document"
+    }
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_c("form", [_c("div", {
+    staticClass: "form-row"
+  }, [_c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "document"
+    }
+  }, [_vm._v("Documento")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.documento,
+      expression: "documento"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      id: "number",
+      placeholder: "Documento",
+      required: ""
+    },
+    domProps: {
+      value: _vm.documento
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.documento = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "name"
+    }
+  }, [_vm._v("Nombre")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.name,
+      expression: "name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      id: "name",
+      placeholder: "Nombre",
+      required: ""
+    },
+    domProps: {
+      value: _vm.name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.name = $event.target.value;
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "lastname"
+    }
+  }, [_vm._v("Apellido")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.lastname,
+      expression: "lastname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      id: "lastname",
+      placeholder: "Apellido",
+      required: ""
+    },
+    domProps: {
+      value: _vm.lastname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.lastname = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "phone"
+    }
+  }, [_vm._v("Teléfono")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.phone,
+      expression: "phone"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      id: "phone",
+      placeholder: "Teléfono",
+      required: ""
+    },
+    domProps: {
+      value: _vm.phone
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.phone = $event.target.value;
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "email"
+    }
+  }, [_vm._v("Correo electronico")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.email,
+      expression: "email"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "email",
+      id: "email",
+      placeholder: "Correo electronico",
+      required: ""
+    },
+    domProps: {
+      value: _vm.email
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.email = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-md-6"
+  }, [_c("label", {
+    attrs: {
+      "for": "role"
+    }
+  }, [_vm._v("Cargo")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.role,
+      expression: "role"
+    }],
+    staticClass: "custom-select",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.role = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "Administrador"
+    }
+  }, [_vm._v("Administrador")]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "Auxiliar contable"
+    }
+  }, [_vm._v("Auxiliar contable")]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "Recolector"
+    }
+  }, [_vm._v("Recolector")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("div", {
+    staticClass: "form-group col-md-12"
+  }, [_c("label", {
+    attrs: {
+      "for": "password"
+    }
+  }, [_vm._v("Contraseña")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.password,
+      expression: "password"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "password",
+      id: "password",
+      required: ""
+    },
+    domProps: {
+      value: _vm.password
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.password = $event.target.value;
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-secondary",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal"
+    }
+  }, [_vm._v("Cerrar")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.registerEmployees();
+      }
+    }
+  }, [_vm._v("Registrarse")])])])])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h5", {
+    staticClass: "modal-title",
+    attrs: {
+      id: "registroModalLabel"
+    }
+  }, [_vm._v("Formulario de Registro")]), _vm._v(" "), _c("button", {
+    staticClass: "close",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  }, [_c("span", {
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }, [_vm._v("×")])])]);
 }];
 render._withStripped = true;
 
@@ -3004,6 +3381,45 @@ component.options.__file = "resources/js/components/Administrator/ModifyEmployee
 
 /***/ }),
 
+/***/ "./resources/js/components/Administrator/UserRegisterModal.vue":
+/*!*********************************************************************!*\
+  !*** ./resources/js/components/Administrator/UserRegisterModal.vue ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UserRegisterModal.vue?vue&type=template&id=9e3c0e7c& */ "./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c&");
+/* harmony import */ var _UserRegisterModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserRegisterModal.vue?vue&type=script&lang=js& */ "./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _UserRegisterModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__.render,
+  _UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Administrator/UserRegisterModal.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/Administrator/EmployeesList.vue?vue&type=script&lang=js&":
 /*!******************************************************************************************!*\
   !*** ./resources/js/components/Administrator/EmployeesList.vue?vue&type=script&lang=js& ***!
@@ -3033,6 +3449,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ModifyEmployee.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/ModifyEmployee.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************!*\
+  !*** ./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserRegisterModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./UserRegisterModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserRegisterModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -3066,6 +3498,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_template_id_38a72a15___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_template_id_38a72a15___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ModifyEmployee.vue?vue&type=template&id=38a72a15& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/ModifyEmployee.vue?vue&type=template&id=38a72a15&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c& ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserRegisterModal_vue_vue_type_template_id_9e3c0e7c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./UserRegisterModal.vue?vue&type=template&id=9e3c0e7c& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/UserRegisterModal.vue?vue&type=template&id=9e3c0e7c&");
 
 
 /***/ }),

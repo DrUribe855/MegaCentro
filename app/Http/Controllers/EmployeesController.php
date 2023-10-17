@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeesController extends Controller
 {
@@ -19,7 +20,37 @@ class EmployeesController extends Controller
  
     public function store(Request $request)
     {
+        $request->validate([
+            'documento' => 'required',
+            'name' => 'required',
+            'lastname' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'role' => 'required',
+            'password' => 'required',
+        ]);
 
+        $newEmployee = new User;
+
+        $newEmployee->document = $request->input('documento');
+        $newEmployee->name = $request->input('name');
+        $newEmployee->last_name = $request->input('lastname');
+        $newEmployee->phone = $request->input('phone');
+        $newEmployee->email = $request->input('email');
+        $newEmployee->role = $request->input('role');
+        $newEmployee->password = Hash::make($request->input('password'));
+
+        $newEmployee->save();
+
+        $data = [
+            'status' => true,
+            'Employee' => $newEmployee,
+        ];
+
+        return response()->json([
+                            'message' => 'Registro guardado correctamente',
+                            'data' => $data,
+                        ]);
     }
  
     public function show($id)
