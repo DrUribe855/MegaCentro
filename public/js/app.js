@@ -2270,6 +2270,125 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: [],
+  components: {},
+  data: function data() {
+    return {
+      clinic_list: [],
+      clinicNumber: [],
+      // Variables de registrar
+      clinic_number: null,
+      document_user: null,
+      // Variables de editar
+      clinicEdit: {},
+      userShow: {},
+      // Variable del buscador
+      search: ''
+    };
+  },
+  created: function created() {
+    this.getClinic();
+  },
+  methods: {
+    getClinic: function getClinic() {
+      var _this = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get('/clinic/generalShow').then(function (res) {
+        console.log("Respuesta del servidor");
+        console.log(res.data);
+        _this.clinic_list = res.data.clinic;
+      })["catch"](function (error) {
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
+      });
+    },
+    // Registrar clinica
+    clinicRegister: function clinicRegister() {
+      var _this2 = this;
+      var document_id;
+      var clinic_number = this.clinic_number;
+      for (var i = 0; i < this.clinic_list.length; i++) {
+        if (this.clinic_list[i].user.document == this.document_user) {
+          document_id = this.clinic_list[i].user_id;
+          break;
+        }
+      }
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/clinic/register', {
+        document_id: document_id,
+        clinic_number: clinic_number
+      }).then(function (res) {
+        console.log("Respuesta del servidor");
+        console.log(res.data);
+        _this2.clinic_list = res.data.clinic;
+        $('#register').modal('hide');
+        _this2.clinic_number = "";
+        _this2.document_user = "";
+        _this2.search = "";
+      })["catch"](function (error) {
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
+      });
+    },
+    // Traer la informacion para mostrar en el editar
+    showEdit: function showEdit(clinicEdit) {
+      this.clinicEdit = clinicEdit;
+      this.userShow = this.clinicEdit.user;
+      console.log(this.userShow);
+    },
+    // Edtidar informacion de la clinica
+    editInfo: function editInfo(clinicEdit) {
+      var _this3 = this;
+      console.log(clinicEdit);
+      axios__WEBPACK_IMPORTED_MODULE_0___default().put("/clinic/update/".concat(clinicEdit.id), clinicEdit).then(function (res) {
+        console.log("Respuesta del servidor");
+        console.log(res.data);
+        _this3.clinic_list = res.data.clinic;
+        _this3.search = "";
+        $('#edit').modal('hide');
+      })["catch"](function (error) {
+        console.log("Error del servidor");
+        console.log(error);
+        console.log(error.response);
+      });
+    },
+    // Buscador
+    searchProducts: function searchProducts() {
+      var _this4 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get('/clinic/search', {
+        params: {
+          search: this.search
+        }
+      }).then(function (res) {
+        console.log("Respuesta del servidor");
+        console.log(res.data);
+        _this4.clinic_list = res.data;
+      })["catch"](function (error) {
+        console.log("Error del servidor");
+        console.log(error);
+        console.log(error.response);
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/EmployeesList.vue?vue&type=template&id=1fe98374&":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/EmployeesList.vue?vue&type=template&id=1fe98374& ***!
@@ -2644,6 +2763,389 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* binding */ render),
+/* harmony export */   staticRenderFns: () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("div", {
+    staticClass: "row m-3"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "col-3"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.search,
+      expression: "search"
+    }],
+    staticClass: "form-control",
+    staticStyle: {
+      width: "15em"
+    },
+    attrs: {
+      type: "number",
+      placeholder: "Buscar Por Documento..."
+    },
+    domProps: {
+      value: _vm.search
+    },
+    on: {
+      input: [function ($event) {
+        if ($event.target.composing) return;
+        _vm.search = $event.target.value;
+      }, _vm.searchProducts]
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 m-0 p-0 row"
+  }, _vm._l(_vm.clinic_list, function (clinic) {
+    return _c("div", {
+      staticClass: "col-12 col-sm-6 col-lg-4 m-0 p-2"
+    }, [_c("div", {
+      staticClass: "col card h-100 m-0"
+    }, [_c("div", {
+      staticClass: "card-header d-flex align-items-center justify-content-between pb-0"
+    }, [_c("div", {
+      staticClass: "col-12 card-title mb-0"
+    }, [_c("h5", {
+      staticClass: "m-0 me-2 text-dark text-uppercase text-center"
+    }, [_c("b", [_vm._v(_vm._s(clinic.user.document))])]), _vm._v(" \n                            Estado: "), _c("small", {
+      "class": [{
+        "text-danger": clinic.status != "ACTIVO",
+        "text-info": clinic.status == "ACTIVO"
+      }]
+    }, [_c("b", [_vm._v(_vm._s(clinic.status == "ACTIVO" ? "ACTIVO" : "INACTIVO"))])]), _vm._v(" "), _c("div", {
+      staticClass: "form-text",
+      attrs: {
+        id: "emailHelp"
+      }
+    }, [_vm._v("Documento del responsable del consultorio.")])])]), _vm._v(" "), _c("div", {
+      staticClass: "card-body"
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-center align-items-center mt-2 mb-3",
+      staticStyle: {
+        position: "relative"
+      }
+    }, [_c("div", {
+      staticClass: "d-flex flex-column align-items-center"
+    }, [_c("h2", {
+      staticClass: "mb-0"
+    }, [_vm._v(" " + _vm._s(clinic.clinic_number) + " ")]), _vm._v(" "), _c("span", [_vm._v("Numero Clinica")])])]), _vm._v(" "), _c("div", {
+      staticClass: "col-12 m-0 p-0 text-end"
+    }, [_c("button", {
+      staticClass: "btn btn-info",
+      attrs: {
+        "data-bs-toggle": "modal",
+        "data-bs-target": "#edit"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.showEdit(clinic);
+        }
+      }
+    }, [_vm._v("EDITAR")])])])])]);
+  }), 0), _vm._v(" "), _c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "register",
+      "data-bs-backdrop": "static",
+      "data-bs-keyboard": "false",
+      tabindex: "-1",
+      "aria-labelledby": "staticBackdropLabel",
+      "aria-hidden": "true"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog"
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_c("form", {
+    on: {
+      submit: function submit($event) {
+        $event.preventDefault();
+        return _vm.clinicRegister();
+      }
+    }
+  }, [_c("div", {
+    staticClass: "form-row"
+  }, [_c("label", {
+    attrs: {
+      "for": "numeroConsultorio"
+    }
+  }, [_vm._v("Numero Del Consultorio")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.clinic_number,
+      expression: "clinic_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      name: "numeroConsultorio",
+      id: "numeroConsultorio"
+    },
+    domProps: {
+      value: _vm.clinic_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.clinic_number = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("label", {
+    staticStyle: {
+      "margin-top": "10px"
+    },
+    attrs: {
+      "for": "numeroConsultorio"
+    }
+  }, [_vm._v("Numero de documento")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.document_user,
+      expression: "document_user"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      name: "numeroConsultorio",
+      id: "numeroConsultorio"
+    },
+    domProps: {
+      value: _vm.document_user
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.document_user = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "form-text",
+    attrs: {
+      id: "emailHelp"
+    }
+  }, [_vm._v("Ingrese el numero de documento del responsable del consultorio.")])]), _vm._v(" "), _vm._m(2)])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "edit",
+      "data-bs-backdrop": "static",
+      "data-bs-keyboard": "false",
+      tabindex: "-1",
+      "aria-labelledby": "staticBackdropLabel",
+      "aria-hidden": "true"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog"
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(3), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_c("form", {
+    on: {
+      submit: function submit($event) {
+        $event.preventDefault();
+        return _vm.editInfo(_vm.clinicEdit);
+      }
+    }
+  }, [_c("div", {
+    staticClass: "form-row"
+  }, [_c("label", {
+    attrs: {
+      "for": "documentoResponsable"
+    }
+  }, [_vm._v("Documento del responsable del consultorio")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.userShow.document,
+      expression: "userShow.document"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "documentoResponsable",
+      id: "documentoResponsable",
+      readonly: ""
+    },
+    domProps: {
+      value: _vm.userShow.document
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.userShow, "document", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("label", {
+    staticStyle: {
+      "margin-top": "10px"
+    },
+    attrs: {
+      "for": ""
+    }
+  }, [_vm._v("numero del Consultorio")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.clinicEdit.clinic_number,
+      expression: "clinicEdit.clinic_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      name: "",
+      id: ""
+    },
+    domProps: {
+      value: _vm.clinicEdit.clinic_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.clinicEdit, "clinic_number", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-row"
+  }, [_c("label", {
+    staticStyle: {
+      "margin-top": "10px"
+    },
+    attrs: {
+      "for": ""
+    }
+  }, [_vm._v("Estado del consultorio")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.clinicEdit.status,
+      expression: "clinicEdit.status"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "",
+      id: ""
+    },
+    domProps: {
+      value: _vm.clinicEdit.status
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.clinicEdit, "status", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _vm._m(4)])])])])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-9"
+  }, [_c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "button",
+      "data-bs-toggle": "modal",
+      "data-bs-target": "#register"
+    }
+  }, [_vm._v("\n                Registrar Clinica\n            ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h5", {
+    staticClass: "modal-title",
+    attrs: {
+      id: "staticBackdropLabel"
+    }
+  }, [_vm._v("Registrar Consultorio")]), _vm._v(" "), _c("button", {
+    staticClass: "btn-close",
+    attrs: {
+      type: "button",
+      "data-bs-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-secondary",
+    attrs: {
+      type: "button",
+      "data-bs-dismiss": "modal"
+    }
+  }, [_vm._v("Cancelar")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "submit"
+    }
+  }, [_vm._v("Registrar")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h5", {
+    staticClass: "modal-title",
+    attrs: {
+      id: "staticBackdropLabel"
+    }
+  }, [_vm._v("Registrar Consultorio")]), _vm._v(" "), _c("button", {
+    staticClass: "btn-close",
+    attrs: {
+      type: "button",
+      "data-bs-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-secondary",
+    attrs: {
+      type: "button",
+      "data-bs-dismiss": "modal"
+    }
+  }, [_vm._v("Cancelar")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "submit"
+    }
+  }, [_vm._v("Editar")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -2661,6 +3163,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js"
 
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('employees-list', (__webpack_require__(/*! ./components/Administrator/EmployeesList.vue */ "./resources/js/components/Administrator/EmployeesList.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('modify-employee', (__webpack_require__(/*! ./components/Administrator/ModifyEmployee.vue */ "./resources/js/components/Administrator/ModifyEmployee.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-list', (__webpack_require__(/*! ./components/Clinic/Clinic.vue */ "./resources/js/components/Clinic/Clinic.vue")["default"]));
 var app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
   el: '#app'
 });
@@ -3004,6 +3507,45 @@ component.options.__file = "resources/js/components/Administrator/ModifyEmployee
 
 /***/ }),
 
+/***/ "./resources/js/components/Clinic/Clinic.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/Clinic/Clinic.vue ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Clinic.vue?vue&type=template&id=3a751798& */ "./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798&");
+/* harmony import */ var _Clinic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Clinic.vue?vue&type=script&lang=js& */ "./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Clinic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__.render,
+  _Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Clinic/Clinic.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/Administrator/EmployeesList.vue?vue&type=script&lang=js&":
 /*!******************************************************************************************!*\
   !*** ./resources/js/components/Administrator/EmployeesList.vue?vue&type=script&lang=js& ***!
@@ -3033,6 +3575,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ModifyEmployee.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/ModifyEmployee.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Clinic.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -3066,6 +3624,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_template_id_38a72a15___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ModifyEmployee_vue_vue_type_template_id_38a72a15___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ModifyEmployee.vue?vue&type=template&id=38a72a15& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Administrator/ModifyEmployee.vue?vue&type=template&id=38a72a15&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798& ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Clinic.vue?vue&type=template&id=3a751798& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798&");
 
 
 /***/ }),

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeesController;
+use App\Http\Controllers\ClinicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,12 @@ Route::get('/', [ EmployeesController::class, 'index']);
 Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ]);
 Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update']);
 
-
+// Rutas de consultorio 
+Route::get('/clinic/view', [ ClinicController::class, 'index' ]);
+Route::get('/clinic/generalShow', [ ClinicController::class, 'generalShow' ]);
+Route::post('/clinic/register', [ ClinicController::class, 'register' ]);
+Route::put('/clinic/update/{id}', [ ClinicController::class, 'update' ]);
+Route::get('/clinic/search', [ ClinicController::class, 'search' ]);
 // Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

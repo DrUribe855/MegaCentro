@@ -305,6 +305,11 @@ return [
             'url'         => '/',
             'icon'        => 'fas fa-fw fa-user',
         ],
+        [
+            'text'        => 'Consultorios',
+            'url'         => '/clinic/view',
+            'icon'        => 'fas fa-fw fa-user',
+        ],
         ['header' => 'account_settings'],
         [
             'text' => 'profile',
