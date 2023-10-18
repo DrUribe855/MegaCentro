@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
+use \App\Models\User;
+use \App\Models\Clinic;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +17,50 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->fake_user();
+        $this->fake_clinic();
+    }
+
+    public function fake_user(){
+        $faker = Faker::create();
+        $document = 108800;
+        $phone_number = 3217076300;
+        for ($i=0; $i < 50; $i++) { 
+            $role = '';
+            if ($i%2 == 0) {
+                $role = 'Administrador';
+            }else if ($i%3 == 0) {
+                $role = 'Auxiliar contable';
+            }else {
+                $role = 'Recolector';
+            }
+            User::insert([
+                'document' => $document,
+                'name' => $faker->firstName(),
+                'last_name' => $faker->lastName(),
+                'phone' => $phone_number++,
+                'email' => $faker->unique()->safeEmail,
+                'password' => bcrypt($document),
+                'role' => $role,
+                'status' => 'Activo'
+                 
+            ]);
+            $document++;
+        }
+    }
+
+    public function fake_clinic(){
+        $faker = Faker::create();
+        for ($i=0; $i < 500; $i++) { 
+            $clinic_number = rand(100,1000);
+            $user_id = rand(1,50);
+            while (Clinic::where('clinic_number', $clinic_number)->exists()) {
+                $clinic_number = rand(100, 1000); // Genera un nuevo número si ya existe
+            }
+            Clinic::insert([
+                'clinic_number' => $clinic_number,
+                'user_id' => $user_id,
+            ]);
+        }
     }
 }

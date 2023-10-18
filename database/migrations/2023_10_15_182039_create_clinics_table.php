@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('clinics', function (Blueprint $table) {
             $table->id();
-            $table->string('clinic_number');
+            $table->string('clinic_number')->unique();
             $table->unsignedBigInteger('user_id');
-            $table->string('status');
+            $table->enum('status', [ 'ACTIVO', 'INACTIVO' ]);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
