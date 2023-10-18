@@ -22,9 +22,9 @@ Route::get('/', function () {
 //Rutas de administrador
 
 Route::get('/', [ EmployeesController::class, 'index']);
-Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ]);
-Route::post('administrator/registerEmployees', [EmployeesController::class, 'store']);
-Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update']);
+Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ])->name('admin.employees');
+Route::post('administrator/registerEmployees', [EmployeesController::class, 'store'])->name('admin.employees.create');
+Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update'])->name('admin.employees.edit');
 
 
 // Auth::routes();
