@@ -302,7 +302,7 @@ return [
         ],
         [
             'text'        => 'Personal',
-            'url'         => '/',
+            'url'         => '/inicio',
             'icon'        => 'fas fa-fw fa-user',
         ],
         ['header' => 'account_settings'],
@@ -310,6 +310,7 @@ return [
             'text' => 'profile',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
+            'can' => 'admin.employees.generalShow'
         ],
         [
             'text' => 'change_password',

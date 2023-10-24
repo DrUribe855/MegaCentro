@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmployeesController extends Controller
 {
@@ -102,11 +103,11 @@ class EmployeesController extends Controller
     }
 
     public function generalShow(){
-        $employees = User::get();
+        $employees = User::paginate(10);
 
         $data = [
                 'status' => true,
-                'employees' => $employees,
+                'employees' => $employees->items(),
             ];
 
         return response()->json( $data );

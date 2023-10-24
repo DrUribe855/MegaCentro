@@ -30,4 +30,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->only('email', 'password');
+
+    //     if (Auth::attempt($credentials)) {
+    //         if (Auth::user()->hasRole('estudiante')) {
+    //             Auth::user()->update(['session_token' => (string) Str::uuid()]);
+    //         }
+    //         return redirect()->intended('/');
+    //     } else {
+    //         session()->flash('message', 'Email or password incorrect');
+    //         return back()->withInput();
+    //     }
+    // }
+    
 }

@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
         $collectorRole = Role::create(['name' => 'Recolector']);
 
         Permission::create(['name' => 'admin.employees.generalShow'])->assignRole($administratorRole);
-        Permission::create(['name' => 'admin.employees.create']);
-        Permission::create(['name' => 'admin.employees.edit']);
+        Permission::create(['name' => 'admin.employees.create'])->assignRole($administratorRole);
+        Permission::create(['name' => 'admin.employees.edit'])->assignRole($administratorRole);
     }
 }

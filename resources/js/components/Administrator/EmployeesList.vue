@@ -39,29 +39,35 @@
                     </tr>
                 </tbody>
             </table>
-        <register-modal v-if="visibilityRegister"></register-modal>
+            <register-modal v-if="visibilityRegister"></register-modal>
         </div>
-           <modify-employee v-if="!visibilityEmployees" :employee="selectedEmployee"></modify-employee>    
-           
+        
+        <modify-employee v-if="!visibilityEmployees" :employee="selectedEmployee"></modify-employee>    
+        <paginator :current-page="currentPage" :total-pages="totalPages"></paginator>
     </div>
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
-    import 'bootstrap/dist/css/bootstrap.css';
-    import 'bootstrap/dist/js/bootstrap.bundle';
-
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.bundle';
 </script>
+
+ 
 
 <script>
 
     import ModifyEmployee from './ModifyEmployee.vue';
     import UserRegisterModal from './UserRegisterModal';
+    import Paginator from './Paginator';
+   
 
     export default {
         props:[],
         components: {
             'modify-employee' : ModifyEmployee,
             'register-modal' : UserRegisterModal,
+            'paginator' : Paginator,
+             
         },
         data(){
             return {
@@ -69,10 +75,22 @@
                 visibilityEmployees : true,
                 selectedEmployee : [],
                 visibilityRegister: false,
+                currentPage: 1,
+                itemsPerPage: 7,
             }
         },
         created(){
             this.getEmployees();
+        },
+        computed: {
+            paginatedItems() {
+            const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.employeesList.slice(startIndex, endIndex);
+            },
+            totalPages() {
+                return Math.ceil(this.employeesList.length / this.itemsPerPage);
+            },
         },
         methods:{
             getEmployees(){
@@ -80,6 +98,7 @@
                     console.log('Respuesta del servidor');
                     console.log(res);
                     this.employeesList = res.data.employees;
+                    console.log(res.data.employees);
                 }).catch(error => {
                     console.log('Error en axios: ');
                     console.log(error);
@@ -112,6 +131,9 @@
                 setTimeout(() => {
                     this.visibilityRegister = false;
                 },200);
+            },
+            changePage(newPage) {
+                this.currentPage = newPage;
             },
         },
     }
