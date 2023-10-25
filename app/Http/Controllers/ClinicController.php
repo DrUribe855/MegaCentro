@@ -15,7 +15,7 @@ class ClinicController extends Controller
     }
 
     public function generalShow(){
-        $responsible = User::with('clinic.clinic_tower')->get();
+        $responsible = User::with('clinic')->get();
 
         $data = [
                     'status' => true,

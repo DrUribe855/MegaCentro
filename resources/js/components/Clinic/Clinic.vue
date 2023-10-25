@@ -117,7 +117,6 @@
               outlined
               fab
               color="red"
-              @click="showInfo(item)"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -217,7 +216,6 @@ export default {
     showInfo(item){
       this.dataInfo = item
       this.showEdit = true
-      console.log("02",this.dataInfo.clinic[0].clinic_tower[0].tower_id);
     },
 
     initialize () {

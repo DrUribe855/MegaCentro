@@ -2347,7 +2347,6 @@ __webpack_require__.r(__webpack_exports__);
     showInfo: function showInfo(item) {
       this.dataInfo = item;
       this.showEdit = true;
-      console.log("02", this.dataInfo.clinic[0].clinic_tower[0].tower_id);
     },
     initialize: function initialize() {
       var _this = this;
@@ -2409,20 +2408,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['clinic'],
-  components: {},
   data: function data() {
     return {
-      selectedClinic: [],
-      infoUser: {},
-      tower: []
+      search: '',
+      headers: [{
+        text: 'N Consultorio',
+        value: 'clinic_number'
+      }, {
+        text: 'N Torre',
+        value: 'tower_id'
+      }, {
+        text: 'Estado',
+        value: 'status'
+      }],
+      desserts: [],
+      selectedClinic: ''
     };
   },
   created: function created() {
-    this.selectedClinic = this.clinic.clinic;
-    this.infoUser = this.clinic;
-    console.log(this.selectedClinic);
-  },
-  methods: {}
+    this.desserts = this.clinic.clinic;
+    console.log(this.desserts);
+  }
 });
 
 /***/ }),
@@ -2970,11 +2976,6 @@ var render = function render() {
             outlined: "",
             fab: "",
             color: "red"
-          },
-          on: {
-            click: function click($event) {
-              return _vm.showInfo(item);
-            }
           }
         }, [_c("v-icon", [_vm._v("mdi-plus")])], 1), _vm._v(" "), _c("v-btn", {
           attrs: {
@@ -3003,7 +3004,7 @@ var render = function render() {
         }, [_vm._v("\n            Reset\n          ")])];
       },
       proxy: true
-    }], null, false, 1014301416)
+    }], null, false, 3396868403)
   })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", [_vm.showEdit ? _c("clinic-edit", {
     attrs: {
       clinic: _vm.dataInfo
@@ -3031,76 +3032,29 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-6 col-sm-11 col-md-6"
-  }, [_c("div", {
-    staticClass: "d-flex justify-content-end"
-  }, [_c("h1", [_vm._v(_vm._s(_vm.infoUser.document) + "2384")])]), _vm._v(" "), _c("div", {
-    staticClass: "form-text d-flex justify-content-end mr-3",
+  return _c("v-card", [_c("v-card-title", [_vm._v("\n        Nutrition\n        "), _c("v-spacer"), _vm._v(" "), _c("v-text-field", {
     attrs: {
-      id: "emailHelp"
-    }
-  }, [_vm._v("Documento del responsable")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-6 col-sm-1 col-md-6"
-  }, [_c("div", {
-    staticClass: "d-flex justify-content-end"
-  }, [_c("button", {
-    staticClass: "btn btn-primary my-4 mr-4",
-    attrs: {
-      type: "button"
+      "append-icon": "mdi-magnify",
+      label: "Buscar",
+      "single-line": "",
+      "hide-details": ""
     },
-    on: {
-      click: function click($event) {
-        return _vm.$parent.goToBack();
-      }
+    model: {
+      value: _vm.search,
+      callback: function callback($$v) {
+        _vm.search = $$v;
+      },
+      expression: "search"
     }
-  }, [_vm._v("\n                    Volver\n                ")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 m-0 p-0 row"
-  }, _vm._l(_vm.selectedClinic, function (clinic) {
-    return _c("div", {
-      staticClass: "col-6 col-sm-4 col-lg-2 m-0 p-2"
-    }, [_c("div", {
-      staticClass: "col card w-80 h-100 m-0"
-    }, [_c("div", {
-      staticClass: "card-header d-flex align-items-center justify-content-between pb-0"
-    }, [_c("div", {
-      staticClass: "col-12 card-title mb-0"
-    }, [clinic.clinic_tower && clinic.clinic_tower[0] ? _c("h5", {
-      staticClass: "m-0 me-2 text-dark text-uppercase text-center"
-    }, [_c("b", [_vm._v(_vm._s(clinic.clinic_tower[0].tower_id))])]) : _vm._e(), _vm._v(" "), _c("div", {
-      staticClass: "form-text",
-      attrs: {
-        id: "emailHelp"
-      }
-    }, [_vm._v("Numero De Torre.")])])]), _vm._v(" "), _c("div", {
-      staticClass: "card-body"
-    }, [_c("div", {
-      staticClass: "d-flex justify-content-center align-items-center mt-2 mb-3",
-      staticStyle: {
-        position: "relative"
-      }
-    }, [_c("div", {
-      staticClass: "d-flex flex-column align-items-center"
-    }, [_c("h2", {
-      staticClass: "mb-0"
-    }, [_vm._v(" " + _vm._s(clinic.clinic_number) + " ")]), _vm._v(" "), _c("span", [_vm._v("Numero Clinica")])])]), _vm._v(" "), _vm._m(0, true)])])]);
-  }), 0)]);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-12 m-0 p-0 text-end"
-  }, [_c("button", {
-    staticClass: "btn btn-info",
+  })], 1), _vm._v(" "), _c("v-data-table", {
     attrs: {
-      "data-bs-toggle": "modal",
-      "data-bs-target": "#edit"
+      headers: _vm.headers,
+      items: _vm.desserts,
+      search: _vm.search
     }
-  }, [_vm._v("EDITAR")])]);
-}];
+  }, [void 0], 2)], 1);
+};
+var staticRenderFns = [];
 render._withStripped = true;
 
 

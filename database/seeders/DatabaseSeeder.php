@@ -7,7 +7,6 @@ use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use \App\Models\User;
 use \App\Models\Clinic;
-use \App\Models\ClinicTower;
 use \App\Models\Tower;
 
 
@@ -21,9 +20,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->fake_user();
-        $this->fake_clinic();
         $this->fake_tower();
-        $this->fake_clinic_tower();
+        $this->fake_clinic();
     }
 
     public function fake_user(){
@@ -31,14 +29,6 @@ class DatabaseSeeder extends Seeder
         $document = 108800;
         $phone_number = 3217076300;
         for ($i=0; $i < 50; $i++) { 
-            $role = '';
-            if ($i%2 == 0) {
-                $role = 'Administrador';
-            }else if ($i%3 == 0) {
-                $role = 'Auxiliar contable';
-            }else {
-                $role = 'Recolector';
-            }
             User::insert([
                 'document' => $document,
                 'name' => $faker->firstName(),
@@ -46,25 +36,10 @@ class DatabaseSeeder extends Seeder
                 'phone' => $phone_number++,
                 'email' => $faker->unique()->safeEmail,
                 'password' => bcrypt($document),
-                'role' => $role,
                 'status' => 'Activo'
                  
             ]);
             $document++;
-        }
-    }
-
-    public function fake_clinic(){
-        for ($i=0; $i < 500; $i++) { 
-            $clinic_number = rand(100,1000);
-            $user_id = rand(1,50);
-            while (Clinic::where('clinic_number', $clinic_number)->exists()) {
-                $clinic_number = rand(100, 1000); // Genera un nuevo número si ya existe
-            }
-            Clinic::insert([
-                'clinic_number' => $clinic_number,
-                'user_id' => $user_id,
-            ]);
         }
     }
 
@@ -78,16 +53,18 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    public function fake_clinic_tower(){
+    public function fake_clinic(){
         for ($i=0; $i < 300; $i++) { 
+            $clinic_number = rand(100,500);
+            $user_id = rand(1,50);
             $tower_id = rand(1,3);
-            $clinic_id = rand(1, 500);
-            while (ClinicTower::where('clinic_id', $clinic_id)->exists()) {
-                $clinic_id = rand(1, 500); // Genera un nuevo número si ya existe
+            while (Clinic::where('clinic_number', $clinic_number)->exists()) {
+                $clinic_number = rand(100, 500);
             }
-            ClinicTower::insert([
+            Clinic::insert([
+                'clinic_number' => $clinic_number,
+                'user_id' => $user_id,
                 'tower_id' => $tower_id,
-                'clinic_id' => $clinic_id,
             ]);
         }
     }
