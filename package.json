@@ -21,6 +21,8 @@
         "vue-loader": "^15.9.7"
     },
     "dependencies": {
-        "vue-template-compiler": "^2.6.12"
+        "sweetalert2": "^11.7.32",
+        "vue-template-compiler": "^2.6.12",
+        "vuetify": "^2.7.1"
     }
 }
