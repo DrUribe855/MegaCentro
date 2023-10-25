@@ -302,7 +302,7 @@ return [
         ],
         [
             'text'        => 'Personal',
-            'url'         => '/',
+            'url'         => '/inicio',
             'icon'        => 'fas fa-fw fa-user',
         ],
         [
@@ -374,6 +374,7 @@ return [
             'text'       => 'information',
             'icon_color' => 'cyan',
             'url'        => '#',
+            'can' => 'admin.employees.generalShow'
         ],
     ],
 

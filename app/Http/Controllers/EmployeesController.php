@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmployeesController extends Controller
 {
@@ -19,7 +22,39 @@ class EmployeesController extends Controller
  
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'document' => 'required',
+            'name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email|',
+            'role' => 'required',
+            'password' => 'required',
+        ]);
 
+        $newEmployee = new User;
+
+        $newEmployee->document = $request->input('document');
+        $newEmployee->name = $request->input('name');
+        $newEmployee->last_name = $request->input('lastname');
+        $newEmployee->phone = $request->input('phone');
+        $newEmployee->email = $request->input('email');
+        $newEmployee->password = Hash::make($request->input('password'));
+
+        $newEmployee->save();
+
+        $role = Role::findByName($validatedData['role']);
+        $newEmployee->assignRole($role);
+
+        $data = [
+            'status' => true,
+            'Employee' => $newEmployee,
+        ];
+
+        return response()->json([
+                            'message' => 'Registro guardado correctamente',
+                            'data' => $data,
+                        ]);
     }
  
     public function show($id)
@@ -72,10 +107,12 @@ class EmployeesController extends Controller
 
     public function generalShow(){
         $employees = User::get();
+        $roles = Role::get();
 
         $data = [
                 'status' => true,
                 'employees' => $employees,
+                'roles' => $roles,
             ];
 
         return response()->json( $data );

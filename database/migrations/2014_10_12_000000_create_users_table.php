@@ -19,7 +19,11 @@ return new class extends Migration
             $table->enum('status', ['Activo', 'Inactivo']);
             $table->rememberToken();
             $table->timestamps();
+
+
         });
+
+        
     }
 
    

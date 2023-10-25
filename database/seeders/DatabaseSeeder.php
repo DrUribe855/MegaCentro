@@ -8,15 +8,11 @@ use Faker\Factory as Faker;
 use \App\Models\User;
 use \App\Models\Clinic;
 use \App\Models\Tower;
-
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
+    
     public function run()
     {
         $this->fake_tower();
@@ -48,5 +44,17 @@ class DatabaseSeeder extends Seeder
                 'tower_id' => $tower_id,
             ]);
         }
+
+        $this->call(RoleSeeder::class);
+
+        $users = User::factory(30)->create();
+
+        $adminRole = Role::where('name','Administrador')->first();
+        $userRole = Role::where('name','Auxiliar contable')->first();
+
+        $users[0]->assignRole($adminRole);
+        $users[1]->assignRole($userRole);
+
+        
     }
 }

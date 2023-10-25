@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeesController;
 use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,15 +17,17 @@ use App\Http\Controllers\ClinicController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('../auth/login');
 });
 
+Route::post('/login2', [AuthController::class, 'login']);
 
 //Rutas de administrador
 
-Route::get('/', [ EmployeesController::class, 'index']);
 Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ]);
-Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update']);
+Route::get('/inicio', [ EmployeesController::class, 'index']);
+Route::post('administrator/registerEmployees', [EmployeesController::class, 'store'])->name('admin.employees.create');
+Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update'])->name('admin.employees.edit');
 
 // Rutas de consultorio 
 Route::get('/clinic/view', [ ClinicController::class, 'index' ]);
@@ -35,6 +38,14 @@ Route::get('/clinic/search', [ ClinicController::class, 'search' ]);
 // Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+Auth::routes();
+
+    
+    
+    
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Auth::routes();
 
