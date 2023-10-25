@@ -11,7 +11,7 @@ class Tower extends Model
     use HasFactory;
     protected $table = 'towers';
 
-    public function clinic_tower(): HasMany{
-        return $this->hasMany(ClinicTower::class);
+    public function clinic(): HasMany{
+        return $this->hasMany(Clinic::class);
     }
 }

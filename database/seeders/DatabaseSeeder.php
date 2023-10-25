@@ -12,14 +12,17 @@ class DatabaseSeeder extends Seeder
     
     public function run()
     {
-        $users = User::factory(30)->create();
-
-        // $adminRole = Role::where('name','Administrador')->first();
-        // $userRole = Role::where('name','Auxiliar contable')->first();
-
-        // $users[0]->assignRole($adminRole);
-        // $users[1]->assignRole($userRole);
 
         $this->call(RoleSeeder::class);
+
+        $users = User::factory(30)->create();
+
+        $adminRole = Role::where('name','Administrador')->first();
+        $userRole = Role::where('name','Auxiliar contable')->first();
+
+        $users[0]->assignRole($adminRole);
+        $users[1]->assignRole($userRole);
+
+        
     }
 }

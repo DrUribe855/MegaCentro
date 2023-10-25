@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -21,27 +22,29 @@ class EmployeesController extends Controller
  
     public function store(Request $request)
     {
-        $request->validate([
-            'documento' => 'required',
+        $validatedData = $request->validate([
+            'document' => 'required',
             'name' => 'required',
-            'lastname' => 'required',
+            'last_name' => 'required',
             'phone' => 'required',
-            'email' => 'required',
+            'email' => 'required|email|',
             'role' => 'required',
             'password' => 'required',
         ]);
 
         $newEmployee = new User;
 
-        $newEmployee->document = $request->input('documento');
+        $newEmployee->document = $request->input('document');
         $newEmployee->name = $request->input('name');
         $newEmployee->last_name = $request->input('lastname');
         $newEmployee->phone = $request->input('phone');
         $newEmployee->email = $request->input('email');
-        $newEmployee->role = $request->input('role');
         $newEmployee->password = Hash::make($request->input('password'));
 
         $newEmployee->save();
+
+        $role = Role::findByName($validatedData['role']);
+        $newEmployee->assignRole($role);
 
         $data = [
             'status' => true,
@@ -103,11 +106,13 @@ class EmployeesController extends Controller
     }
 
     public function generalShow(){
-        $employees = User::paginate(10);
+        $employees = User::get();
+        $roles = Role::get();
 
         $data = [
                 'status' => true,
-                'employees' => $employees->items(),
+                'employees' => $employees,
+                'roles' => $roles,
             ];
 
         return response()->json( $data );

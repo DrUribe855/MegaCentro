@@ -87,7 +87,6 @@
 		},
 		methods: {
 			registerEmployees(){
-
 				const information = {
 					documento : this.documento,
 					name : this.name,

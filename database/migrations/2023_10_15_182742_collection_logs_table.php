@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('collection_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tower_clinic_id');
+            $table->unsignedBigInteger('clinic_id');
             $table->unsignedBigInteger('residue_id');
             $table->float('weight');
             $table->timestamps();
 
-            $table->foreign('tower_clinic_id')->references('id')->on('clinic_towers')->onDelete('cascade');
+            $table->foreign('clinic_id')->references('id')->on('clinics')->onDelete('cascade');
             $table->foreign('residue_id')->references('id')->on('residues')->onDelete('cascade');
         });
     }
