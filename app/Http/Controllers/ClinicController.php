@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Clinic;
+use App\Models\ClinicTower;
+use App\Models\User;
 
 class ClinicController extends Controller
 {
@@ -12,11 +15,11 @@ class ClinicController extends Controller
     }
 
     public function generalShow(){
-        $clinic = Clinic::with('user')->get();
+        $responsible = User::with('clinic.clinic_tower')->get();
 
         $data = [
                     'status' => true,
-                    'clinic' => $clinic,
+                    'responsible' => $responsible,
                 ];
 
         return response()->json($data);
@@ -44,17 +47,21 @@ class ClinicController extends Controller
     }
 
     public function update(Request $request, $id){
-        $request->validate([
-            'clinic_number' => 'required|unique:clinics',
-        ]);
-        
+        $clinicData = $request->input('clinicData');
+        if ($request->input('validateStatus') == true) {
+            $validator = Validator::make($clinicData, [
+                'clinic_number' => 'required|unique:clinics',
+            ]);
+            if ($validator->failed()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            } 
+        }
         $clinic = Clinic::find($id);
-        $clinic->status = $request->input('status');
-        $clinic->clinic_number = $request->input('clinic_number');
+        $clinic->status = $clinicData['status'];
+        $clinic->clinic_number = $clinicData['clinic_number'];
         $clinic->save();
 
         $records = Clinic::with('user')->get();
-
         $data = [
                     'status' => true,
                     'clinic' => $records,

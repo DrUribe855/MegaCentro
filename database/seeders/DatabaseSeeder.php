@@ -7,6 +7,9 @@ use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use \App\Models\User;
 use \App\Models\Clinic;
+use \App\Models\ClinicTower;
+use \App\Models\Tower;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +22,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->fake_user();
         $this->fake_clinic();
+        $this->fake_tower();
+        $this->fake_clinic_tower();
     }
 
     public function fake_user(){
@@ -50,7 +55,6 @@ class DatabaseSeeder extends Seeder
     }
 
     public function fake_clinic(){
-        $faker = Faker::create();
         for ($i=0; $i < 500; $i++) { 
             $clinic_number = rand(100,1000);
             $user_id = rand(1,50);
@@ -60,6 +64,30 @@ class DatabaseSeeder extends Seeder
             Clinic::insert([
                 'clinic_number' => $clinic_number,
                 'user_id' => $user_id,
+            ]);
+        }
+    }
+
+    public function fake_tower(){
+        $j = 1;
+        for ($i=0; $i < 3; $i++) { 
+            Tower::insert([
+                'id' => $j,
+            ]);
+            $j++;
+        }
+    }
+
+    public function fake_clinic_tower(){
+        for ($i=0; $i < 300; $i++) { 
+            $tower_id = rand(1,3);
+            $clinic_id = rand(1, 500);
+            while (ClinicTower::where('clinic_id', $clinic_id)->exists()) {
+                $clinic_id = rand(1, 500); // Genera un nuevo número si ya existe
+            }
+            ClinicTower::insert([
+                'tower_id' => $tower_id,
+                'clinic_id' => $clinic_id,
             ]);
         }
     }

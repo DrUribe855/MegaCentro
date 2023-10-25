@@ -306,7 +306,7 @@ return [
             'icon'        => 'fas fa-fw fa-user',
         ],
         [
-            'text'        => 'Consultorios',
+            'text'        => 'Responsables',
             'url'         => '/clinic/view',
             'icon'        => 'fas fa-fw fa-user',
         ],
