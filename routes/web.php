@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeesController;
 use App\Http\Controllers\ClinicController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\CollectorController;
+use App\Http\Controllers\ManagerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,32 +24,35 @@ Route::get('/', function () {
 });
 
 Route::post('/login2', [AuthController::class, 'login']);
+Route::get('/index', [HomeController::class, 'index']);
 
-//Rutas de administrador
+// --------------------------- Rutas de modulo empleados --------------------------- \\
 
-Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ]);
-Route::get('/inicio', [ EmployeesController::class, 'index']);
-Route::post('administrator/registerEmployees', [EmployeesController::class, 'store'])->name('admin.employees.create');
-Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update'])->name('admin.employees.edit');
+Route::get('administrator/generalShow', [ EmployeesController::class, 'generalShow' ])->middleware('can:admin.employees.generalShow');
+Route::get('/indexEmployees', [ EmployeesController::class, 'index'])->middleware('can:admin.employees.generalShow');
+Route::post('administrator/registerEmployees', [EmployeesController::class, 'store'])->middleware('can:admin.employees.create')->name('admin.employees.create');
+Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'update'])->middleware('can:admin.employees.edit')->name('admin.employees.edit');
 
-// Rutas de consultorio 
-Route::get('/clinic/view', [ ClinicController::class, 'index' ]);
-Route::get('/clinic/generalShow', [ ClinicController::class, 'generalShow' ]);
-Route::post('/clinic/register', [ ClinicController::class, 'register' ]);
-Route::put('/clinic/update/{id}', [ ClinicController::class, 'update' ]);
-Route::get('/clinic/search', [ ClinicController::class, 'search' ]);
-// Auth::routes();
+// --------------------------- Rutas de auxiliar ---------------------------------- \\
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/assistant/index', [ AssistantController::class, 'index'])->middleware('can:admin.managers.generalShow');
 
+// --------------------------- Rutas de modulo encargados -------------------------------- \\ 
+
+Route::get('/clinic/view', [ ClinicController::class, 'index' ])->middleware('can:admin.managers.generalShow');
+Route::get('/clinic/generalShow', [ ClinicController::class, 'generalShow' ])->middleware('can:admin.managers.generalShow');
+Route::post('/clinic/register', [ ClinicController::class, 'register' ])->middleware('can:admin.managers.create');
+Route::put('/clinic/update/{id}', [ ClinicController::class, 'update' ])->middleware('can:admin.managers.edit');
+
+// ----------------------------- Rutas de recolector --------------------------------- \\
+
+Route::get('/collector/index', [ CollectorController::class, 'index'])->middleware('can:collector.collections.generalShow');
+
+// ------------------------------- Rutas de encargado --------------------------------------- \\
+
+Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('can:manager.clinics.generalShow');
+
+// Rutas de login
 
 Auth::routes();
-
-    
-    
-    
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+ 

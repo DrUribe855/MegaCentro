@@ -36,7 +36,7 @@ class EmployeesController extends Controller
 
         $newEmployee->document = $request->input('document');
         $newEmployee->name = $request->input('name');
-        $newEmployee->last_name = $request->input('lastname');
+        $newEmployee->last_name = $request->input('last_name');
         $newEmployee->phone = $request->input('phone');
         $newEmployee->email = $request->input('email');
         $newEmployee->password = Hash::make($request->input('password'));
@@ -52,9 +52,9 @@ class EmployeesController extends Controller
         ];
 
         return response()->json([
-                            'message' => 'Registro guardado correctamente',
-                            'data' => $data,
-                        ]);
+                'message' => 'Registro guardado correctamente',
+                'data' => $data,
+            ]);
     }
  
     public function show($id)
@@ -71,14 +71,16 @@ class EmployeesController extends Controller
     {
 
         $employees = User::find($id);
+        $role = Role::findOrCreate($request->input('role_name'));
+
 
         if($employees){
             $employees->name = $request->input('name');
             $employees->last_name = $request->input('last_name');
             $employees->phone = $request->input('phone');
             $employees->email = $request->input('email');
+            $employees->roles()->sync([$role->id]);
             $employees->status = $request->input('status');
-            $employees->role = $request->input('role');
             $employees->save();
 
             $data = [
@@ -106,13 +108,14 @@ class EmployeesController extends Controller
     }
 
     public function generalShow(){
-        $employees = User::get();
-        $roles = Role::get();
+        $employees = User::leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->select('users.*', 'roles.name as role_name')
+                    ->get();
 
         $data = [
                 'status' => true,
                 'employees' => $employees,
-                'roles' => $roles,
             ];
 
         return response()->json( $data );
