@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('clinics', function (Blueprint $table) {
             $table->id();
-            $table->string('clinic_number');
+            $table->string('clinic_number')->unique();
             $table->unsignedBigInteger('user_id');
-            $table->string('status');
+            $table->unsignedBigInteger('tower_id');
+            $table->enum('status', [ 'ACTIVO', 'INACTIVO' ]);
             $table->timestamps();
 
+            $table->foreign('tower_id')->references('id')->on('towers');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

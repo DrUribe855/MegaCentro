@@ -5,11 +5,11 @@
 
 @extends('adminlte::page')
 
-@section('title', 'Lista de empleados')
+@section('title', 'Inicio')
 
 @section('content')
 	<div id="app">
-		<employees-list></employees-list>
+		Vista index
 	</div>
 @stop
 @section('css')

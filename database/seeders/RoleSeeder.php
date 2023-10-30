@@ -15,9 +15,34 @@ class RoleSeeder extends Seeder
         $administratorRole = Role::create(['name' => 'Administrador']);
         $assistantRole = Role::create(['name' => 'Auxiliar Contable']);
         $collectorRole = Role::create(['name' => 'Recolector']);
+        $managerRole = Role::create(['name' => 'Encargado']);
 
+        // ------------------------ Rol administrador -------------------- \\
+
+        //Permisos de modulo empleados
         Permission::create(['name' => 'admin.employees.generalShow'])->assignRole($administratorRole);
         Permission::create(['name' => 'admin.employees.create'])->assignRole($administratorRole);
         Permission::create(['name' => 'admin.employees.edit'])->assignRole($administratorRole);
+
+        //Permisos de modulo de encargados
+        Permission::create(['name' => 'admin.managers.generalShow'])->assignRole($assistantRole, $administratorRole);
+        Permission::create(['name' => 'admin.managers.create'])->assignRole($administratorRole);
+        Permission::create(['name' => 'admin.managers.edit'])->assignRole($administratorRole);
+
+        // ------------------------ Rol asistente -------------------------- \\
+
+        Permission::create(['name' => 'assistant.statistics.generalShow'])->assignRole($assistantRole, $administratorRole);
+        Permission::create(['name' => 'assistant.statistics.create'])->assignRole($administratorRole);
+        Permission::create(['name' => 'assistant.statistics.edit'])->assignRole($administratorRole);
+
+        // ------------------------ Rol recolector ---------------------------- \\
+
+        Permission::create(['name' => 'collector.collections.generalShow'])->assignRole($collectorRole, $administratorRole);
+        Permission::create(['name' => 'collector.collections.create'])->assignRole($collectorRole, $administratorRole);
+        Permission::create(['name' => 'collector.collections.edit'])->assignRole($collectorRole, $administratorRole);
+
+        // ------------------------ Rol encargado -------------------------------- \\
+
+        Permission::create(['name' => 'manager.clinics.generalShow'])->assignRole($managerRole, $administratorRole);
     }
 }

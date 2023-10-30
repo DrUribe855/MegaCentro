@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -21,27 +22,29 @@ class EmployeesController extends Controller
  
     public function store(Request $request)
     {
-        $request->validate([
-            'documento' => 'required',
+        $validatedData = $request->validate([
+            'document' => 'required',
             'name' => 'required',
-            'lastname' => 'required',
+            'last_name' => 'required',
             'phone' => 'required',
-            'email' => 'required',
+            'email' => 'required|email|',
             'role' => 'required',
             'password' => 'required',
         ]);
 
         $newEmployee = new User;
 
-        $newEmployee->document = $request->input('documento');
+        $newEmployee->document = $request->input('document');
         $newEmployee->name = $request->input('name');
-        $newEmployee->last_name = $request->input('lastname');
+        $newEmployee->last_name = $request->input('last_name');
         $newEmployee->phone = $request->input('phone');
         $newEmployee->email = $request->input('email');
-        $newEmployee->role = $request->input('role');
         $newEmployee->password = Hash::make($request->input('password'));
 
         $newEmployee->save();
+
+        $role = Role::findByName($validatedData['role']);
+        $newEmployee->assignRole($role);
 
         $data = [
             'status' => true,
@@ -49,9 +52,9 @@ class EmployeesController extends Controller
         ];
 
         return response()->json([
-                            'message' => 'Registro guardado correctamente',
-                            'data' => $data,
-                        ]);
+                'message' => 'Registro guardado correctamente',
+                'data' => $data,
+            ]);
     }
  
     public function show($id)
@@ -68,14 +71,16 @@ class EmployeesController extends Controller
     {
 
         $employees = User::find($id);
+        $role = Role::findOrCreate($request->input('role_name'));
+
 
         if($employees){
             $employees->name = $request->input('name');
             $employees->last_name = $request->input('last_name');
             $employees->phone = $request->input('phone');
             $employees->email = $request->input('email');
+            $employees->roles()->sync([$role->id]);
             $employees->status = $request->input('status');
-            $employees->role = $request->input('role');
             $employees->save();
 
             $data = [
@@ -103,11 +108,14 @@ class EmployeesController extends Controller
     }
 
     public function generalShow(){
-        $employees = User::paginate(10);
+        $employees = User::leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->select('users.*', 'roles.name as role_name')
+                    ->get();
 
         $data = [
                 'status' => true,
-                'employees' => $employees->items(),
+                'employees' => $employees,
             ];
 
         return response()->json( $data );
