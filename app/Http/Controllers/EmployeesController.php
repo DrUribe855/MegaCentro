@@ -21,14 +21,16 @@ class EmployeesController extends Controller
     }
  
     public function store(Request $request)
-    {
+    {   
+
         $validatedData = $request->validate([
             'document' => 'required',
             'name' => 'required',
             'last_name' => 'required',
             'phone' => 'required',
             'email' => 'required|email|',
-            'role' => 'required',
+            'role_name' => 'required',
+            'status' => 'required',
             'password' => 'required',
         ]);
 
@@ -39,11 +41,12 @@ class EmployeesController extends Controller
         $newEmployee->last_name = $request->input('last_name');
         $newEmployee->phone = $request->input('phone');
         $newEmployee->email = $request->input('email');
+        $newEmployee->status = $request->input('status');
         $newEmployee->password = Hash::make($request->input('password'));
 
         $newEmployee->save();
 
-        $role = Role::findByName($validatedData['role']);
+        $role = Role::findByName($validatedData['role_name']);
         $newEmployee->assignRole($role);
 
         $data = [
@@ -80,7 +83,7 @@ class EmployeesController extends Controller
             $employees->phone = $request->input('phone');
             $employees->email = $request->input('email');
             $employees->roles()->sync([$role->id]);
-            $employees->status = $request->input('status');
+            // $employees->status = $request->input('status');
             $employees->save();
 
             $data = [

@@ -2167,9 +2167,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      rules: [function (value) {
+        return !!value || 'Obligatorio';
+      }],
       dialog: false,
       dialogDelete: false,
       paginationOptions: {
@@ -2287,6 +2293,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.formTitle === 'Registrar usuario') {
         axios.post('administrator/registerEmployees', this.editedItem).then(function (resp) {
           console.log('Datos enviados correctamente: ', resp.data);
+          // this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
           _this4.getEmployees();
         })["catch"](function (error) {
           console.log("Error en axios");
@@ -2315,6 +2322,13 @@ __webpack_require__.r(__webpack_exports__);
         });
         this.close();
       }
+    },
+    showAlert: function showAlert(title, text, icon) {
+      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+        title: title,
+        text: text,
+        icon: icon
+      });
     }
   }
 });
@@ -2620,7 +2634,12 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("v-app", [_c("v-main", [_c("v-data-table", {
+  return _c("div", {
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
+  }, [_c("v-app", [_c("v-main", [_c("v-data-table", {
     staticClass: "elevation-12",
     attrs: {
       headers: _vm.headers,
@@ -2649,7 +2668,7 @@ var render = function render() {
                   color: "primary",
                   dark: ""
                 }
-              }, "v-btn", attrs, false), on), [_vm._v("\n                          Registrar empleado\n                        ")])];
+              }, "v-btn", attrs, false), on), [_vm._v("\n                                Registrar empleado\n                              ")])];
             }
           }]),
           model: {
@@ -2669,6 +2688,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Documento",
             type: "number"
           },
@@ -2687,6 +2707,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Nombre"
           },
           model: {
@@ -2704,6 +2725,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Apellido"
           },
           model: {
@@ -2721,6 +2743,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Télefono",
             type: "number"
           },
@@ -2739,6 +2762,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Correo",
             type: "email"
           },
@@ -2757,6 +2781,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            rules: _vm.rules,
             label: "Contraseña"
           },
           model: {
@@ -2774,6 +2799,7 @@ var render = function render() {
           }
         }, [_c("v-select", {
           attrs: {
+            rules: _vm.rules,
             items: _vm.roles,
             placeholder: "Cargo"
           },
@@ -2791,13 +2817,8 @@ var render = function render() {
             md: "4"
           }
         }, [_c("v-select", {
-          directives: [{
-            name: "show",
-            rawName: "v-show",
-            value: _vm.editedIndex !== -1,
-            expression: "editedIndex !== -1"
-          }],
           attrs: {
+            rules: _vm.rules,
             items: _vm.items,
             placeholder: "Activo",
             value: "Activo"
@@ -2817,7 +2838,7 @@ var render = function render() {
           on: {
             click: _vm.close
           }
-        }, [_vm._v("\n                            Cancel\n                          ")]), _vm._v(" "), _c("v-btn", {
+        }, [_vm._v("\n                                  Cancel\n                                ")]), _vm._v(" "), _c("v-btn", {
           attrs: {
             color: "blue darken-1",
             text: ""
@@ -2825,7 +2846,7 @@ var render = function render() {
           on: {
             click: _vm.save
           }
-        }, [_vm._v("\n                            Save\n                          ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+        }, [_vm._v("\n                                  Save\n                                ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
           attrs: {
             "max-width": "500px"
           },
@@ -2871,7 +2892,7 @@ var render = function render() {
               return _vm.editItem(item);
             }
           }
-        }, [_vm._v("\n                    mdi-pencil\n                  ")])];
+        }, [_vm._v("\n                          mdi-pencil\n                        ")])];
       }
     }, {
       key: "no-data",
@@ -2883,11 +2904,11 @@ var render = function render() {
           on: {
             click: _vm.getEmployees
           }
-        }, [_vm._v("\n                    Reiniciar\n                  ")])];
+        }, [_vm._v("\n                          Reiniciar\n                        ")])];
       },
       proxy: true
     }])
-  })], 1)], 1);
+  })], 1)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
