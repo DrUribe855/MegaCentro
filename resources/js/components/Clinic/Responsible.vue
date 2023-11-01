@@ -231,7 +231,6 @@
   import ClinicEdit from "./Clinic.vue";
   import ClinicShow from "./ViewClinic.vue";
   import ClinicTower from "./Tower.vue";
-  import Swal from 'sweetalert2';
 
   export default {
 

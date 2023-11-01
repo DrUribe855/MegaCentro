@@ -7,10 +7,7 @@ import Vuetify from "vuetify";
 Vue.use(Vuetify);
  
 window.Vue = require('vue');
-//Lista de componentes
 
-Vue.component('employees-list', require('./components/Administrator/EmployeesList.vue').default);
-Vue.component('modify-employee', require('./components/Administrator/ModifyEmployee.vue').default);
 // Clinic
 Vue.component('clinic-list', require('./components/Clinic/Responsible.vue').default);
 Vue.component('clinic-edit', require('./components/Clinic/Clinic.vue').default);
@@ -20,8 +17,6 @@ Vue.use(Vuetify);
 //Administrator
 
 Vue.component('employees-list', require('./components/Administrator/Employees/EmployeesList.vue').default);
-Vue.component('clinic-list', require('./components/Clinic/Clinic.vue').default);
-Vue.component('clinic-edit', require('./components/Clinic/EditClinic').default);
 
 //Assistant
 Vue.component('index-assistant', require('./components/Assistant/IndexAssistant.vue').default);
