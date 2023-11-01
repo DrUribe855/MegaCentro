@@ -9,7 +9,7 @@
 
 @extends('adminlte::page')
 
-@section('title', 'Lsita de consultorios')
+@section('title', 'Lisita de consultorios')
 
 @section('content')
     <div id="app">

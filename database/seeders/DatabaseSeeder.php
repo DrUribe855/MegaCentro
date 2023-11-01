@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use \App\Models\User;
 use \App\Models\Clinic;
+use App\Models\Clinic_user;
 use \App\Models\Tower;
 
 
@@ -29,6 +30,18 @@ class DatabaseSeeder extends Seeder
         $document = 108800;
         $phone_number = 3217076300;
         for ($i=0; $i < 50; $i++) { 
+            $role = '';
+            if ($i%2 == 0) {
+                $role = 'Recolector';
+            }else{
+                $role = 'Dueno';
+            }
+            
+            if ($i%3 == 0) {
+                $role = 'Responsable';
+            }else if (($i%4 == 0)) {
+                $role = 'Administrador';
+            }
             User::insert([
                 'document' => $document,
                 'name' => $faker->firstName(),
@@ -36,6 +49,7 @@ class DatabaseSeeder extends Seeder
                 'phone' => $phone_number++,
                 'email' => $faker->unique()->safeEmail,
                 'password' => bcrypt($document),
+                'role' => $role,
                 'status' => 'Activo'
                  
             ]);
@@ -56,15 +70,15 @@ class DatabaseSeeder extends Seeder
     public function fake_clinic(){
         for ($i=0; $i < 300; $i++) { 
             $clinic_number = rand(100,500);
-            $user_id = rand(1,50);
             $tower_id = rand(1,3);
+            $status = '';
             while (Clinic::where('clinic_number', $clinic_number)->exists()) {
                 $clinic_number = rand(100, 500);
             }
             Clinic::insert([
                 'clinic_number' => $clinic_number,
-                'user_id' => $user_id,
                 'tower_id' => $tower_id,
+                'status' => 'DESOCUPADO',
             ]);
         }
     }

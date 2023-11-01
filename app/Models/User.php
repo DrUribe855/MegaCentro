@@ -30,7 +30,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function clinic() : HasMany{
-        return $this->hasMany(Clinic::class);
+    public function clinic_user() : HasMany{
+        return $this->hasMany(Clinic_user::class);
     }
 }
