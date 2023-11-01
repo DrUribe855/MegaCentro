@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use \App\Models\User;
 use \App\Models\Clinic;
+use App\Models\Clinic_user;
 use \App\Models\Tower;
 use Spatie\Permission\Models\Role;
 
@@ -33,15 +34,15 @@ class DatabaseSeeder extends Seeder
     public function fake_clinic(){
         for ($i=0; $i < 300; $i++) { 
             $clinic_number = rand(100,500);
-            $user_id = rand(1,50);
             $tower_id = rand(1,3);
+            $status = '';
             while (Clinic::where('clinic_number', $clinic_number)->exists()) {
                 $clinic_number = rand(100, 500);
             }
             Clinic::insert([
                 'clinic_number' => $clinic_number,
-                'user_id' => $user_id,
                 'tower_id' => $tower_id,
+                'status' => 'DESOCUPADO',
             ]);
         }
 

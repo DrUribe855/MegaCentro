@@ -21,8 +21,8 @@ class Clinic extends Model
         return $this->belongsTo(Tower::class);
     }
 
-    public function user() : BelongsTo{
-        return $this->belongsTo(User::class);
+    public function clinic_user() : HasMany{
+        return $this->hasMany(Clinic_user::class);
     }
 
     public function collection_log() : HasMany{
