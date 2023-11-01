@@ -324,7 +324,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         if(this.formTitle === 'Registrar usuario'){
           axios.post('administrator/registerEmployees', this.editedItem).then(resp => {
               console.log('Datos enviados correctamente: ', resp.data);
-              // this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+              this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
               this.getEmployees();
           }).catch(error => {
               console.log("Error en axios");
