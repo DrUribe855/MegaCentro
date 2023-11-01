@@ -2,11 +2,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
 <template>
-        <v-app>
+  <div style="height: 100vh; overflow-y: scroll">
+    <v-app >
             <v-main>
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :options="paginationOptions"
                         class="elevation-12"
                     >
                         <template v-slot:top>
@@ -14,12 +16,8 @@
                             flat
                           >
                             <v-toolbar-title>Lista de empleados</v-toolbar-title>
-                            <v-divider
-                              class="mx-4"
-                              inset
-                              vertical
-                            ></v-divider>
                             <v-spacer></v-spacer>
+                            
                             <v-dialog
                               v-model="dialog"
                               max-width="500px"
@@ -32,7 +30,7 @@
                                   v-bind="attrs"
                                   v-on="on"
                                 >
-                                  New Item
+                                  Registrar empleado
                                 </v-btn>
                               </template>
                               <v-card>
@@ -49,6 +47,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.document"
                                             label="Documento"
                                             type="number"
@@ -60,6 +59,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.name"
                                             label="Nombre"
                                           ></v-text-field>
@@ -70,6 +70,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.last_name"
                                             label="Apellido"
                                           ></v-text-field>
@@ -80,6 +81,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.phone"
                                             label="Télefono"
                                             type="number"
@@ -92,6 +94,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.email"
                                             label="Correo"
                                             type="email"
@@ -104,6 +107,7 @@
                                           md="4"
                                         >
                                           <v-text-field
+                                            :rules = "rules"
                                             v-model="editedItem.password"
                                             label="Contraseña"
                                             
@@ -116,8 +120,10 @@
                                           md="4"
                                         >
                                         <v-select
+                                            :rules = "rules"
                                             :items="roles"
-                                            v-model="editedItem.role"
+                                            v-model="editedItem.role_name"
+                                            placeholder="Cargo"
                                         ></v-select>
                                         </v-col>
                                         <v-col
@@ -126,8 +132,12 @@
                                           md="4"
                                         >
                                         <v-select
+                                            :rules = "rules"
+                                            
                                             :items="items"
                                             v-model="editedItem.status"
+                                            placeholder="Activo"
+                                            value="Activo"
                                         ></v-select>
                                         </v-col>
                                     </v-row>
@@ -174,24 +184,20 @@
                           >
                             mdi-pencil
                           </v-icon>
-                          <v-icon
-                            small
-                            @click="deleteItem(item)"
-                          >
-                            mdi-delete
-                          </v-icon>
                         </template>
                         <template v-slot:no-data>
                           <v-btn
                             color="primary"
                             @click="getEmployees"
                           >
-                            Reset
+                            Reiniciar
                           </v-btn>
                         </template>
                     </v-data-table>
             </v-main>
         </v-app>
+  </div>
+       
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
@@ -202,10 +208,19 @@ import 'bootstrap/dist/js/bootstrap.bundle';
  
 
 <script>
+
+  import swal from 'sweetalert';
+
   export default {
     data: () => ({
+      rules: [
+        value => !!value || 'Obligatorio',
+      ],
       dialog: false,
       dialogDelete: false,
+      paginationOptions: {
+        customFilter: (itemsPerPage) => [5, 10].includes(itemsPerPage),
+      },
       items: ['Activo', 'Inactivo'],
       roles: ['Administrador','Auxiliar Contable', 'Recolector'],
       headers: [
@@ -218,33 +233,31 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         { text: 'Nombre', value: 'name' },
         { text: 'Apellido', value: 'last_name' },
         { text: 'Correo', value: 'email' },
-        { text: 'Télefono', value: 'phone' },
+        // { text: 'Télefono', value: 'phone' },
         { text: 'Estado', value: 'status' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Cargo', value: 'role_name' },
+        { text: 'Editar', value: 'actions', sortable: false },
       ],
+      search: '',
       desserts: [],
       editedIndex: -1,
       editedItem: {
+        id: '',
         document : '',
         name : '',
         last_name : '',
         phone : '',
         email : '',
-        role : '',
+        role_name : '',
+        status: '',
         password : '',
       },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
+      
     }),
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Registrar usuario' : 'Editar usuario'
       },
     },
 
@@ -274,6 +287,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
             })
         },
       editItem (item) {
+        console.log(this.editedItem);
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
@@ -307,17 +321,47 @@ import 'bootstrap/dist/js/bootstrap.bundle';
       },
 
       save () {
-        console.log(this.editedItem.document);
-        axios.post('administrator/registerEmployees', this.editedItem).then(resp => {
-            console.log('Datos enviados correctamente: ', resp.data);
+        if(this.formTitle === 'Registrar usuario'){
+          axios.post('administrator/registerEmployees', this.editedItem).then(resp => {
+              console.log('Datos enviados correctamente: ', resp.data);
+              this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+              this.getEmployees();
+          }).catch(error => {
+              console.log("Error en axios");
+              console.log(error);
+              console.log(error.response);
+          });
+          this.close()  
+        }else{
+          const id = this.editedItem.id;
+          console.log(id);
+          axios.put(`administrator/updateEmployees/${id}`,{
+            name: this.editedItem.name,
+            last_name: this.editedItem.last_name,
+            phone: this.editedItem.phone,
+            email: this.editedItem.email,
+            status: this.editedItem.status,
+            role_name: this.editedItem.role_name,
+          }).then(res => {
+            console.log('Respuesta del servidor - Edicion de usuarios');
+            console.log(res.data);
             this.getEmployees();
-        }).catch(error => {
-            console.log("Error en axios");
+            
+          }).catch(error => {
+            console.log('Error en axios: ');
             console.log(error);
             console.log(error.response);
-        });
-        this.close()
+          })
+          this.close();
+        }
       },
+      showAlert(title, text, icon){
+        swal({
+          title: title,
+          text: text,
+          icon: icon,
+        });
+      }
     },
   }
 </script>
