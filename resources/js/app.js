@@ -7,7 +7,6 @@ import Vuetify from "vuetify";
 Vue.use(Vuetify);
  
 window.Vue = require('vue');
-//Lista de componentes
 
 // Clinic
 Vue.component('clinic-list', require('./components/Clinic/Responsible.vue').default);

@@ -16,6 +16,7 @@ class RoleSeeder extends Seeder
         $assistantRole = Role::create(['name' => 'Auxiliar Contable']);
         $collectorRole = Role::create(['name' => 'Recolector']);
         $managerRole = Role::create(['name' => 'Encargado']);
+        $ownerRole = Role::create(['name' => 'Dueño']);
 
         // ------------------------ Rol administrador -------------------- \\
 
@@ -41,8 +42,8 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'collector.collections.create'])->assignRole($collectorRole, $administratorRole);
         Permission::create(['name' => 'collector.collections.edit'])->assignRole($collectorRole, $administratorRole);
 
-        // ------------------------ Rol encargado -------------------------------- \\
+        // ------------------------ Rol encargado y dueño -------------------------------- \\
 
-        Permission::create(['name' => 'manager.clinics.generalShow'])->assignRole($managerRole, $administratorRole);
+        Permission::create(['name' => 'manager.clinics.generalShow'])->assignRole($managerRole, $ownerRole);
     }
 }
