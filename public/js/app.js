@@ -2545,6 +2545,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+<<<<<<< HEAD
+// import Swal from 'sweetalert2';
+=======
+>>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['clinic'],
   data: function data() {
@@ -2864,8 +2868,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Clinic_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Clinic.vue */ "./resources/js/components/Clinic/Clinic.vue");
 /* harmony import */ var _ViewClinic_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ViewClinic.vue */ "./resources/js/components/Clinic/ViewClinic.vue");
 /* harmony import */ var _Tower_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tower.vue */ "./resources/js/components/Clinic/Tower.vue");
+<<<<<<< HEAD
+
+=======
+>>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 
 
+// import Swal from 'sweetalert2';
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -3128,6 +3137,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+<<<<<<< HEAD
+// import Swal from 'sweetalert2';
+=======
+>>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -3318,6 +3331,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+<<<<<<< HEAD
+// import Swal from 'sweetalert2';
+=======
+>>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
