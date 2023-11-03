@@ -2249,7 +2249,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
       axios.get('administrator/generalShow').then(function (res) {
         console.log('Respuesta del servidor');
-        console.log(res);
+        // console.log(res);
         _this.desserts = res.data.employees;
       })["catch"](function (error) {
         console.log('Error en axios: ');
@@ -2258,7 +2258,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     editItem: function editItem(item) {
-      console.log(this.editedItem);
+      // console.log(this.editedItem);
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
@@ -2293,34 +2293,54 @@ __webpack_require__.r(__webpack_exports__);
       if (this.formTitle === 'Registrar usuario') {
         axios.post('administrator/registerEmployees', this.editedItem).then(function (resp) {
           console.log('Datos enviados correctamente: ', resp.data);
-          _this4.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
-          _this4.getEmployees();
+          if (resp.data.status == false && resp.data.message == "Documento registrado") {
+            _this4.showAlert('Error', 'Ya hay un usuario registrado con ese numero de documento', 'error');
+          } else if (resp.data.message == "Email registrado" && resp.data.status == false) {
+            _this4.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error');
+          } else if (resp.data.message == 'Registro guardado correctamente') {
+            _this4.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+            _this4.getEmployees();
+            _this4.close();
+          }
         })["catch"](function (error) {
-          console.log("Error en axios");
-          console.log(error);
           console.log(error.response);
+          if (error.response.status == 422 && error.response.data.message == 'validation.email') {
+            _this4.showAlert('Error', 'El email ingresado no es válido', 'error');
+          } else if (error.response.status == 422 && error.response.statusText == 'Unprocessable Content') {
+            _this4.showAlert('Error', 'Todos los campos deben ser validados', 'error');
+          }
         });
-        this.close();
       } else {
         var id = this.editedItem.id;
         console.log(id);
         axios.put("administrator/updateEmployees/".concat(id), {
+          document: this.editedItem.document,
           name: this.editedItem.name,
           last_name: this.editedItem.last_name,
           phone: this.editedItem.phone,
           email: this.editedItem.email,
           status: this.editedItem.status,
-          role_name: this.editedItem.role_name
+          role_name: this.editedItem.role_name,
+          password: this.editedItem.password
         }).then(function (res) {
-          console.log('Respuesta del servidor - Edicion de usuarios');
-          console.log(res.data);
-          _this4.getEmployees();
+          console.log("Impresión de guardado: ", res.data);
+          if (res.data.status == false && res.data.message == "Documento registrado") {
+            _this4.showAlert('Error', 'Ya hay un usuario registrado con ese numero de documento', 'error');
+          } else if (res.data.message == "Email registrado" && res.data.status == false) {
+            _this4.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error');
+          } else {
+            _this4.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+            _this4.getEmployees();
+            _this4.close();
+          }
         })["catch"](function (error) {
-          console.log('Error en axios: ');
-          console.log(error);
-          console.log(error.response);
+          console.log("Impresión de error: ", error.response);
+          if (error.response.status == 422 && error.response.data.message == 'validation.email') {
+            _this4.showAlert('Error', 'El email ingresado no es válido', 'error');
+          } else if (error.response.status == 422 && error.response.statusText == 'Unprocessable Content') {
+            _this4.showAlert('Error', 'Todos los campos deben ser validados', 'error');
+          }
         });
-        this.close();
       }
     },
     showAlert: function showAlert(title, text, icon) {
@@ -3878,7 +3898,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Documento",
             type: "number"
           },
@@ -3897,7 +3916,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Nombre"
           },
           model: {
@@ -3915,7 +3933,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Apellido"
           },
           model: {
@@ -3933,7 +3950,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Télefono",
             type: "number"
           },
@@ -3952,7 +3968,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Correo",
             type: "email"
           },
@@ -3971,7 +3986,6 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
-            rules: _vm.rules,
             label: "Contraseña"
           },
           model: {
@@ -3989,7 +4003,6 @@ var render = function render() {
           }
         }, [_c("v-select", {
           attrs: {
-            rules: _vm.rules,
             items: _vm.roles,
             placeholder: "Cargo"
           },
@@ -4008,9 +4021,7 @@ var render = function render() {
           }
         }, [_c("v-select", {
           attrs: {
-            rules: _vm.rules,
             items: _vm.items,
-            placeholder: "Activo",
             value: "Activo"
           },
           model: {

@@ -19,8 +19,12 @@ use App\Http\Controllers\ManagerController;
 |
 */
 
-Route::get('/', function () {
-    return view('../auth/login');
+Route::get('/', function(){
+    if(auth()->user()){
+        return view('index');
+    }else{
+        return view('../auth/login');
+    }
 });
 
 Route::post('/login2', [AuthController::class, 'login']);

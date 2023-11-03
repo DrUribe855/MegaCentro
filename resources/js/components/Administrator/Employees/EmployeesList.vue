@@ -47,7 +47,6 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.document"
                                             label="Documento"
                                             type="number"
@@ -59,7 +58,6 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.name"
                                             label="Nombre"
                                           ></v-text-field>
@@ -70,7 +68,6 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.last_name"
                                             label="Apellido"
                                           ></v-text-field>
@@ -81,7 +78,6 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.phone"
                                             label="Télefono"
                                             type="number"
@@ -94,7 +90,6 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.email"
                                             label="Correo"
                                             type="email"
@@ -107,9 +102,9 @@
                                           md="4"
                                         >
                                           <v-text-field
-                                            :rules = "rules"
                                             v-model="editedItem.password"
                                             label="Contraseña"
+                                            
                                             
                                           ></v-text-field>
                                           
@@ -120,7 +115,6 @@
                                           md="4"
                                         >
                                         <v-select
-                                            :rules = "rules"
                                             :items="roles"
                                             v-model="editedItem.role_name"
                                             placeholder="Cargo"
@@ -132,11 +126,10 @@
                                           md="4"
                                         >
                                         <v-select
-                                            :rules = "rules"
                                             
                                             :items="items"
                                             v-model="editedItem.status"
-                                            placeholder="Activo"
+                                            
                                             value="Activo"
                                         ></v-select>
                                         </v-col>
@@ -278,7 +271,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         getEmployees(){
             axios.get('administrator/generalShow').then(res => {
                 console.log('Respuesta del servidor');
-                console.log(res);
+                // console.log(res);
                 this.desserts = res.data.employees;
             }).catch(error => {
                 console.log('Error en axios: ');
@@ -287,7 +280,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
             })
         },
       editItem (item) {
-        console.log(this.editedItem);
+        // console.log(this.editedItem);
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
@@ -324,35 +317,55 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         if(this.formTitle === 'Registrar usuario'){
           axios.post('administrator/registerEmployees', this.editedItem).then(resp => {
               console.log('Datos enviados correctamente: ', resp.data);
-              this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
-              this.getEmployees();
+              if(resp.data.status == false && resp.data.message == "Documento registrado"){
+                this.showAlert('Error', 'Ya hay un usuario registrado con ese numero de documento', 'error'); 
+              }else if(resp.data.message == "Email registrado" && resp.data.status == false){
+                this.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error'); 
+              }else if(resp.data.message == 'Registro guardado correctamente'){
+                this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+                this.getEmployees();
+                this.close()
+              }
           }).catch(error => {
-              console.log("Error en axios");
-              console.log(error);
               console.log(error.response);
-          });
-          this.close()  
+              if( error.response.status == 422 && error.response.data.message == 'validation.email'){
+                this.showAlert('Error', 'El email ingresado no es válido', 'error');
+              }else if(error.response.status == 422 && error.response.statusText == 'Unprocessable Content'){
+                this.showAlert('Error', 'Todos los campos deben ser validados', 'error');
+              }
+          });    
         }else{
-          const id = this.editedItem.id;
+          let id = this.editedItem.id;
           console.log(id);
           axios.put(`administrator/updateEmployees/${id}`,{
+            document: this.editedItem.document,
             name: this.editedItem.name,
             last_name: this.editedItem.last_name,
             phone: this.editedItem.phone,
             email: this.editedItem.email,
             status: this.editedItem.status,
             role_name: this.editedItem.role_name,
+            password: this.editedItem.password,
           }).then(res => {
-            console.log('Respuesta del servidor - Edicion de usuarios');
-            console.log(res.data);
-            this.getEmployees();
+            console.log("Impresión de guardado: ",res.data);
+            if(res.data.status == false && res.data.message == "Documento registrado"){
+                this.showAlert('Error', 'Ya hay un usuario registrado con ese numero de documento', 'error'); 
+              }else if(res.data.message == "Email registrado" && res.data.status == false){
+                this.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error'); 
+              }else{
+                this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+                this.getEmployees();
+                this.close()
+              }
             
           }).catch(error => {
-            console.log('Error en axios: ');
-            console.log(error);
-            console.log(error.response);
-          })
-          this.close();
+            console.log("Impresión de error: ", error.response);
+            if( error.response.status == 422 && error.response.data.message == 'validation.email'){
+                this.showAlert('Error', 'El email ingresado no es válido', 'error');
+              }else if(error.response.status == 422 && error.response.statusText == 'Unprocessable Content'){
+                this.showAlert('Error', 'Todos los campos deben ser validados', 'error');
+              }
+          });
         }
       },
       showAlert(title, text, icon){
