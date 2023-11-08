@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
                 'clinic_number' => $clinic_number,
                 'tower_id' => $tower_id,
                 'status' => 'DESOCUPADO',
+                'collection_status' => 'SIN RECOLECTAR',
             ]);
         }
     }

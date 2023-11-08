@@ -60,6 +60,7 @@ Route::post('/clinic/addUser', [ClinicController::class, 'addUser'])->middleware
 // ----------------------------- Rutas de recolector --------------------------------- \\
 
 Route::get('/collector/index', [ CollectorController::class, 'index'])->middleware('can:collector.collections.generalShow');
+Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
 
 // ------------------------------- Rutas de encargado --------------------------------------- \\
 

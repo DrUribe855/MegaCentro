@@ -2545,10 +2545,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-<<<<<<< HEAD
-// import Swal from 'sweetalert2';
-=======
->>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['clinic'],
   data: function data() {
@@ -2868,13 +2864,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Clinic_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Clinic.vue */ "./resources/js/components/Clinic/Clinic.vue");
 /* harmony import */ var _ViewClinic_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ViewClinic.vue */ "./resources/js/components/Clinic/ViewClinic.vue");
 /* harmony import */ var _Tower_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tower.vue */ "./resources/js/components/Clinic/Tower.vue");
-<<<<<<< HEAD
-
-=======
->>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 
 
-// import Swal from 'sweetalert2';
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -3137,10 +3128,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-<<<<<<< HEAD
-// import Swal from 'sweetalert2';
-=======
->>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -3331,10 +3318,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-<<<<<<< HEAD
-// import Swal from 'sweetalert2';
-=======
->>>>>>> 3168fcfdd132aba5b0a8f78d42ac81572915e07d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -3758,9 +3741,113 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
-    return {};
+    return {
+      dialog: false,
+      dialogDelete: false,
+      headers: [{
+        text: 'Numero de consultorio',
+        align: 'center',
+        sortable: false,
+        value: 'clinic.clinic_number'
+      }, {
+        text: 'N° Torre',
+        value: 'clinic.tower_id',
+        align: 'center'
+      }, {
+        text: 'Estado de recolección',
+        value: 'clinic.collection_status',
+        align: 'center'
+      }, {
+        text: 'Registrar recolección',
+        value: 'actions',
+        sortable: false,
+        align: 'center'
+      }],
+      desserts: [],
+      editedIndex: -1,
+      editedItem: {
+        id: '',
+        clinic_number: '',
+        residue_id: '',
+        weight: 0
+      },
+      defaultItem: {
+        name: '',
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0
+      }
+    };
   },
-  methods: {}
+  computed: {
+    formTitle: function formTitle() {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
+    }
+  },
+  watch: {
+    dialog: function dialog(val) {
+      val || this.close();
+    },
+    dialogDelete: function dialogDelete(val) {
+      val || this.closeDelete();
+    }
+  },
+  created: function created() {
+    this.getClinics();
+  },
+  methods: {
+    getClinics: function getClinics() {
+      var _this = this;
+      axios.get('/collector/clinics').then(function (res) {
+        console.log('Respuesta del servidor');
+        console.log(res.data);
+        _this.desserts = res.data.clinics;
+      })["catch"](function (error) {
+        console.log('Error en axios: ');
+        console.log(error);
+        console.log(error.response);
+      });
+    },
+    editItem: function editItem(item) {
+      this.editedIndex = this.desserts.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    deleteItem: function deleteItem(item) {
+      this.editedIndex = this.desserts.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    deleteItemConfirm: function deleteItemConfirm() {
+      this.desserts.splice(this.editedIndex, 1);
+      this.closeDelete();
+    },
+    close: function close() {
+      var _this2 = this;
+      this.dialog = false;
+      this.$nextTick(function () {
+        _this2.editedItem = Object.assign({}, _this2.defaultItem);
+        _this2.editedIndex = -1;
+      });
+    },
+    closeDelete: function closeDelete() {
+      var _this3 = this;
+      this.dialogDelete = false;
+      this.$nextTick(function () {
+        _this3.editedItem = Object.assign({}, _this3.defaultItem);
+        _this3.editedIndex = -1;
+      });
+    },
+    save: function save() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+      } else {
+        this.desserts.push(this.editedItem);
+      }
+      this.close();
+    }
+  }
 });
 
 /***/ }),
@@ -5800,13 +5887,206 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _vm._m(0);
+  return _c("v-app", [_c("v-main", [_c("v-data-table", {
+    staticClass: "elevation-1",
+    attrs: {
+      headers: _vm.headers,
+      items: _vm.desserts,
+      "sort-by": "calories"
+    },
+    scopedSlots: _vm._u([{
+      key: "top",
+      fn: function fn() {
+        return [_c("v-toolbar", {
+          attrs: {
+            flat: ""
+          }
+        }, [_c("v-toolbar-title", [_vm._v("Consultorios asignados")]), _vm._v(" "), _c("v-divider", {
+          staticClass: "mx-4",
+          attrs: {
+            inset: "",
+            vertical: ""
+          }
+        }), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-dialog", {
+          attrs: {
+            "max-width": "500px"
+          },
+          model: {
+            value: _vm.dialog,
+            callback: function callback($$v) {
+              _vm.dialog = $$v;
+            },
+            expression: "dialog"
+          }
+        }, [_c("v-card", [_c("v-card-title", [_c("span", {
+          staticClass: "text-h5"
+        }, [_vm._v(" Registro de recolección ")])]), _vm._v(" "), _c("v-card-text", [_c("v-container", [_c("v-row", [_c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            label: "Numero de consultorio",
+            readonly: ""
+          },
+          model: {
+            value: _vm.editedItem.clinic_number,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem, "clinic_number", $$v);
+            },
+            expression: "editedItem.clinic_number"
+          }
+        })], 1), _vm._v(" "), _c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            label: "Calories"
+          },
+          model: {
+            value: _vm.editedItem,
+            callback: function callback($$v) {
+              _vm.editedItem = $$v;
+            },
+            expression: "editedItem"
+          }
+        })], 1), _vm._v(" "), _c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            label: "Fat (g)"
+          },
+          model: {
+            value: _vm.editedItem.residue_id,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem, "residue_id", $$v);
+            },
+            expression: "editedItem.residue_id"
+          }
+        })], 1), _vm._v(" "), _c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            label: "Carbs (g)"
+          },
+          model: {
+            value: _vm.editedItem.weight,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem, "weight", $$v);
+            },
+            expression: "editedItem.weight"
+          }
+        })], 1), _vm._v(" "), _c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            label: "Protein (g)"
+          },
+          model: {
+            value: _vm.editedItem.protein,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem, "protein", $$v);
+            },
+            expression: "editedItem.protein"
+          }
+        })], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
+          attrs: {
+            color: "blue darken-1",
+            text: ""
+          },
+          on: {
+            click: _vm.close
+          }
+        }, [_vm._v("\n                        Cancel\n                      ")]), _vm._v(" "), _c("v-btn", {
+          attrs: {
+            color: "blue darken-1",
+            text: ""
+          },
+          on: {
+            click: _vm.save
+          }
+        }, [_vm._v("\n                        Save\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+          attrs: {
+            "max-width": "500px"
+          },
+          model: {
+            value: _vm.dialogDelete,
+            callback: function callback($$v) {
+              _vm.dialogDelete = $$v;
+            },
+            expression: "dialogDelete"
+          }
+        }, [_c("v-card", [_c("v-card-title", {
+          staticClass: "text-h5"
+        }, [_vm._v("Are you sure you want to delete this item?")]), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
+          attrs: {
+            color: "blue darken-1",
+            text: ""
+          },
+          on: {
+            click: _vm.closeDelete
+          }
+        }, [_vm._v("Cancel")]), _vm._v(" "), _c("v-btn", {
+          attrs: {
+            color: "blue darken-1",
+            text: ""
+          },
+          on: {
+            click: _vm.deleteItemConfirm
+          }
+        }, [_vm._v("OK")]), _vm._v(" "), _c("v-spacer")], 1)], 1)], 1)], 1)];
+      },
+      proxy: true
+    }, {
+      key: "item.actions",
+      fn: function fn(_ref) {
+        var item = _ref.item;
+        return [_c("v-icon", {
+          staticClass: "mr-2",
+          attrs: {
+            small: ""
+          },
+          on: {
+            click: function click($event) {
+              return _vm.editItem(item);
+            }
+          }
+        }, [_vm._v("\n                mdi-delete\n              ")])];
+      }
+    }, {
+      key: "no-data",
+      fn: function fn() {
+        return [_c("v-btn", {
+          attrs: {
+            color: "primary"
+          },
+          on: {
+            click: _vm.getClinics
+          }
+        }, [_vm._v("\n                Reset\n              ")])];
+      },
+      proxy: true
+    }])
+  })], 1)], 1);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", [_c("h1", [_vm._v("Vista index de Recolector")])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 
