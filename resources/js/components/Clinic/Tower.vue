@@ -38,27 +38,30 @@
                                 hide-details
                             ></v-text-field>
                         </v-card-title>
-                        <v-data-table
-                            :headers="headers"
-                            :items="desserts"
-                            :search="search"
-                            :items-per-page="5"
-                        >
-                            <template v-slot:item.actions="{ item }">
-                                <v-btn
-                                    class="mx-2"
-                                    fab
-                                    dark
-                                    x-small
-                                    color="primary"
-                                    @click="showInfoEdit(item)"
-                                    >
-                                    <v-icon dark>
-                                        mdi-pencil
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                        </v-data-table>
+                        <div>
+                            <v-data-table
+                                :headers="headers"
+                                :items="desserts"
+                                :search="search"
+                                :items-per-page="5"
+                                >
+                                <template v-slot:item.actions="{ item }">
+                                    <v-btn
+                                        class="mx-2"
+                                        fab
+                                        dark
+                                        x-small
+                                        color="primary"
+                                        @click="showInfoEdit(item)"
+                                        >
+                                        <v-icon dark>
+                                            mdi-pencil
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-data-table>
+                            
+                        </div>
                         <v-dialog
                             v-model="dialogEdit"
                             max-width="550px"
@@ -77,6 +80,7 @@
                                                 md="4"
                                             >
                                                 <v-text-field
+                                                    type="number"
                                                     v-model="editedItem.clinic_number"
                                                     label="Numero Consultorio"
                                                 ></v-text-field>
@@ -148,8 +152,9 @@
                                         md="4"
                                         >
                                         <v-text-field
-                                        v-model="registerClinic.clinic_number"
-                                        label="Numero Consultorio"
+                                            type="number"
+                                            v-model="registerClinic.clinic_number"
+                                            label="Numero Consultorio"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col
@@ -216,6 +221,7 @@
 </template>
 
 <script>
+    // import Swal from 'sweetalert2';
     export default {
         data () {
           return {
@@ -228,10 +234,10 @@
             items: ['OCUPADO', 'DESOCUPADO'],
             filters: ['RESPONSABLES', 'CONSULTORIOS', 'TORRE #1', 'TORRE #2', 'TORRE #3'],
             headers: [
-              { text: 'N Torre', value: 'tower_id' },
-              { text: 'N Conuslta', value: 'clinic_number' },
-              { text: 'Estado', value: 'status' },
-              { text: 'Opciones', value: 'actions', sortable: false },
+                { text: 'N Torre', value: 'tower_id' },
+                { text: 'N Conuslta', value: 'clinic_number' },
+                { text: 'Estado', value: 'status' },
+                { text: 'Opciones', value: 'actions', sortable: false },
             ],
             desserts: [],
 
@@ -251,21 +257,21 @@
         },
 
         created () {
-            // console.log("05",this.selectedFilter);
+            console.log("05",this.selectedFilter);
             this.initialize(1)
         },
 
         methods: {
             initialize (tower) {
                 axios.get(`/clinic/showTower/${tower}`).then(res => {
-                    // console.log("Respuesta del servidor");
-                    // console.log(res.data);
+                    console.log("Respuesta del servidor");
+                    console.log(res.data);
                     this.desserts = res.data.tower
                     this.selectedFilter = ''
                 }).catch(error => {
-                    // console.log("Error en servidor");
-                    // console.log(error);
-                    // console.log(error.response);
+                    console.log("Error en servidor");
+                    console.log(error);
+                    console.log(error.response);
                 });
             },
 
@@ -281,18 +287,18 @@
                 }else if (this.selectedFilter == 'TORRE #3') {
                     this.initialize(3)
                 }
-                // console.log("Filtro seleccionado ",this.selectedFilter);
+                console.log("Filtro seleccionado ",this.selectedFilter);
             },
 
             showInfoEdit(item){
                 this.editedIndex = this.desserts.indexOf(item)
                 this.editedItem = Object.assign({}, item)
-                // console.log("03 ",this.editedItem);
+                console.log("03 ",this.editedItem);
                 this.dialogEdit = true
             },
 
             save () {
-                // console.log(this.editedItem)
+                console.log(this.editedItem)
                 var validate = true;
                 if (this.editedItem.clinic_number == "") {
                     this.alertFalse('Parece que el campo numero consultorio esta vacío');
@@ -304,36 +310,31 @@
                     this.alertFalse('Parece que el campo estado esta vacío');
                     validate = false
                 }
-                if (validate) {
-                    // console.log(this.editedItem);
-                    Swal.fire({
-                        title: 'Quiere editar este consultorio?',
+                if (validate) { 
+                    swal({
+                        title: "Quiere editar este consultorio?",
                         text: "Los cambios se aplicaran permanentemente!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Editar',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire(
-                                'Cambio Exitoso!',
-                                'Se edito correctamente',
-                                'success'
-                            )
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
                             axios.put(`/clinic/update/${this.editedItem.id}`, {data: this.editedItem}).then(res => {
-                                // console.log("Respuesta del servidor");
-                                // console.log(res.data);
-                                // console.log(this.editedItem);
+                                console.log("Respuesta del servidor");
+                                console.log(res.data);
+                                console.log(this.editedItem);
                                 this.initialize(this.editedItem.tower_id);
                                 this.dialogEdit = false
+                                swal("Se edito correctamente el consultorio!", {
+                                    icon: "success",
+                                });
                             }).catch(error => {
-                                // console.log("Error en servidor");
-                                // console.log(error);
-                                // console.log(error.response);
-                            });
+                                console.log("Error en servidor");
+                                console.log(error);
+                                console.log(error.response);
+                            });   
                         }
-                    })
+                    });
                     this.close()   
                 }
             },
@@ -349,54 +350,56 @@
             },
 
             saveRegister(){
-                // console.log("Registro", this.registerClinic);
+                console.log("Registro", this.registerClinic);
                 var validate = true;
-                // console.log("registrar consultorio ",this.registerClinic);
+                console.log("registrar consultorio ",this.registerClinic);
                 if (this.registerClinic.clinic_number == "") {
-                  this.alertFalse('Parece que el campo numero consultorio esta vacío');
-                  validate = false 
+                    this.alertFalse('Parece que el campo numero consultorio esta vacío');
+                    validate = false 
                 }else if(this.registerClinic.tower_id == ""){
-                  this.alertFalse('Parece que el campo numero torre esta vacío');
-                  validate = false
+                    this.alertFalse('Parece que el campo numero torre esta vacío');
+                    validate = false
                 }else if (this.registerClinic.status == "") {
-                  this.alertFalse('Parece que el campo estado esta vacío');
-                  validate = false
+                    this.alertFalse('Parece que el campo estado esta vacío');
+                    validate = false
                 }
                 if (validate == true) {
-                  axios.post('/clinic/register', this.registerClinic).then(res => {
-                    // console.log("Respuesta del servidor");
-                    // console.log("Datos de registrar consultorio ",res.data.clinic);
-                    this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
-                    this.dialogRegister = false
-                    this.showFilterClinic = true
-                  }).catch(error => {
-                    // console.log("Error en servidor");
-                    // console.log(error);
-                    // console.log(error.response);
-                    if (error.response.status == 422) {
-                      this.alertFalse('Parece que algunos campos estan vaíos'); 
-                    }else{
-                      this.alertFalse('Parece que algo salio mal'); 
-                    }
-                  }); 
+                    axios.post('/clinic/register', this.registerClinic).then(res => {
+                        console.log("Respuesta del servidor");
+                        console.log("Datos de registrar consultorio ",res.data.clinic);
+                        this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
+                        this.dialogRegister = false
+                        this.showFilterClinic = true
+                        this.initialize(res.data.clinic.tower_id)
+                        this.registerClinic = {}
+                    }).catch(error => {
+                        console.log("Error en servidor");
+                        console.log(error);
+                        console.log(error.response);
+                        if (error.response.status == 422) {
+                          this.alertFalse('Parece que algunos campos estan vaíos'); 
+                        }else{
+                          this.alertFalse('Parece que algo salio mal'); 
+                        }
+                    }); 
                 }
             },
 
             alertTrue(text){
-                Swal.fire(
-                  'Cambio Exitoso!',
-                  text,
-                  'success'
-                )
+                swal({
+                    title: "Cambio Exitoso!",
+                    text: text,
+                    icon: "success",
+                });
             },
 
             alertFalse(text){
-                Swal.fire({
-                      icon: 'error',
-                      title: 'ERROR',
-                      text: text,
-                    })
-                },
+                swal({
+                  title: "ERROR!",
+                  text: text,
+                  icon: "error",
+                });
             },
+        }
     }
 </script>

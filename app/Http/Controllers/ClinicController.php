@@ -10,6 +10,7 @@ use App\Models\User;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Auth\Events\Validated;
 use Psy\CodeCleaner\FunctionContextPass;
+use Spatie\Permission\Models\Role;
 
 class ClinicController extends Controller
 {
@@ -18,37 +19,39 @@ class ClinicController extends Controller
     }
 
     public function generalShow(){
-        $responsible = User::with('clinic_user.clinic')->where('role', 'Responsable')->get();
+        $responsibles = User::role('Encargado')->with('clinic_user.clinic')->get();
 
         $data = [
                     'status' => true,
-                    'responsible' => $responsible,
+                    'responsible' => $responsibles,
                 ];
 
         return response()->json($data);
     }
 
     public function consultationUser(){
-        $consultation = User::where(function ($query) {
-            $query->where('role', 'Dueno')
-                ->orWhere('role', 'Recolector');
-        })
-        ->leftJoin('clinic_users', 'users.id', '=', 'clinic_users.user_id')
-        ->get('Users.*');
+        $consultationOwner = User::role(['Dueño'])
+            ->leftJoin('clinic_users', 'users.id', '=', 'clinic_users.user_id')
+            ->get('users.*');
+
+        $consultationCollector = User::role(['Recolector'])
+            ->leftJoin('clinic_users', 'users.id', '=', 'clinic_users.user_id')
+            ->get('users.*');
 
         $data = [
-                    'status' => true,
-                    'infoClinic' => $consultation,
-                ];
+            'status' => true,
+            'infoClinicOwner' => $consultationOwner,
+            'infoClinicCollector' => $consultationCollector,
+        ];
 
         return response()->json($data);
     }
 
     public function generalShowClinic(){
         $records = Clinic::select('Clinics.*')
-        ->LEFTJOIN ('Clinic_users', 'Clinics.id', '=', 'Clinic_users.clinic_id')
-        ->where('Clinic_users.clinic_id')
-        ->get();
+            ->LEFTJOIN ('Clinic_users', 'Clinics.id', '=', 'Clinic_users.clinic_id')
+            ->where('Clinic_users.clinic_id')
+            ->get();
 
         $data = [
                     'status' => true,
@@ -59,16 +62,15 @@ class ClinicController extends Controller
     }
 
     public function showClinicResponsible(){
-        $clinicResponsible = Clinic_user::select('Users.*','Clinics.*')
-        ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-        ->join('Clinics', 'Clinic_users.clinic_id', '=', 'Clinics.id')
-        ->where('Users.role', '=', 'Responsable')
+        $clinicResponsible = User::role('Encargado')
+        ->join('clinic_users', 'users.id', '=', 'clinic_users.user_id')
+        ->join('clinics', 'clinic_users.clinic_id', '=', 'clinics.id')
         ->get();
 
         $data = [
-                    'status' => true,
-                    'clinic' => $clinicResponsible,
-                ];
+            'status' => true,
+            'clinic' => $clinicResponsible,
+        ];
 
         return response()->json($data);
     }
@@ -99,9 +101,15 @@ class ClinicController extends Controller
         $clinic->status = $request->input('status');
         $clinic->save(); 
 
+        $clinicResponsible = User::role('Encargado')
+        ->join('clinic_users', 'users.id', '=', 'clinic_users.user_id')
+        ->join('clinics', 'clinic_users.clinic_id', '=', 'clinics.id')
+        ->get();
+
         $data = [
                     'status' => true,
-                    'clinic' => $clinic
+                    'clinic' => $clinic,
+                    'clinicResponsible' => $clinicResponsible,
                 ];
 
         return response()->json($data);
@@ -122,21 +130,24 @@ class ClinicController extends Controller
     }
 
     public function consultation($id){
-        $consultation = Clinic_user::select('Users.*', 'clinics.*')
+        $consultation = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
         ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
         ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
         ->where('Clinics.id', '=', $id)
+        ->where('model_has_roles.role_id', '=', 3)
+        ->orWhere('model_has_roles.role_id', '=', 5)
         ->get();
 
         $data = [
-                    'status' => true,
-                    'infoClinic' => $consultation,
-                ];
+            'status' => true,
+            'infoClinic' => $consultation,
+        ];
 
         return response()->json($data);
     }
 
-    public function infoClinic($id){
+    public function infoClinic($id){ 
         $clinic = Clinic::SELECT('Clinics.*')
         ->JOIN('Clinic_users', 'Clinics.id', '=', 'Clinic_users.clinic_id')
         ->WHERE('Clinic_users.user_id', '=', $id)
@@ -165,7 +176,7 @@ class ClinicController extends Controller
         $clinic->status = 'OCUPADO';
         $clinic->save();
 
-        $records = User::with('clinic_user.clinic')->where('role', 'Responsable')->get();
+        $records = User::role('Recolector')->with('clinic_user.clinic')->get();
 
         $data = [
                     'status' => true,
@@ -199,10 +210,13 @@ class ClinicController extends Controller
             $status = false;
         }   
 
-        $records = Clinic_user::select('Users.*', 'clinics.*')
+        $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
         ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
         ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
         ->where('Clinics.id', '=', $clinic_id)
+        ->where('model_has_roles.role_id', '=', 3)
+        ->orWhere('model_has_roles.role_id', '=', 5)
         ->get();
 
         $data = [
@@ -222,18 +236,23 @@ class ClinicController extends Controller
         ->where('user_id', '=', $user_id)
         ->delete();
 
-        $records = Clinic_user::select('Users.*', 'clinics.*')
+        $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
         ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
         ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
         ->where('Clinics.id', '=', $clinic_id)
+        ->where('model_has_roles.role_id', '=', 3)
+        ->orWhere('model_has_roles.role_id', '=', 5)
         ->get();
 
         $data = [
+                    'status' => true,
                     'user_id' => $user_id,
                     'clinic_id' => $clinic_id, 
                     'response' => $clinic_user,
                     'users' => $records,
                 ];
-        return $data;
+
+        return response()->json($data);
     }
 }
