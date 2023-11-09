@@ -34,10 +34,10 @@
                               <v-col
                                 cols="12"
                                 sm="6"
-                                md="4"
+                                md="6"
                               >
                                 <v-text-field
-                                  v-model="editedItem.clinic_number"
+                                  v-model="editedItem.clinic.clinic_number"
                                   label="Numero de consultorio"
                                   readonly
                                 ></v-text-field>
@@ -45,41 +45,61 @@
                               <v-col
                                 cols="12"
                                 sm="6"
-                                md="4"
+                                md="6"
                               >
-                                <v-text-field
-                                  v-model="editedItem"
-                                  label="Calories"
-                                ></v-text-field>
+                                <v-select
+                                  id="select1"
+                                  v-model="subCategory"
+                                  :items="['Peligrosos', 'No peligrosos']"
+                                  label="Categoría de residuo"
+                                ></v-select>
                               </v-col>
                               <v-col
                                 cols="12"
                                 sm="6"
-                                md="4"
+                                md="6"
                               >
-                                <v-text-field
-                                  v-model="editedItem.residue_id"
-                                  label="Fat (g)"
-                                ></v-text-field>
+                                <v-select
+                                  id="select2"
+                                  v-model="type"
+                                  v-if="subCategory === 'Peligrosos'"
+                                  :items="opcionesPeligrosos.map(opcion => opcion.label)"
+                                  label="Tipo de residuo peligroso"
+                                ></v-select>
                               </v-col>
                               <v-col
                                 cols="12"
                                 sm="6"
-                                md="4"
+                                md="6"
                               >
-                                <v-text-field
-                                  v-model="editedItem.weight"
-                                  label="Carbs (g)"
-                                ></v-text-field>
+                                <v-select
+                                  id="select3"
+                                  v-if="subCategory === 'Peligrosos'"
+                                  :items="getOpcionesResiduo(tipo)"
+                                  label="Tipo de residuo peligroso"
+                                ></v-select>
                               </v-col>
                               <v-col
                                 cols="12"
                                 sm="6"
-                                md="4"
+                                md="6"
+                              >
+                                <v-select
+                                  id="select4"
+                                  v-if="subCategory === 'No peligrosos'"
+                                  :items="opcionesNoPeligrosos.map(opcion => opcion.label)"
+                                  label="Tipo de residuo no peligroso"
+                                ></v-select>
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                sm="6"
+                                md="6"
                               >
                                 <v-text-field
-                                  v-model="editedItem.protein"
-                                  label="Protein (g)"
+                                  id="select5"
+                                  type="number"
+                                  label="Cantidad recolectada"
                                 ></v-text-field>
                               </v-col>
                             </v-row>
@@ -123,8 +143,9 @@
                     small
                     class="mr-2"
                     @click="editItem(item)"
+                    color="green"
                   >
-                    mdi-delete
+                    mdi-plus
                   </v-icon>
                 </template>
                 <template v-slot:no-data>
@@ -159,9 +180,9 @@
       editedIndex: -1,
       editedItem: {
         id: '',
-        clinic_number: '',
-        residue_id: '',
-        weight: 0,
+        clinic: {
+          clinic_number: '',
+        }
       },
       defaultItem: {
         name: '',
@@ -170,6 +191,40 @@
         carbs: 0,
         protein: 0,
       },
+      subCategory: "",
+      type: "",
+      opcionesPeligrosos: [
+        {
+          value: "infecciosos o riesgo biologico",
+          label: "Infecciosos o riesgo biologico"
+        },
+        {
+          value: "quimicos",
+          label: "Quimicos"
+        },
+        {
+          value: "radioactivos",
+          label: "Radioactivos"
+        }
+      ],
+      opcionesNoPeligrosos: [
+        {
+          value: "biodegradables",
+          label: "Biodegradables"
+        },
+        {
+          value: "reciclables",
+          label: "Reciclables"
+        },
+        {
+          value: "inertes",
+          label: "Inertes"
+        },
+        {
+          value: "ordinarios_comunes",
+          label: "Ordinarios - Comunes"
+        }
+      ]
     }),
 
     computed: {
@@ -244,6 +299,18 @@
           this.desserts.push(this.editedItem)
         }
         this.close()
+      },
+      getOpcionesResiduo(tipoPeligroso) {
+        switch (tipoPeligroso) {
+          case "Infecciosos o riesgo biologico":
+            return ["Biosanitarios", "Anatomopatologicos", "Cortopunzantes", "Animales"];
+          case "Quimicos":
+            return ["Farmacos", "Citotóxicos", "Metales pesados", "Reactivos", "Contenedores presurizados", "Aceites usados"];
+          case "Radioactivos":
+            return ["Fuentes abiertas", "Fuentes cerradas"];
+          default:
+            return [];
+        }
       },
     },
   }

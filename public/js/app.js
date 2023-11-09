@@ -3767,9 +3767,9 @@ __webpack_require__.r(__webpack_exports__);
       editedIndex: -1,
       editedItem: {
         id: '',
-        clinic_number: '',
-        residue_id: '',
-        weight: 0
+        clinic: {
+          clinic_number: ''
+        }
       },
       defaultItem: {
         name: '',
@@ -3777,7 +3777,32 @@ __webpack_require__.r(__webpack_exports__);
         fat: 0,
         carbs: 0,
         protein: 0
-      }
+      },
+      subCategory: "",
+      type: "",
+      opcionesPeligrosos: [{
+        value: "infecciosos o riesgo biologico",
+        label: "Infecciosos o riesgo biologico"
+      }, {
+        value: "quimicos",
+        label: "Quimicos"
+      }, {
+        value: "radioactivos",
+        label: "Radioactivos"
+      }],
+      opcionesNoPeligrosos: [{
+        value: "biodegradables",
+        label: "Biodegradables"
+      }, {
+        value: "reciclables",
+        label: "Reciclables"
+      }, {
+        value: "inertes",
+        label: "Inertes"
+      }, {
+        value: "ordinarios_comunes",
+        label: "Ordinarios - Comunes"
+      }]
     };
   },
   computed: {
@@ -3846,6 +3871,18 @@ __webpack_require__.r(__webpack_exports__);
         this.desserts.push(this.editedItem);
       }
       this.close();
+    },
+    getOpcionesResiduo: function getOpcionesResiduo(tipoPeligroso) {
+      switch (tipoPeligroso) {
+        case "Infecciosos o riesgo biologico":
+          return ["Biosanitarios", "Anatomopatologicos", "Cortopunzantes", "Animales"];
+        case "Quimicos":
+          return ["Farmacos", "Citotóxicos", "Metales pesados", "Reactivos", "Contenedores presurizados", "Aceites usados"];
+        case "Radioactivos":
+          return ["Fuentes abiertas", "Fuentes cerradas"];
+        default:
+          return [];
+      }
     }
   }
 });
@@ -5924,7 +5961,7 @@ var render = function render() {
           attrs: {
             cols: "12",
             sm: "6",
-            md: "4"
+            md: "6"
           }
         }, [_c("v-text-field", {
           attrs: {
@@ -5932,79 +5969,89 @@ var render = function render() {
             readonly: ""
           },
           model: {
-            value: _vm.editedItem.clinic_number,
+            value: _vm.editedItem.clinic.clinic_number,
             callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "clinic_number", $$v);
+              _vm.$set(_vm.editedItem.clinic, "clinic_number", $$v);
             },
-            expression: "editedItem.clinic_number"
+            expression: "editedItem.clinic.clinic_number"
           }
         })], 1), _vm._v(" "), _c("v-col", {
           attrs: {
             cols: "12",
             sm: "6",
-            md: "4"
+            md: "6"
           }
-        }, [_c("v-text-field", {
+        }, [_c("v-select", {
           attrs: {
-            label: "Calories"
+            id: "select1",
+            items: ["Peligrosos", "No peligrosos"],
+            label: "Categoría de residuo"
           },
           model: {
-            value: _vm.editedItem,
+            value: _vm.subCategory,
             callback: function callback($$v) {
-              _vm.editedItem = $$v;
+              _vm.subCategory = $$v;
             },
-            expression: "editedItem"
+            expression: "subCategory"
           }
         })], 1), _vm._v(" "), _c("v-col", {
           attrs: {
             cols: "12",
             sm: "6",
-            md: "4"
+            md: "6"
           }
-        }, [_c("v-text-field", {
+        }, [_vm.subCategory === "Peligrosos" ? _c("v-select", {
           attrs: {
-            label: "Fat (g)"
+            id: "select2",
+            items: _vm.opcionesPeligrosos.map(function (opcion) {
+              return opcion.label;
+            }),
+            label: "Tipo de residuo peligroso"
           },
           model: {
-            value: _vm.editedItem.residue_id,
+            value: _vm.type,
             callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "residue_id", $$v);
+              _vm.type = $$v;
             },
-            expression: "editedItem.residue_id"
+            expression: "type"
           }
-        })], 1), _vm._v(" "), _c("v-col", {
+        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
           attrs: {
             cols: "12",
             sm: "6",
-            md: "4"
+            md: "6"
           }
-        }, [_c("v-text-field", {
+        }, [_vm.subCategory === "Peligrosos" ? _c("v-select", {
           attrs: {
-            label: "Carbs (g)"
-          },
-          model: {
-            value: _vm.editedItem.weight,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "weight", $$v);
-            },
-            expression: "editedItem.weight"
+            id: "select3",
+            items: _vm.getOpcionesResiduo(_vm.tipo),
+            label: "Tipo de residuo peligroso"
           }
-        })], 1), _vm._v(" "), _c("v-col", {
+        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
           attrs: {
             cols: "12",
             sm: "6",
-            md: "4"
+            md: "6"
+          }
+        }, [_vm.subCategory === "No peligrosos" ? _c("v-select", {
+          attrs: {
+            id: "select4",
+            items: _vm.opcionesNoPeligrosos.map(function (opcion) {
+              return opcion.label;
+            }),
+            label: "Tipo de residuo no peligroso"
+          }
+        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
+          attrs: {
+            cols: "12",
+            sm: "6",
+            md: "6"
           }
         }, [_c("v-text-field", {
           attrs: {
-            label: "Protein (g)"
-          },
-          model: {
-            value: _vm.editedItem.protein,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "protein", $$v);
-            },
-            expression: "editedItem.protein"
+            id: "select5",
+            type: "number",
+            label: "Cantidad recolectada"
           }
         })], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
           attrs: {
@@ -6061,14 +6108,15 @@ var render = function render() {
         return [_c("v-icon", {
           staticClass: "mr-2",
           attrs: {
-            small: ""
+            small: "",
+            color: "green"
           },
           on: {
             click: function click($event) {
               return _vm.editItem(item);
             }
           }
-        }, [_vm._v("\n                mdi-delete\n              ")])];
+        }, [_vm._v("\n                mdi-plus\n              ")])];
       }
     }, {
       key: "no-data",
