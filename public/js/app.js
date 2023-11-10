@@ -2369,165 +2369,106 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      dialog: false,
-      dialogDelete: false,
-      headers: [{
-        text: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        value: 'name'
-      }, {
-        text: 'Calories',
-        value: 'calories'
-      }, {
-        text: 'Fat (g)',
-        value: 'fat'
-      }, {
-        text: 'Carbs (g)',
-        value: 'carbs'
-      }, {
-        text: 'Protein (g)',
-        value: 'protein'
-      }, {
-        text: 'Actions',
-        value: 'actions',
-        sortable: false
-      }],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
+      list_residues: [],
+      index: 31,
+      residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      type: 'month',
+      typeToLabel: {
+        month: 'Month',
+        week: 'Week',
+        day: 'Day',
+        '4day': '4 Days'
       },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      }
+      focus: new Date(),
+      date: '',
+      dateAxios: '',
+      position: 0
     };
   },
-  computed: {
-    formTitle: function formTitle() {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
-    }
-  },
-  watch: {
-    dialog: function dialog(val) {
-      val || this.close();
-    },
-    dialogDelete: function dialogDelete(val) {
-      val || this.closeDelete();
-    }
-  },
   created: function created() {
-    this.initialize();
+    this.setToday();
+    this.initialize(this.dateAxios);
   },
   methods: {
-    initialize: function initialize() {
-      this.desserts = [{
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0
-      }, {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3
-      }, {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0
-      }, {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3
-      }, {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9
-      }, {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0
-      }, {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0
-      }, {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5
-      }, {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9
-      }, {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7
-      }];
-    },
-    editItem: function editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-    deleteItem: function deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-    deleteItemConfirm: function deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
-    close: function close() {
+    initialize: function initialize(date) {
       var _this = this;
-      this.dialog = false;
-      this.$nextTick(function () {
-        _this.editedItem = Object.assign({}, _this.defaultItem);
-        _this.editedIndex = -1;
-      });
-    },
-    closeDelete: function closeDelete() {
-      var _this2 = this;
-      this.dialogDelete = false;
-      this.$nextTick(function () {
-        _this2.editedItem = Object.assign({}, _this2.defaultItem);
-        _this2.editedIndex = -1;
-      });
-    },
-    save: function save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
+      console.log("date ", date);
+      if (date != '') {
+        axios.get("/residue/generalShow/".concat(date)).then(function (res) {
+          console.log("Respuesta del servidor");
+          console.log("Datos de consulta ", res.data.date);
+          _this.list_residues = res.data.residues;
+        })["catch"](function (error) {
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
+        });
       }
-      this.close();
+    },
+    getResidueValue: function getResidueValue(residueId, day) {
+      var residue = this.list_residues.find(function (r) {
+        return r.residue_id === residueId && r.day_of_month === day;
+      });
+      if (residue) {
+        return residue.total_weight;
+      } else {
+        return "0";
+      }
+    },
+    setToday: function setToday() {
+      this.focus = new Date();
+      var options = {
+        month: 'long'
+      };
+      var month = this.focus.toLocaleDateString('es-ES', options);
+      var year = this.focus.getFullYear();
+      var monthNumber = this.focus.getMonth() + 1;
+      this.position = monthNumber <= 9 ? this.position = '0' + monthNumber : this.position = monthNumber;
+      this.date = month + ' ' + year;
+      this.dateAxios = year + '-' + monthNumber;
+      this.initialize(this.dateAxios);
+    },
+    prev: function prev() {
+      var newFocus = new Date(this.focus);
+      newFocus.setMonth(newFocus.getMonth() - 1);
+      var options = {
+        month: 'long'
+      };
+      var monthName = newFocus.toLocaleDateString('es-ES', options);
+      var year = newFocus.getFullYear();
+      this.focus = newFocus;
+      this.date = monthName + ' ' + year;
+      this.position--;
+      if (this.position == 0) {
+        this.position = 12;
+      }
+      if (this.position <= 9) {
+        this.position = '0' + this.position--;
+      }
+      this.dateAxios = year + '-' + this.position;
+      console.log("FECHA ", this.dateAxios);
+      this.initialize(this.dateAxios);
+    },
+    next: function next() {
+      var newFocus = new Date(this.focus);
+      newFocus.setMonth(newFocus.getMonth() + 1);
+      var options = {
+        month: 'long'
+      };
+      var monthName = newFocus.toLocaleDateString('es-ES', options);
+      var year = newFocus.getFullYear();
+      this.focus = newFocus;
+      this.date = monthName + ' ' + year;
+      this.position++;
+      if (this.position > 12) {
+        this.position = 1;
+      }
+      if (this.position <= 9) {
+        this.position = '0' + this.position++;
+      }
+      this.dateAxios = year + '-' + this.position;
+      this.initialize(this.dateAxios);
+      console.log(this.date);
     }
   }
 });
@@ -2545,6 +2486,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+// import Swal from 'sweetalert2';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['clinic'],
   data: function data() {
@@ -2620,51 +2562,53 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.infoUser = this.clinic;
-    // console.log("infoUser ",this.infoUser);
+    console.log("infoUser ", this.infoUser);
     this.initialize();
   },
   methods: {
     initialize: function initialize() {
       var _this = this;
       axios.post("/clinic/infoClinic/".concat(this.infoUser.id)).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("Datos de ventana ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("Datos de ventana ", res.data);
         _this.desserts = res.data.clinic;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     infoPersonnel: function infoPersonnel(item, option) {
       var _this2 = this;
       axios.get("/clinic/consultation/".concat(item.id)).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
-        // console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
+        console.log("Respuesta del servidor");
+        console.log("Datos de tabla ", res.data);
+        console.log(res.data.infoClinic.filter(function (item) {
+          return item.role === 'Dueno';
+        }));
         if (option == 1) {
           _this2.titlePersonnel = 'Dueño';
           _this2.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Dueno';
+            return item.role_id === 5;
           });
         } else {
           _this2.titlePersonnel = 'Recolector';
           _this2.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Recolector';
+            return item.role_id === 3;
           });
         }
         _this2.dialog = true;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
       this.dataClinic = item;
     },
     showInfoEdit: function showInfoEdit(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      // console.log("03 ",item);
+      console.log("03 ", item);
       this.dialogEdit = true;
     },
     close: function close() {
@@ -2685,29 +2629,27 @@ __webpack_require__.r(__webpack_exports__);
         validate = false;
       }
       if (validate) {
-        // console.log(this.editedItem);
-        Swal.fire({
-          title: 'Quiere editar este consultorio?',
+        console.log(this.editedItem);
+        swal({
+          title: "Quiere editar este consultorio?",
           text: "Los cambios se aplicaran permanentemente!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Editar'
-        }).then(function (result) {
-          if (result.isConfirmed) {
-            Swal.fire('Cambio Exitoso!', 'Se edito correctamente', 'success');
+          icon: "warning",
+          buttons: true,
+          dangerMode: true
+        }).then(function (willDelete) {
+          if (willDelete) {
             axios.put("/clinic/update/".concat(_this3.editedItem.id), {
               data: _this3.editedItem
             }).then(function (res) {
-              // console.log("Respuesta del servidor");
-              // console.log(res.data);
+              console.log("Respuesta del servidor");
+              console.log(res.data);
               _this3.initialize();
               _this3.dialogEdit = false;
+              swal('Cambio Exitoso!', 'Se edito correctamente', 'success');
             })["catch"](function (error) {
-              // console.log("Error en servidor");
-              // console.log(error);
-              // console.log(error.response);
+              console.log("Error en servidor");
+              console.log(error);
+              console.log(error.response);
             });
           }
         });
@@ -2717,27 +2659,23 @@ __webpack_require__.r(__webpack_exports__);
     showUser: function showUser(title) {
       var _this4 = this;
       axios.get('/clinic/consultationUser').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
+        console.log("Respuesta del servidor");
+        console.log("datos ", res.data);
         if (title == 'Dueño') {
           _this4.title = 'dueño';
           _this4.textLable = 'Agregar Dueño';
-          _this4.user = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Dueno';
-          });
+          _this4.user = res.data.infoClinicOwner;
         } else if (title == 'Recolector') {
           _this4.title = 'recolector';
           _this4.textLable = 'Agregar Recolector';
-          _this4.user = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Recolector';
-          });
+          _this4.user = res.data.infoClinicCollector;
         }
-        // console.log("Dueños ",this.user);
+        console.log("Dueños ", _this4.user);
         _this4.showAdd = true;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     closeUser: function closeUser() {
@@ -2746,15 +2684,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveUser: function saveUser() {
       var _this5 = this;
-      // console.log(this.selectedUser);
-      // console.log(this.dataClinic.id);
+      console.log(this.selectedUser);
+      console.log(this.dataClinic.id);
       var data = {
         'clinic': this.dataClinic.id,
         'user': this.selectedUser
       };
       axios.post('/clinic/addUser', data).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("Datos de agregar consultorio ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("Datos de agregar consultorio ", res.data);
         if (res.data.status == false) {
           if (_this5.titlePersonnel == 'Dueño') {
             _this5.alertFalse('Parece que el dueño ya tiene este consultorio');
@@ -2765,27 +2703,29 @@ __webpack_require__.r(__webpack_exports__);
           if (_this5.titlePersonnel == 'Dueño') {
             _this5.alertTrue('El dueño se agrego correctamente');
             _this5.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role === 'Dueno';
+              return item.role_id === 5;
             });
           } else if (_this5.titlePersonnel == 'Recolector') {
             _this5.alertTrue('El recolector se agrego correctamente');
             _this5.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role === 'Recolector';
+              return item.role_id === 3;
             });
           }
           _this5.showAdd = false;
         }
         _this5.selectedUser = '';
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
         if (error.response.status == 422) {
           if (_this5.titlePersonnel == 'Dueño') {
             _this5.alertFalse('Parece que el campo agregar dueño estan vacío');
           } else if (_this5.titlePersonnel == 'Recolector') {
             _this5.alertFalse('Parece que el campo agregar recolector estan vacío');
           }
+        } else {
+          _this5.alertFalse('Parece que algo salio mal');
         }
         _this5.selectedUser = '';
       });
@@ -2801,48 +2741,51 @@ __webpack_require__.r(__webpack_exports__);
         message = 'recolector';
         role = 'recolectores';
       }
-      Swal.fire({
+      swal({
         title: "Seguro que quiere quitar este ".concat(message, " ").concat(item.document, " de la lista de ").concat(role),
         text: "Los cambios se aplicaran permanentemente!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Quitar'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          Swal.fire('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
+        icon: "warning",
+        buttons: true,
+        succesMode: true
+      }).then(function (willDelete) {
+        if (willDelete) {
           axios.post('/clinic/deleteUser', item).then(function (res) {
-            // console.log("Respuesta del servidor");
-            // console.log("Datos de delete ",res.data);
+            console.log("Respuesta del servidor");
+            console.log("Datos de delete ", res.data);
             if (_this6.titlePersonnel == 'Dueño') {
               _this6.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role === 'Dueno';
+                return item.role_id === 5;
               });
             } else if (_this6.titlePersonnel == 'Recolector') {
               _this6.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role === 'Recolector';
+                return item.role_id === 3;
               });
             }
             _this6.searchPersonnel = '';
-            // console.log("filtro ",this.titlePersonnel);
+            swal('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
+            console.log("filtro ", _this6.titlePersonnel);
           })["catch"](function (error) {
-            // console.log("Error en servidor");
-            // console.log(error);
-            // console.log(error.response);
+            console.log("Error en servidor");
+            console.log(error);
+            console.log(error.response);
+            _this6.alertFalse('Parece que algo salio mal');
           });
+          console.log("item ", item);
         }
       });
-      // console.log("item ",item);
     },
     alertTrue: function alertTrue(text) {
-      Swal.fire('Cambio Exitoso!', text, 'success');
+      swal({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
     },
     alertFalse: function alertFalse(text) {
-      Swal.fire({
-        icon: 'error',
-        title: 'ERROR',
-        text: text
+      swal({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
       });
     }
   }
@@ -2952,12 +2895,14 @@ __webpack_require__.r(__webpack_exports__);
         this.initialize();
         this.showBtn = false;
         this.showFilterClinic = false;
+        this.selectedFilter = '';
       } else if (this.selectedFilter == 'RESPONSABLES SIN CONSULTORIOS') {
         this.responsibleClinic();
         this.showBtn = true;
         this.showFilterClinic = false;
+        this.selectedFilter = '';
       }
-      // console.log("01",this.selectedFilter);
+      console.log("01", this.selectedFilter);
     },
     showTower: function showTower(textFilter) {
       if (textFilter == 'TORRES') {
@@ -2984,15 +2929,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     addClinic: function addClinic(item) {
       var _this = this;
-      // console.log("id",item);
+      console.log("id", item);
       axios.get('/clinic/generalShowClinic').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("Datos de consulta ",res.data.clinics);
+        console.log("Respuesta del servidor");
+        console.log("Datos de consulta ", res.data.clinics);
         _this.clinics = res.data.clinics;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
       this.infoResponsible = item;
       this.dialog = true;
@@ -3000,38 +2945,38 @@ __webpack_require__.r(__webpack_exports__);
     initialize: function initialize() {
       var _this2 = this;
       axios.get('/clinic/generalShow').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
+        console.log("Respuesta del servidor");
+        console.log(res.data);
         _this2.desserts = res.data.responsible.filter(function (item) {
           return item.clinic_user.length > 0;
         });
         _this2.selectedClinic = '';
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     responsibleClinic: function responsibleClinic() {
       var _this3 = this;
       axios.get('/clinic/generalShow').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
+        console.log("Respuesta del servidor");
+        console.log("Responsables sin consultorios", res.data);
         _this3.desserts = res.data.responsible.filter(function (item) {
           return item.clinic_user.length == 0;
         });
         _this3.selectedFilter = '';
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     editItem: function editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
-      // console.log(this.editedItem);
+      console.log(this.editedItem);
     },
     close: function close() {
       this.dialogRegister = false;
@@ -3040,23 +2985,24 @@ __webpack_require__.r(__webpack_exports__);
     },
     save: function save() {
       var _this4 = this;
-      // console.log("Clinica seleccionada ",this.selectedClinic);
+      console.log("Clinica seleccionada ", this.selectedClinic);
       var data = {
         'clinic': this.selectedClinic,
         'user': this.infoResponsible.id
       };
       axios.post('/clinic/addClinic', data).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("Datos de agregar consultorio ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("Datos de agregar consultorio ", res.data);
         _this4.desserts = res.data.responsible.filter(function (item) {
           return item.clinic_user.length > 0;
         });
         _this4.alertTrue("El consultorio se agrego correctamente al responsable ".concat(_this4.infoResponsible.document));
+        _this4.initialize();
         _this4.showBtn = false;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
         if (error.response.status == 422) {
           _this4.alertFalse('Parece que el campo agregar cosultorio esta vaío');
         } else {
@@ -3070,9 +3016,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveRegister: function saveRegister() {
       var _this5 = this;
-      // console.log("Registro", this.registerClinic);
+      console.log("Registro", this.registerClinic);
       var validate = true;
-      // console.log("registrar consultorio ",this.registerClinic);
+      console.log("registrar consultorio ", this.registerClinic);
       if (this.registerClinic.clinic_number == "") {
         this.alertFalse('Parece que el campo numero consultorio esta vacío');
         validate = false;
@@ -3085,15 +3031,15 @@ __webpack_require__.r(__webpack_exports__);
       }
       if (validate == true) {
         axios.post('/clinic/register', this.registerClinic).then(function (res) {
-          // console.log("Respuesta del servidor");
-          // console.log("Datos de registrar consultorio ",res.data.clinic);
+          console.log("Respuesta del servidor");
+          console.log("Datos de registrar consultorio ", res.data.clinic);
           _this5.alertTrue("Se registro el consultorio ".concat(res.data.clinic.clinic_number, " correctamente!"));
           _this5.dialogRegister = false;
           _this5.showFilterClinic = true;
         })["catch"](function (error) {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
           if (error.response.status == 422) {
             _this5.alertFalse('Parece que algunos campos estan vaíos');
           } else {
@@ -3103,13 +3049,17 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     alertTrue: function alertTrue(text) {
-      Swal.fire('Cambio Exitoso!', text, 'success');
+      swal({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
     },
     alertFalse: function alertFalse(text) {
-      Swal.fire({
-        icon: 'error',
-        title: 'ERROR',
-        text: text
+      swal({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
       });
     }
   }
@@ -3168,21 +3118,21 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    // console.log("05",this.selectedFilter);
+    console.log("05", this.selectedFilter);
     this.initialize(1);
   },
   methods: {
     initialize: function initialize(tower) {
       var _this = this;
       axios.get("/clinic/showTower/".concat(tower)).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
+        console.log("Respuesta del servidor");
+        console.log(res.data);
         _this.desserts = res.data.tower;
         _this.selectedFilter = '';
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     changeFilter: function changeFilter() {
@@ -3197,17 +3147,17 @@ __webpack_require__.r(__webpack_exports__);
       } else if (this.selectedFilter == 'TORRE #3') {
         this.initialize(3);
       }
-      // console.log("Filtro seleccionado ",this.selectedFilter);
+      console.log("Filtro seleccionado ", this.selectedFilter);
     },
     showInfoEdit: function showInfoEdit(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      // console.log("03 ",this.editedItem);
+      console.log("03 ", this.editedItem);
       this.dialogEdit = true;
     },
     save: function save() {
       var _this2 = this;
-      // console.log(this.editedItem)
+      console.log(this.editedItem);
       var validate = true;
       if (this.editedItem.clinic_number == "") {
         this.alertFalse('Parece que el campo numero consultorio esta vacío');
@@ -3220,30 +3170,29 @@ __webpack_require__.r(__webpack_exports__);
         validate = false;
       }
       if (validate) {
-        // console.log(this.editedItem);
-        Swal.fire({
-          title: 'Quiere editar este consultorio?',
+        swal({
+          title: "Quiere editar este consultorio?",
           text: "Los cambios se aplicaran permanentemente!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Editar'
-        }).then(function (result) {
-          if (result.isConfirmed) {
-            Swal.fire('Cambio Exitoso!', 'Se edito correctamente', 'success');
+          icon: "warning",
+          buttons: true,
+          dangerMode: true
+        }).then(function (willDelete) {
+          if (willDelete) {
             axios.put("/clinic/update/".concat(_this2.editedItem.id), {
               data: _this2.editedItem
             }).then(function (res) {
-              // console.log("Respuesta del servidor");
-              // console.log(res.data);
-              // console.log(this.editedItem);
+              console.log("Respuesta del servidor");
+              console.log(res.data);
+              console.log(_this2.editedItem);
               _this2.initialize(_this2.editedItem.tower_id);
               _this2.dialogEdit = false;
+              swal("Se edito correctamente el consultorio!", {
+                icon: "success"
+              });
             })["catch"](function (error) {
-              // console.log("Error en servidor");
-              // console.log(error);
-              // console.log(error.response);
+              console.log("Error en servidor");
+              console.log(error);
+              console.log(error.response);
             });
           }
         });
@@ -3260,9 +3209,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveRegister: function saveRegister() {
       var _this3 = this;
-      // console.log("Registro", this.registerClinic);
+      console.log("Registro", this.registerClinic);
       var validate = true;
-      // console.log("registrar consultorio ",this.registerClinic);
+      console.log("registrar consultorio ", this.registerClinic);
       if (this.registerClinic.clinic_number == "") {
         this.alertFalse('Parece que el campo numero consultorio esta vacío');
         validate = false;
@@ -3275,15 +3224,17 @@ __webpack_require__.r(__webpack_exports__);
       }
       if (validate == true) {
         axios.post('/clinic/register', this.registerClinic).then(function (res) {
-          // console.log("Respuesta del servidor");
-          // console.log("Datos de registrar consultorio ",res.data.clinic);
+          console.log("Respuesta del servidor");
+          console.log("Datos de registrar consultorio ", res.data.clinic);
           _this3.alertTrue("Se registro el consultorio ".concat(res.data.clinic.clinic_number, " correctamente!"));
           _this3.dialogRegister = false;
           _this3.showFilterClinic = true;
+          _this3.initialize(res.data.clinic.tower_id);
+          _this3.registerClinic = {};
         })["catch"](function (error) {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
           if (error.response.status == 422) {
             _this3.alertFalse('Parece que algunos campos estan vaíos');
           } else {
@@ -3293,13 +3244,17 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     alertTrue: function alertTrue(text) {
-      Swal.fire('Cambio Exitoso!', text, 'success');
+      swal({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
     },
     alertFalse: function alertFalse(text) {
-      Swal.fire({
-        icon: 'error',
-        title: 'ERROR',
-        text: text
+      swal({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
       });
     }
   }
@@ -3437,25 +3392,25 @@ __webpack_require__.r(__webpack_exports__);
     initialize: function initialize() {
       var _this = this;
       axios.get('/clinic/generalShowClinic').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("datos initialize ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("datos initialize ", res.data);
         _this.desserts = res.data.clinics;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     clinicResponsible: function clinicResponsible() {
       var _this2 = this;
       axios.get('/clinic/showClinicResponsible').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("datos clinicResponsible ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("datos clinicResponsible ", res.data);
         _this2.dessertsClinic = res.data.clinic;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     changeFilter: function changeFilter() {
@@ -3464,20 +3419,20 @@ __webpack_require__.r(__webpack_exports__);
       } else if (this.selectedFilter == 'CONSULTORIOS CON RESPONSABLES') {
         this.showTables = true;
         this.tittle = 'Consultorios Con Responsables';
-        // console.log(this.selectedFilter);
+        console.log(this.selectedFilter);
       } else if (this.selectedFilter == 'CONSULTORIOS SIN RESPONSABLES') {
         this.showTables = false;
         this.tittle = 'Consultorios Sin Responsables';
-        // console.log(this.selectedFilter);
+        console.log(this.selectedFilter);
       } else if (this.selectedFilter == 'TORRES') {
         this.$parent.showTower('TORRES');
       }
-      // console.log(this.selectedFilter);
+      console.log(this.selectedFilter);
     },
     showInfoEdit: function showInfoEdit(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      // console.log("03 ",this.editedItem);
+      console.log("03 ", this.editedItem);
       this.dialogEdit = true;
     },
     save: function save() {
@@ -3494,33 +3449,30 @@ __webpack_require__.r(__webpack_exports__);
         validate = false;
       }
       if (validate) {
-        // console.log(this.editedItem);
-        Swal.fire({
-          title: 'Quiere editar este consultorio?',
+        console.log(this.editedItem);
+        sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+          title: "Quiere editar este consultorio?",
           text: "Los cambios se aplicaran permanentemente!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Editar'
-        }).then(function (result) {
-          if (result.isConfirmed) {
-            Swal.fire('Cambio Exitoso!', 'Se edito correctamente', 'success');
+          icon: "warning",
+          buttons: true,
+          dangerMode: true
+        }).then(function (willDelete) {
+          if (willDelete) {
             axios.put("/clinic/update/".concat(_this3.editedItem.id), {
               data: _this3.editedItem
             }).then(function (res) {
-              // console.log("Respuesta del servidor");
-              // console.log(res.data);
-              _this3.initialize();
+              console.log("Respuesta del servidor");
+              console.log(res.data);
+              _this3.clinicResponsible();
               _this3.dialogEdit = false;
+              sweetalert__WEBPACK_IMPORTED_MODULE_0___default()('Cambio Exitoso!', 'Se edito correctamente', 'success');
             })["catch"](function (error) {
-              // console.log("Error en servidor");
-              // console.log(error);
-              // console.log(error.response);
+              console.log("Error en servidor");
+              console.log(error);
+              console.log(error.response);
             });
           }
         });
-        this.registerClinic = {};
         this.close();
       }
     },
@@ -3534,52 +3486,50 @@ __webpack_require__.r(__webpack_exports__);
     infoPersonnel: function infoPersonnel(item, option) {
       var _this4 = this;
       axios.get("/clinic/consultation/".concat(item.id)).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
-        // console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
+        console.log("Respuesta del servidor");
+        console.log("Datos de tabla ", res.data);
+        console.log(res.data.infoClinic.filter(function (item) {
+          return item.role === 'Dueno';
+        }));
         if (option == 1) {
           _this4.titlePersonnel = 'Dueño';
           _this4.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Dueno';
+            return item.role_id === 5;
           });
         } else {
           _this4.titlePersonnel = 'Recolector';
           _this4.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Recolector';
+            return item.role_id === 3;
           });
         }
         _this4.dialog = true;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
       this.dataClinic = item;
     },
     showUser: function showUser(title) {
       var _this5 = this;
       axios.get('/clinic/consultationUser').then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log(res.data);
+        console.log("Respuesta del servidor");
+        console.log("datos ", res.data);
         if (title == 'Dueño') {
           _this5.title = 'dueño';
           _this5.textLable = 'Agregar Dueño';
-          _this5.user = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Dueno';
-          });
+          _this5.user = res.data.infoClinicOwner;
         } else if (title == 'Recolector') {
           _this5.title = 'recolector';
           _this5.textLable = 'Agregar Recolector';
-          _this5.user = res.data.infoClinic.filter(function (item) {
-            return item.role === 'Recolector';
-          });
+          _this5.user = res.data.infoClinicCollector;
         }
-        // console.log("Dueños ",this.user);
+        console.log("Dueños ", _this5.user);
         _this5.showAdd = true;
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
       });
     },
     closeUser: function closeUser() {
@@ -3588,15 +3538,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveUser: function saveUser() {
       var _this6 = this;
-      // console.log(this.selectedUser);
-      // console.log(this.dataClinic.id);
+      console.log(this.selectedUser);
+      console.log(this.dataClinic.id);
       var data = {
         'clinic': this.dataClinic.id,
         'user': this.selectedUser
       };
       axios.post('/clinic/addUser', data).then(function (res) {
-        // console.log("Respuesta del servidor");
-        // console.log("Datos de agregar consultorio ",res.data);
+        console.log("Respuesta del servidor");
+        console.log("Datos de agregar consultorio ", res.data);
         if (res.data.status == false) {
           if (_this6.titlePersonnel == 'Dueño') {
             _this6.alertFalse('Parece que el dueño ya tiene este consultorio');
@@ -3607,27 +3557,29 @@ __webpack_require__.r(__webpack_exports__);
           if (_this6.titlePersonnel == 'Dueño') {
             _this6.alertTrue('El dueño se agrego correctamente');
             _this6.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role === 'Dueno';
+              return item.role_id === 5;
             });
           } else if (_this6.titlePersonnel == 'Recolector') {
             _this6.alertTrue('El recolector se agrego correctamente');
             _this6.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role === 'Recolector';
+              return item.role_id === 3;
             });
           }
           _this6.showAdd = false;
         }
         _this6.selectedUser = '';
       })["catch"](function (error) {
-        // console.log("Error en servidor");
-        // console.log(error);
-        // console.log(error.response);
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
         if (error.response.status == 422) {
           if (_this6.titlePersonnel == 'Dueño') {
             _this6.alertFalse('Parece que el campo agregar dueño estan vacío');
           } else if (_this6.titlePersonnel == 'Recolector') {
             _this6.alertFalse('Parece que el campo agregar recolector estan vacío');
           }
+        } else {
+          _this6.alertFalse('Parece que algo salio mal');
         }
         _this6.selectedUser = '';
       });
@@ -3643,39 +3595,38 @@ __webpack_require__.r(__webpack_exports__);
         message = 'recolector';
         role = 'recolectores';
       }
-      Swal.fire({
+      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
         title: "Seguro que quiere quitar este ".concat(message, " ").concat(item.document, " de la lista de ").concat(role),
         text: "Los cambios se aplicaran permanentemente!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Quitar'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          Swal.fire('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
+        icon: "warning",
+        buttons: true,
+        succesMode: true
+      }).then(function (willDelete) {
+        if (willDelete) {
           axios.post('/clinic/deleteUser', item).then(function (res) {
-            // console.log("Respuesta del servidor");
-            // console.log("Datos de delete ",res.data);
+            console.log("Respuesta del servidor");
+            console.log("Datos de delete ", res.data);
             if (_this7.titlePersonnel == 'Dueño') {
               _this7.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role === 'Dueno';
+                return item.role_id === 5;
               });
             } else if (_this7.titlePersonnel == 'Recolector') {
               _this7.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role === 'Recolector';
+                return item.role_id === 3;
               });
             }
             _this7.searchPersonnel = '';
-            // console.log("filtro ",this.titlePersonnel);
+            sweetalert__WEBPACK_IMPORTED_MODULE_0___default()('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
+            console.log("filtro ", _this7.titlePersonnel);
           })["catch"](function (error) {
-            // console.log("Error en servidor");
-            // console.log(error);
-            // console.log(error.response);
+            console.log("Error en servidor");
+            console.log(error);
+            console.log(error.response);
+            _this7.alertFalse('Parece que algo salio mal');
           });
+          console.log("item ", item);
         }
       });
-      // console.log("item ",item);
     },
     showRegister: function showRegister() {
       this.dialogRegister = true;
@@ -3683,7 +3634,7 @@ __webpack_require__.r(__webpack_exports__);
     saveRegister: function saveRegister() {
       var _this8 = this;
       var validate = true;
-      // console.log("registrar consultorio ",this.registerClinic);
+      console.log("registrar consultorio ", this.registerClinic);
       if (this.registerClinic.clinic_number == "") {
         this.alertFalse('Parece que el campo numero consultorio esta vacío');
         validate = false;
@@ -3696,15 +3647,17 @@ __webpack_require__.r(__webpack_exports__);
       }
       if (validate) {
         axios.post('/clinic/register', this.registerClinic).then(function (res) {
-          // console.log("Respuesta del servidor");
-          // console.log("Datos de registrar consultorio ",res.data.clinic);
+          console.log("Respuesta del servidor");
+          console.log("Datos de registrar consultorio ", res.data.clinic);
           _this8.alertTrue("Se registro el consultorio ".concat(res.data.clinic.clinic_number, " correctamente!"));
+          _this8.registerClinic = {};
           _this8.dialogRegister = false;
           _this8.showFilterClinic = true;
+          _this8.initialize();
         })["catch"](function (error) {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
           if (error.response.status == 422) {
             _this8.alertFalse('Parece que algunos campos estan vaíos');
           } else {
@@ -3714,13 +3667,17 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     alertTrue: function alertTrue(text) {
-      Swal.fire('Cambio Exitoso!', text, 'success');
+      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
     },
     alertFalse: function alertFalse(text) {
-      Swal.fire({
-        icon: 'error',
-        title: 'ERROR',
-        text: text
+      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
       });
     }
   }
@@ -4236,226 +4193,270 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("v-app", [_c("v-main", [_c("v-data-table", {
-    staticClass: "elevation-1",
+  return _c("div", {
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
+  }, [_c("v-app", [_c("v-main", [_c("div", {
+    staticClass: "mt-6"
+  }, [_c("v-toolbar", {
     attrs: {
-      headers: _vm.headers,
-      items: _vm.desserts,
-      "sort-by": "calories"
+      flat: ""
+    }
+  }, [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-sm-3 col-6"
+  }, [_c("v-btn", {
+    staticClass: "mr-4",
+    attrs: {
+      outlined: "",
+      color: "grey darken-2"
     },
-    scopedSlots: _vm._u([{
-      key: "top",
-      fn: function fn() {
-        return [_c("v-toolbar", {
-          attrs: {
-            flat: ""
-          }
-        }, [_c("v-toolbar-title", [_vm._v("My CRUD")]), _vm._v(" "), _c("v-divider", {
-          staticClass: "mx-4",
-          attrs: {
-            inset: "",
-            vertical: ""
-          }
-        }), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-dialog", {
-          attrs: {
-            "max-width": "500px"
-          },
-          scopedSlots: _vm._u([{
-            key: "activator",
-            fn: function fn(_ref) {
-              var on = _ref.on,
-                attrs = _ref.attrs;
-              return [_c("v-btn", _vm._g(_vm._b({
-                staticClass: "mb-2",
-                attrs: {
-                  color: "primary",
-                  dark: ""
-                }
-              }, "v-btn", attrs, false), on), [_vm._v("\n              New Item\n            ")])];
-            }
-          }]),
-          model: {
-            value: _vm.dialog,
-            callback: function callback($$v) {
-              _vm.dialog = $$v;
-            },
-            expression: "dialog"
-          }
-        }, [_vm._v(" "), _c("v-card", [_c("v-card-title", [_c("span", {
-          staticClass: "text-h5"
-        }, [_vm._v(_vm._s(_vm.formTitle))])]), _vm._v(" "), _c("v-card-text", [_c("v-container", [_c("v-row", [_c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "4"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            label: "Dessert name"
-          },
-          model: {
-            value: _vm.editedItem.name,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "name", $$v);
-            },
-            expression: "editedItem.name"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "4"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            label: "Calories"
-          },
-          model: {
-            value: _vm.editedItem.calories,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "calories", $$v);
-            },
-            expression: "editedItem.calories"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "4"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            label: "Fat (g)"
-          },
-          model: {
-            value: _vm.editedItem.fat,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "fat", $$v);
-            },
-            expression: "editedItem.fat"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "4"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            label: "Carbs (g)"
-          },
-          model: {
-            value: _vm.editedItem.carbs,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "carbs", $$v);
-            },
-            expression: "editedItem.carbs"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "4"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            label: "Protein (g)"
-          },
-          model: {
-            value: _vm.editedItem.protein,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem, "protein", $$v);
-            },
-            expression: "editedItem.protein"
-          }
-        })], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.close
-          }
-        }, [_vm._v("\n                Cancel\n              ")]), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.save
-          }
-        }, [_vm._v("\n                Save\n              ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
-          attrs: {
-            "max-width": "500px"
-          },
-          model: {
-            value: _vm.dialogDelete,
-            callback: function callback($$v) {
-              _vm.dialogDelete = $$v;
-            },
-            expression: "dialogDelete"
-          }
-        }, [_c("v-card", [_c("v-card-title", {
-          staticClass: "text-h5"
-        }, [_vm._v("Are you sure you want to delete this item?")]), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.closeDelete
-          }
-        }, [_vm._v("Cancel")]), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.deleteItemConfirm
-          }
-        }, [_vm._v("OK")]), _vm._v(" "), _c("v-spacer")], 1)], 1)], 1)], 1)];
+    on: {
+      click: _vm.setToday
+    }
+  }, [_vm._v("\n                Mes actual\n              ")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-3 col-6"
+  }, [_c("v-btn", {
+    attrs: {
+      fab: "",
+      text: "",
+      small: "",
+      color: "grey darken-2"
+    },
+    on: {
+      click: _vm.prev
+    }
+  }, [_c("v-icon", {
+    attrs: {
+      small: ""
+    }
+  }, [_vm._v("\n                  mdi-chevron-left\n                ")])], 1), _vm._v(" "), _c("v-btn", {
+    attrs: {
+      fab: "",
+      text: "",
+      small: "",
+      color: "grey darken-2"
+    },
+    on: {
+      click: _vm.next
+    }
+  }, [_c("v-icon", {
+    attrs: {
+      small: ""
+    }
+  }, [_vm._v("\n                  mdi-chevron-right\n                ")])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-5 col-6 pb-6"
+  }, [_c("v-toolbar-title", [_vm._v("\n                " + _vm._s(_vm.date) + "\n              ")])], 1)]), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-menu", {
+    attrs: {
+      bottom: "",
+      right: ""
+    }
+  })], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "my-6"
+  }, [_c("div", {
+    staticClass: "row flex justify-content-center"
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("h1", [_vm._v("FORMULARIO RH1")])]), _vm._v(" "), _c("img", {
+    staticClass: "ml-6 img-fluid",
+    attrs: {
+      src: __webpack_require__(/*! ../img/Imagen1.png */ "./resources/js/components/img/Imagen1.png"),
+      alt: "Logo Megacentro",
+      width: "110em"
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "text-center my-6"
+  }, [_c("h3", [_vm._v("FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS")])])]), _vm._v(" "), _c("div", {
+    staticClass: "row mx-4 mt-4"
+  }, [_c("div", {
+    staticClass: "row col-12 m-0 p-0"
+  }, [_c("div", {
+    staticClass: "col-8"
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "NOMBRE DE LA INSTITUCIÓN"
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "FECHA"
+    },
+    model: {
+      value: _vm.date,
+      callback: function callback($$v) {
+        _vm.date = $$v;
       },
-      proxy: true
-    }, {
-      key: "item.actions",
-      fn: function fn(_ref2) {
-        var item = _ref2.item;
-        return [_c("v-icon", {
-          staticClass: "mr-2",
-          attrs: {
-            small: ""
-          },
-          on: {
-            click: function click($event) {
-              return _vm.editItem(item);
-            }
-          }
-        }, [_vm._v("\n        mdi-pencil\n      ")]), _vm._v(" "), _c("v-icon", {
-          attrs: {
-            small: ""
-          },
-          on: {
-            click: function click($event) {
-              return _vm.deleteItem(item);
-            }
-          }
-        }, [_vm._v("\n        mdi-delete\n      ")])];
-      }
-    }, {
-      key: "no-data",
-      fn: function fn() {
-        return [_c("v-btn", {
-          attrs: {
-            color: "primary"
-          },
-          on: {
-            click: _vm.initialize
-          }
-        }, [_vm._v("\n        Reset\n      ")])];
-      },
-      proxy: true
-    }])
-  })], 1)], 1);
+      expression: "date"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "row col-12 m-0 p-0"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "DIRECCIÓN"
+    }
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "NIVEL DE ATENCIÓN"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "CIUDAD"
+    }
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "TELÉFONO"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "PROFESIONAL RESPOSABLE"
+    }
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "CARGO"
+    }
+  })], 1)])])]), _vm._v(" "), _c("div", {
+    staticClass: "container"
+  }, [_c("div", {
+    staticClass: "table-responsive"
+  }, [_c("div", {
+    staticClass: "text-center mb-6"
+  }, [_c("h4", [_vm._v("TIPO DE RESIDUOS")])]), _vm._v(" "), _c("table", {
+    staticClass: "table table-bordered"
+  }, [_c("thead", [_c("tr", [_c("th", {
+    staticStyle: {
+      "padding-bottom": "5em",
+      "padding-left": "1em"
+    },
+    attrs: {
+      rowspan: "3"
+    }
+  }, [_vm._v("DÍA")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "4"
+    }
+  }, [_vm._v("RESIDUOS NO PELIGROSOS")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "12"
+    }
+  }, [_vm._v("RESIDUOS PELIGROSOS")])]), _vm._v(" "), _c("tr", [_c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "4"
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "4"
+    }
+  }, [_vm._v("INFECCIOSOS O RIESGO BIOLOGICO")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "6"
+    }
+  }, [_vm._v("QUIMICOS")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "2"
+    }
+  }, [_vm._v("RADIACTIVOS")])]), _vm._v(" "), _c("tr", [_c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("BIODEGRADABLES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("RECICLABES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("INERTES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("ORDINARIOS-COMUNES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("BIOSANITARIOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("ANATOMOPATOLOGICOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("CORTOPUNZANTES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("ANIMALES (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("FARMACOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("CITOTÓXICOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("METALES PESADOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("REACTIVOS (Kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("CONTENEDORES PRESURIZADOS")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("ACEITES USADOS (kg)")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("FUENTES ABIERTAS")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
+  }, [_vm._v("FUENTES CERRADAS")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.index, function (i) {
+    return _c("tr", {
+      staticClass: "text-center"
+    }, [_c("td", [_vm._v(_vm._s(i <= 9 ? "0" + i : i))]), _vm._v(" "), _vm._l(_vm.residueIds, function (residueId) {
+      return _c("td", [_vm._v("\n                  " + _vm._s(_vm.getResidueValue(residueId, i)) + "\n                ")]);
+    })], 2);
+  }), 0)])])])])], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -4652,6 +4653,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Clinica"
     },
     model: {
@@ -4922,6 +4924,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Consultorio"
     },
     model: {
@@ -5158,7 +5161,7 @@ var render = function render() {
       },
       expression: "search"
     }
-  })], 1), _vm._v(" "), _c("v-data-table", {
+  })], 1), _vm._v(" "), _c("div", [_c("v-data-table", {
     attrs: {
       headers: _vm.headers,
       items: _vm.desserts,
@@ -5186,10 +5189,10 @@ var render = function render() {
           attrs: {
             dark: ""
           }
-        }, [_vm._v("\n                                    mdi-pencil\n                                ")])], 1)];
+        }, [_vm._v("\n                                        mdi-pencil\n                                    ")])], 1)];
       }
     }])
-  }), _vm._v(" "), _c("v-dialog", {
+  })], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "550px"
     },
@@ -5210,6 +5213,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Consultorio"
     },
     model: {
@@ -5298,6 +5302,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Consultorio"
     },
     model: {
@@ -5611,6 +5616,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Consultorio"
     },
     model: {
@@ -5699,6 +5705,7 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
+      type: "number",
       label: "Numero Consultorio"
     },
     model: {
@@ -6294,6 +6301,16 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
 //     enabledTransports: ['ws', 'wss'],
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/img/Imagen1.png":
+/*!*************************************************!*\
+  !*** ./resources/js/components/img/Imagen1.png ***!
+  \*************************************************/
+/***/ ((module) => {
+
+module.exports = "/images/Imagen1.png?4a3040185f75883020363e61a4ce38d7";
 
 /***/ }),
 

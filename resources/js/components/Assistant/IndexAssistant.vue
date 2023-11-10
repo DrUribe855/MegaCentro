@@ -1,331 +1,278 @@
 <template>
+  <div style="height: 100vh; overflow-y: scroll">
     <v-app>
-        <v-main>
-            <v-data-table
-                :headers="headers"
-                :items="desserts"
-                sort-by="calories"
-                class="elevation-1"
-            >
-        <template v-slot:top>
+      <v-main>
+        <div class="mt-6">
           <v-toolbar
             flat
           >
-            <v-toolbar-title>My CRUD</v-toolbar-title>
-            <v-divider
-              class="mx-4"
-              inset
-              vertical
-            ></v-divider>
-            <v-spacer></v-spacer>
-            <v-dialog
-              v-model="dialog"
-              max-width="500px"
-            >
-              <template v-slot:activator="{ on, attrs }">
+            <div class="row">
+              <div class="col-sm-3 col-6">
                 <v-btn
-                  color="primary"
-                  dark
-                  class="mb-2"
-                  v-bind="attrs"
-                  v-on="on"
+                  outlined
+                  class="mr-4"
+                  color="grey darken-2"
+                  @click="setToday"
                 >
-                  New Item
+                  Mes actual
                 </v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="text-h5">{{ formTitle }}</span>
-                </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                      >
-                        <v-text-field
-                          v-model="editedItem.name"
-                          label="Dessert name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                      >
-                        <v-text-field
-                          v-model="editedItem.calories"
-                          label="Calories"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                      >
-                        <v-text-field
-                          v-model="editedItem.fat"
-                          label="Fat (g)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                      >
-                        <v-text-field
-                          v-model="editedItem.carbs"
-                          label="Carbs (g)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                      >
-                        <v-text-field
-                          v-model="editedItem.protein"
-                          label="Protein (g)"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="close"
+              </div>
+              <div class="col-sm-3 col-6">
+                <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="prev"
                   >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="save"
+                  <v-icon small>
+                    mdi-chevron-left
+                  </v-icon>
+                </v-btn>
+                <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="next"
                   >
-                    Save
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogDelete" max-width="500px">
-              <v-card>
-                <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+                  <v-icon small>
+                    mdi-chevron-right
+                  </v-icon>
+                </v-btn>
+              </div>
+              <div class="col-sm-5 col-6 pb-6">
+                <v-toolbar-title>
+                  {{ date }}
+                </v-toolbar-title>
+              </div>
+            </div>
+            <v-spacer></v-spacer>
+            <v-menu
+              bottom
+              right
+            >
+            </v-menu>
           </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(item)"
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(item)"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:no-data>
-          <v-btn
-            color="primary"
-            @click="initialize"
-          >
-            Reset
-          </v-btn>
-        </template>
-      </v-data-table>
-        </v-main>
+        </div>
+        <div class="my-6">
+          <div class="row flex justify-content-center">
+            <div class="text-center">
+              <h1>FORMULARIO RH1</h1>
+            </div>
+            <img src="../img/Imagen1.png" alt="Logo Megacentro" width="110em" class="ml-6 img-fluid">
+          </div>
+          <div class="text-center my-6">
+            <h3>FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS</h3>
+          </div>
+        </div>
+        <div class="row mx-4 mt-4">
+          <div class="row col-12 m-0 p-0">
+            <div class="col-8">
+              <v-text-field
+                label="NOMBRE DE LA INSTITUCIÓN"
+              ></v-text-field>
+            </div>
+            <div class="col-4">
+              <v-text-field
+                v-model="date"
+                label="FECHA"
+              ></v-text-field>
+            </div>
+          </div>
+          <div class="row col-12 m-0 p-0">
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="DIRECCIÓN"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="NIVEL DE ATENCIÓN"
+                ></v-text-field>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="CIUDAD"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="TELÉFONO"
+                ></v-text-field>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="PROFESIONAL RESPOSABLE"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="CARGO"
+                ></v-text-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="table-responsive">
+            <div class="text-center mb-6">
+              <h4>TIPO DE RESIDUOS</h4>
+            </div>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th rowspan="3" style="padding-bottom: 5em; padding-left: 1em;">DÍA</th>
+                  <th colspan="4" class="text-center">RESIDUOS NO PELIGROSOS</th>
+                  <th colspan="12" class="text-center">RESIDUOS PELIGROSOS</th>
+                </tr>
+                <tr>
+                  <th class="text-center" colspan="4"></th>
+                  <th class="text-center" colspan="4">INFECCIOSOS O RIESGO BIOLOGICO</th>
+                  <th class="text-center" colspan="6">QUIMICOS</th>
+                  <th class="text-center" colspan="2">RADIACTIVOS</th>
+                </tr>
+                <tr>
+                  <th class="text-center" style="font-size: 12px;">BIODEGRADABLES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">RECICLABES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">INERTES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ORDINARIOS-COMUNES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">BIOSANITARIOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ANATOMOPATOLOGICOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CORTOPUNZANTES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ANIMALES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">FARMACOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CITOTÓXICOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">METALES PESADOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">REACTIVOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CONTENEDORES PRESURIZADOS</th>
+                  <th class="text-center" style="font-size: 12px;">ACEITES USADOS (kg)</th>
+                  <th class="text-center" style="font-size: 12px;">FUENTES ABIERTAS</th>
+                  <th class="text-center" style="font-size: 12px;">FUENTES CERRADAS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="i in index" class="text-center">
+                  <td>{{ i <= 9 ? '0'+i : i }}</td>
+                  <td v-for="residueId in residueIds">
+                    {{ getResidueValue(residueId, i) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </v-main>
     </v-app>
+  </div>
 </template>
+
 <script>
   export default {
-    data: () => ({
-      dialog: false,
-      dialogDelete: false,
-      headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'start',
-          sortable: false,
-          value: 'name',
+    data(){
+      return {
+        list_residues: [],
+        index: 31,
+        residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        type: 'month',
+        typeToLabel: {
+          month: 'Month',
+          week: 'Week',
+          day: 'Day',
+          '4day': '4 Days',
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-    }),
-
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
+        focus: new Date(),
+        date: '',
+        dateAxios: '',
+        position: 0,
+      }
     },
 
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
-    },
-
-    created () {
-      this.initialize()
+    created(){
+      this.setToday();
+      this.initialize(this.dateAxios);
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
-      },
-
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+      initialize(date){
+        console.log("date ", date);
+        if (date != '') {
+          axios.get(`/residue/generalShow/${date}`).then(res =>{
+            console.log("Respuesta del servidor");
+            console.log("Datos de consulta ",res.data.date);
+            this.list_residues = res.data.residues;
+          }).catch(error => {
+            console.log("Error en servidor");
+            console.log(error);
+            console.log(error.response);
+          }); 
         }
-        this.close()
       },
-    },
+
+      getResidueValue(residueId, day) {
+        const residue = this.list_residues.find((r) => r.residue_id === residueId && r.day_of_month === day);
+
+        if (residue) {
+          return residue.total_weight;
+        } else {
+          return "0";
+        }
+      },
+
+      setToday () {
+        this.focus = new Date();
+        const options = { month: 'long' };
+        const month = this.focus.toLocaleDateString('es-ES', options);
+        const year = this.focus.getFullYear();
+        const monthNumber = this.focus.getMonth() + 1;
+        this.position = monthNumber <= 9 ? this.position = '0'+ monthNumber : this.position = monthNumber;
+        this.date = month+ ' '+ year;
+        this.dateAxios = year+'-'+monthNumber;
+        this.initialize(this.dateAxios);
+      },
+      prev () {
+        const newFocus = new Date(this.focus);
+        newFocus.setMonth(newFocus.getMonth() - 1);
+        const options = { month: 'long' };
+        const monthName = newFocus.toLocaleDateString('es-ES', options); 
+        const year = newFocus.getFullYear();
+        this.focus = newFocus;
+        this.date = monthName+ ' '+ year
+        this.position--;
+        if (this.position == 0) {
+          this.position = 12;
+        }
+        if (this.position <= 9 ) {
+          this.position = '0'+this.position--;
+        }
+        this.dateAxios = year+'-'+this.position;
+        console.log("FECHA ",this.dateAxios);
+        this.initialize(this.dateAxios);
+      },
+      next () {
+        const newFocus = new Date(this.focus);
+        newFocus.setMonth(newFocus.getMonth() + 1);
+        const options = { month: 'long' };
+        const monthName = newFocus.toLocaleDateString('es-ES', options);
+        const year = newFocus.getFullYear();
+        this.focus = newFocus;
+        this.date = monthName+ ' '+ year
+        this.position++;
+        if (this.position > 12) {
+          this.position = 1;
+        }
+        if (this.position <= 9 ) {
+          this.position = '0'+this.position++;
+        }
+        this.dateAxios = year+'-'+this.position;
+        this.initialize(this.dateAxios);
+        console.log(this.date);
+      },
+    }
   }
 </script>

@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\CollectorController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ResidueController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -69,4 +70,7 @@ Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('
 // Rutas de login
 
 Auth::routes();
- 
+
+// ------------------------------- Rutas de residuos --------------------------------------- 
+
+Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalShow']);

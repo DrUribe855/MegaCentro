@@ -41,7 +41,7 @@
                     <v-dialog
                         v-model="dialog"
                         max-width="650px"
-                    >
+                        >
                         <v-card>
                             <v-card-title>
                                 <span class="text-h5">{{ titlePersonnel }}</span>
@@ -176,6 +176,7 @@
                                             md="4"
                                         >
                                             <v-text-field
+                                            type="number"
                                             v-model="editedItem.clinic_number"
                                             label="Numero Consultorio"
                                             ></v-text-field>
@@ -247,6 +248,7 @@
                                     md="4"
                                     >
                                     <v-text-field
+                                    type="number"
                                     v-model="registerClinic.clinic_number"
                                     label="Numero Consultorio"
                                     ></v-text-field>
@@ -375,6 +377,7 @@
 </template>
 
 <script>
+    import swal from 'sweetalert';
     export default {
     data () {
       return {
@@ -466,25 +469,25 @@
     methods: {
         initialize () {
             axios.get('/clinic/generalShowClinic').then(res => {
-                // console.log("Respuesta del servidor");
-                // console.log("datos initialize ",res.data);
+                console.log("Respuesta del servidor");
+                console.log("datos initialize ",res.data);
                 this.desserts = res.data.clinics
             }).catch(error => {
-                // console.log("Error en servidor");
-                // console.log(error);
-                // console.log(error.response);
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
             });
         },
 
         clinicResponsible (){
             axios.get('/clinic/showClinicResponsible').then(res => {
-                // console.log("Respuesta del servidor");
-                // console.log("datos clinicResponsible ",res.data);
+                console.log("Respuesta del servidor");
+                console.log("datos clinicResponsible ",res.data);
                 this.dessertsClinic = res.data.clinic
             }).catch(error => {
-                // console.log("Error en servidor");
-                // console.log(error);
-                // console.log(error.response);
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
             });
         },
 
@@ -494,26 +497,26 @@
             }else if(this.selectedFilter == 'CONSULTORIOS CON RESPONSABLES'){
                 this.showTables = true
                 this.tittle = 'Consultorios Con Responsables'
-                // console.log(this.selectedFilter);
+                console.log(this.selectedFilter);
             }else if(this.selectedFilter == 'CONSULTORIOS SIN RESPONSABLES'){
                 this.showTables = false
                 this.tittle = 'Consultorios Sin Responsables'
-                // console.log(this.selectedFilter);
+                console.log(this.selectedFilter);
             }else if (this.selectedFilter == 'TORRES') {
                 this.$parent.showTower('TORRES')
             }
-            // console.log(this.selectedFilter);
+            console.log(this.selectedFilter);
         },
 
         showInfoEdit(item){
             this.editedIndex = this.desserts.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            // console.log("03 ",this.editedItem);
+            console.log("03 ",this.editedItem);
             this.dialogEdit = true
         },
 
         save () {
-        var validate = true;
+            var validate = true;
             if (this.editedItem.clinic_number == "") {
                 this.alertFalse('Parece que el campo numero consultorio esta vacío');
                 validate = false 
@@ -525,36 +528,33 @@
                 validate = false
             }
             if (validate) {
-                // console.log(this.editedItem);
-                Swal.fire({
-                    title: 'Quiere editar este consultorio?',
+                console.log(this.editedItem);
+                swal({
+                    title: "Quiere editar este consultorio?",
                     text: "Los cambios se aplicaran permanentemente!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Editar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Cambio Exitoso!',
-                            'Se edito correctamente',
-                            'success'
-                        )
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
                         axios.put(`/clinic/update/${this.editedItem.id}`, {data: this.editedItem}).then(res => {
-                            // console.log("Respuesta del servidor");
-                            // console.log(res.data);
-                            this.initialize();
+                            console.log("Respuesta del servidor");
+                            console.log(res.data);
+                            this.clinicResponsible();
                             this.dialogEdit= false
+                            swal(
+                                'Cambio Exitoso!',
+                                'Se edito correctamente',
+                                'success'
+                            )
                         }).catch(error => {
-                            // console.log("Error en servidor");
-                            // console.log(error);
-                            // console.log(error.response);
+                            console.log("Error en servidor");
+                            console.log(error);
+                            console.log(error.response);
                         });
                     }
                 })
-                this.registerClinic = {}
-                this.close()   
+                    this.close()   
             }
         },
 
@@ -568,44 +568,44 @@
 
         infoPersonnel(item, option){
             axios.get(`/clinic/consultation/${item.id}`).then(res => {
-                // console.log("Respuesta del servidor");
-                // console.log(res.data);
-                // console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
+                console.log("Respuesta del servidor");
+                console.log("Datos de tabla ",res.data);
+                console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
                 if (option == 1) {
                     this.titlePersonnel = 'Dueño'
-                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role === 'Dueno')   
+                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 5)   
                 }else{
                     this.titlePersonnel = 'Recolector'
-                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role === 'Recolector')
+                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 3)
                 }
                 this.dialog = true
             }).catch(error => {
-                // console.log("Error en servidor");
-                // console.log(error);
-                // console.log(error.response);
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
             });
             this.dataClinic = item
         },
 
         showUser(title){
             axios.get('/clinic/consultationUser').then(res => {
-                // console.log("Respuesta del servidor");
-                // console.log(res.data);
+                console.log("Respuesta del servidor");
+                console.log("datos ",res.data);
                 if (title == 'Dueño') {
                     this.title = 'dueño'
                     this.textLable = 'Agregar Dueño'
-                    this.user = res.data.infoClinic.filter(item => item.role === 'Dueno')   
+                    this.user = res.data.infoClinicOwner   
                 }else if (title == 'Recolector') {
                     this.title = 'recolector'
                     this.textLable = 'Agregar Recolector'
-                    this.user = res.data.infoClinic.filter(item => item.role === 'Recolector')   
+                    this.user = res.data.infoClinicCollector   
                 }
-                // console.log("Dueños ",this.user);
+                console.log("Dueños ",this.user);
                 this.showAdd = true
             }).catch(error => {
-                // console.log("Error en servidor");
-                // console.log(error);
-                // console.log(error.response);
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
             });
         },
 
@@ -615,15 +615,15 @@
         },
 
         saveUser(){
-            // console.log(this.selectedUser);
-            // console.log(this.dataClinic.id);
+            console.log(this.selectedUser);
+            console.log(this.dataClinic.id);
             var data = {
                 'clinic': this.dataClinic.id,
                 'user': this.selectedUser
             }
             axios.post('/clinic/addUser', data).then(res => {
-                // console.log("Respuesta del servidor");
-                // console.log("Datos de agregar consultorio ",res.data);
+                console.log("Respuesta del servidor");
+                console.log("Datos de agregar consultorio ",res.data);
                 if (res.data.status == false) {
                     if (this.titlePersonnel == 'Dueño') {
                         this.alertFalse('Parece que el dueño ya tiene este consultorio');
@@ -633,24 +633,26 @@
                 }else if (res.data.status == true) {
                     if (this.titlePersonnel == 'Dueño') {
                         this.alertTrue('El dueño se agrego correctamente');
-                        this.clinicPersonner = res.data.user.filter(item => item.role === 'Dueno')
+                        this.clinicPersonner = res.data.user.filter(item => item.role_id === 5)
                     }else if(this.titlePersonnel == 'Recolector'){
                         this.alertTrue('El recolector se agrego correctamente');
-                        this.clinicPersonner = res.data.user.filter(item => item.role === 'Recolector')
+                        this.clinicPersonner = res.data.user.filter(item => item.role_id === 3)
                     }
                     this.showAdd = false   
                 }
                 this.selectedUser = ''
             }).catch(error => {
-                // console.log("Error en servidor");
-                // console.log(error);
-                // console.log(error.response);
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
                 if (error.response.status == 422) {
                     if (this.titlePersonnel == 'Dueño') {
                         this.alertFalse('Parece que el campo agregar dueño estan vacío');
                     }else if(this.titlePersonnel == 'Recolector'){
                         this.alertFalse('Parece que el campo agregar recolector estan vacío');
                     }
+                }else{
+                    this.alertFalse('Parece que algo salio mal');
                 }
                 this.selectedUser = ''
             });
@@ -666,39 +668,38 @@
                 message = 'recolector'
                 role = 'recolectores'
             }
-            Swal.fire({
+            swal({
                 title: `Seguro que quiere quitar este ${message} ${item.document} de la lista de ${role}`,
                 text: "Los cambios se aplicaran permanentemente!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Quitar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Cambio Exitoso!',
-                        `Se quito el ${message} del la lista de ${role}`,
-                        'success'
-                    )
+                icon: "warning",
+                buttons: true,
+                succesMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
                     axios.post('/clinic/deleteUser', item).then(res => {
-                        // console.log("Respuesta del servidor");
-                        // console.log("Datos de delete ",res.data);
+                        console.log("Respuesta del servidor");
+                        console.log("Datos de delete ",res.data);
                         if (this.titlePersonnel == 'Dueño') {
-                            this.clinicPersonner = res.data.users.filter(item => item.role === 'Dueno')
+                            this.clinicPersonner = res.data.users.filter(item => item.role_id === 5)
                         }else if(this.titlePersonnel == 'Recolector'){
-                            this.clinicPersonner = res.data.users.filter(item => item.role === 'Recolector')
+                            this.clinicPersonner = res.data.users.filter(item => item.role_id === 3)
                         }
                         this.searchPersonnel = ''
-                        // console.log("filtro ",this.titlePersonnel);
+                        swal(
+                            'Cambio Exitoso!',
+                            `Se quito el ${message} del la lista de ${role}`,
+                            'success'
+                        )
+                        console.log("filtro ",this.titlePersonnel);
                     }).catch(error => {
-                        // console.log("Error en servidor");
-                        // console.log(error);
-                        // console.log(error.response);
+                        console.log("Error en servidor");
+                        console.log(error);
+                        console.log(error.response);
+                        this.alertFalse('Parece que algo salio mal')
                     });
+                    console.log("item ",item);
                 }
             })
-            // console.log("item ",item);
         },
 
         showRegister(){
@@ -707,7 +708,7 @@
 
         saveRegister(){
             var validate = true;
-            // console.log("registrar consultorio ",this.registerClinic);
+            console.log("registrar consultorio ",this.registerClinic);
             if (this.registerClinic.clinic_number == "") {
                 this.alertFalse('Parece que el campo numero consultorio esta vacío');
                 validate = false 
@@ -720,15 +721,17 @@
             }
             if (validate) {
                 axios.post('/clinic/register', this.registerClinic).then(res => {
-                    // console.log("Respuesta del servidor");
-                    // console.log("Datos de registrar consultorio ",res.data.clinic);
+                    console.log("Respuesta del servidor");
+                    console.log("Datos de registrar consultorio ",res.data.clinic);
                     this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
+                    this.registerClinic = {}
                     this.dialogRegister = false
                     this.showFilterClinic = true
+                    this.initialize()
                 }).catch(error => {
-                    // console.log("Error en servidor");
-                    // console.log(error);
-                    // console.log(error.response);
+                    console.log("Error en servidor");
+                    console.log(error);
+                    console.log(error.response);
                     if (error.response.status == 422) {
                         this.alertFalse('Parece que algunos campos estan vaíos'); 
                     }else{
@@ -739,19 +742,19 @@
         },
 
         alertTrue(text){
-            Swal.fire(
-            'Cambio Exitoso!',
-            text,
-            'success'
-            )
+            swal({
+                title: "Cambio Exitoso!",
+                text: text,
+                icon: "success",
+            });
         },
 
         alertFalse(text){
-            Swal.fire({
-            icon: 'error',
-            title: 'ERROR',
-            text: text,
-            })
+            swal({
+              title: "ERROR!",
+              text: text,
+              icon: "error",
+            });
         },
     },
   }

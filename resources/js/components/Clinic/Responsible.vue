@@ -90,6 +90,7 @@
                             md="4"
                             >
                             <v-text-field
+                              type="number"
                               v-model="registerClinic.clinic_number"
                               label="Numero Consultorio"
                             ></v-text-field>
@@ -231,6 +232,7 @@
   import ClinicEdit from "./Clinic.vue";
   import ClinicShow from "./ViewClinic.vue";
   import ClinicTower from "./Tower.vue";
+  // import Swal from 'sweetalert2';
 
   export default {
 
@@ -319,12 +321,14 @@
           this.initialize();
           this.showBtn = false;
           this.showFilterClinic = false 
+          this.selectedFilter = ''
         }else if (this.selectedFilter == 'RESPONSABLES SIN CONSULTORIOS'){
           this.responsibleClinic();
           this.showBtn = true
           this.showFilterClinic = false
+          this.selectedFilter = ''
         }
-        // console.log("01",this.selectedFilter);
+        console.log("01",this.selectedFilter);
       },
 
       showTower(textFilter){
@@ -355,15 +359,15 @@
       },
 
       addClinic(item){
-        // console.log("id",item);
+        console.log("id",item);
         axios.get('/clinic/generalShowClinic').then(res => {
-          // console.log("Respuesta del servidor");
-          // console.log("Datos de consulta ",res.data.clinics);
+          console.log("Respuesta del servidor");
+          console.log("Datos de consulta ",res.data.clinics);
           this.clinics = res.data.clinics;
         }).catch(error => {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
         });
         this.infoResponsible = item
         this.dialog = true
@@ -371,27 +375,27 @@
 
       initialize () {
         axios.get('/clinic/generalShow').then(res => {
-          // console.log("Respuesta del servidor");
-          // console.log(res.data);
+          console.log("Respuesta del servidor");
+          console.log(res.data);
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
           this.selectedClinic = ''
         }).catch(error => {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
         });
       },
 
       responsibleClinic () {
         axios.get('/clinic/generalShow').then(res => {
-          // console.log("Respuesta del servidor");
-          // console.log(res.data);
+          console.log("Respuesta del servidor");
+          console.log("Responsables sin consultorios",res.data);
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
           this.selectedFilter = ''
         }).catch(error => {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
         });
       },
 
@@ -399,7 +403,7 @@
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
-        // console.log(this.editedItem);
+        console.log(this.editedItem);
       },
 
       close () {
@@ -409,21 +413,22 @@
       },
 
       save () {
-        // console.log("Clinica seleccionada ",this.selectedClinic);
+        console.log("Clinica seleccionada ",this.selectedClinic);
         var data = {
           'clinic': this.selectedClinic,
           'user': this.infoResponsible.id
         }
         axios.post('/clinic/addClinic', data).then(res => {
-          // console.log("Respuesta del servidor");
-          // console.log("Datos de agregar consultorio ",res.data);
+          console.log("Respuesta del servidor");
+          console.log("Datos de agregar consultorio ",res.data);
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
           this.alertTrue(`El consultorio se agrego correctamente al responsable ${this.infoResponsible.document}`);
+          this.initialize()
           this.showBtn = false
         }).catch(error => {
-          // console.log("Error en servidor");
-          // console.log(error);
-          // console.log(error.response);
+          console.log("Error en servidor");
+          console.log(error);
+          console.log(error.response);
           if (error.response.status == 422) {
             this.alertFalse('Parece que el campo agregar cosultorio esta vaío'); 
           }else{
@@ -438,9 +443,9 @@
       },
 
       saveRegister(){
-        // console.log("Registro", this.registerClinic);
+        console.log("Registro", this.registerClinic);
         var validate = true;
-        // console.log("registrar consultorio ",this.registerClinic);
+        console.log("registrar consultorio ",this.registerClinic);
         if (this.registerClinic.clinic_number == "") {
           this.alertFalse('Parece que el campo numero consultorio esta vacío');
           validate = false 
@@ -453,15 +458,15 @@
         }
         if (validate == true) {
           axios.post('/clinic/register', this.registerClinic).then(res => {
-            // console.log("Respuesta del servidor");
-            // console.log("Datos de registrar consultorio ",res.data.clinic);
+            console.log("Respuesta del servidor");
+            console.log("Datos de registrar consultorio ",res.data.clinic);
             this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
             this.dialogRegister = false
             this.showFilterClinic = true
           }).catch(error => {
-            // console.log("Error en servidor");
-            // console.log(error);
-            // console.log(error.response);
+            console.log("Error en servidor");
+            console.log(error);
+            console.log(error.response);
             if (error.response.status == 422) {
               this.alertFalse('Parece que algunos campos estan vaíos'); 
             }else{
@@ -472,19 +477,19 @@
       },
 
       alertTrue(text){
-        Swal.fire(
-          'Cambio Exitoso!',
-          text,
-          'success'
-        )
+        swal({
+          title: "Cambio Exitoso!",
+          text: text,
+          icon: "success",
+        });
       },
 
       alertFalse(text){
-        Swal.fire({
-          icon: 'error',
-          title: 'ERROR',
+        swal({
+          title: "ERROR!",
           text: text,
-        })
+          icon: "error",
+        });
       },
     },
   }
