@@ -1,83 +1,133 @@
 <template>
-  <div>
+  <div style="height: 100vh; overflow-y: scroll">
     <v-app>
       <v-main>
-        <v-toolbar
-          flat
-        >
-          <v-btn
-            outlined
-            class="mr-4"
-            color="grey darken-2"
-            @click="setToday"
+        <div class="mt-6">
+          <v-toolbar
+            flat
           >
-            Mes de actual
-          </v-btn>
-          <v-btn
-            fab
-            text
-            small
-            color="grey darken-2"
-            @click="prev"
-          >
-            <v-icon small>
-              mdi-chevron-left
-            </v-icon>
-          </v-btn>
-          <v-btn
-            fab
-            text
-            small
-            color="grey darken-2"
-            @click="next"
-          >
-            <v-icon small>
-              mdi-chevron-right
-            </v-icon>
-          </v-btn>
-          <v-toolbar-title>
-            {{ date }}
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-menu
-            bottom
-            right
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                outlined
-                color="grey darken-2"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>
-                  mdi-menu-down
-                </v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-toolbar>
+            <div class="row">
+              <div class="col-sm-3 col-6">
+                <v-btn
+                  outlined
+                  class="mr-4"
+                  color="grey darken-2"
+                  @click="setToday"
+                >
+                  Mes actual
+                </v-btn>
+              </div>
+              <div class="col-sm-3 col-6">
+                <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="prev"
+                  >
+                  <v-icon small>
+                    mdi-chevron-left
+                  </v-icon>
+                </v-btn>
+                <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="next"
+                  >
+                  <v-icon small>
+                    mdi-chevron-right
+                  </v-icon>
+                </v-btn>
+              </div>
+              <div class="col-sm-5 col-6 pb-6">
+                <v-toolbar-title>
+                  {{ date }}
+                </v-toolbar-title>
+              </div>
+            </div>
+            <v-spacer></v-spacer>
+            <v-menu
+              bottom
+              right
+            >
+            </v-menu>
+          </v-toolbar>
+        </div>
+        <div class="my-6">
+          <div class="row flex justify-content-center">
+            <div class="text-center">
+              <h1>FORMULARIO RH1</h1>
+            </div>
+            <img src="../img/Imagen1.png" alt="Logo Megacentro" width="110em" class="ml-6 img-fluid">
+          </div>
+          <div class="text-center my-6">
+            <h3>FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS</h3>
+          </div>
+        </div>
+        <div class="row mx-4 mt-4">
+          <div class="row col-12 m-0 p-0">
+            <div class="col-8">
+              <v-text-field
+                label="NOMBRE DE LA INSTITUCIÓN"
+              ></v-text-field>
+            </div>
+            <div class="col-4">
+              <v-text-field
+                v-model="date"
+                label="FECHA"
+              ></v-text-field>
+            </div>
+          </div>
+          <div class="row col-12 m-0 p-0">
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="DIRECCIÓN"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="NIVEL DE ATENCIÓN"
+                ></v-text-field>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="CIUDAD"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="TELÉFONO"
+                ></v-text-field>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <v-text-field
+                  label="PROFESIONAL RESPOSABLE"
+                ></v-text-field>
+              </div>
+              <div>
+                <v-text-field
+                  label="CARGO"
+                ></v-text-field>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="container">
           <div class="table-responsive">
+            <div class="text-center mb-6">
+              <h4>TIPO DE RESIDUOS</h4>
+            </div>
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th rowspan="3" style="padding-bottom: 6em; padding-left: 1em;">FECHA</th>
+                  <th rowspan="3" style="padding-bottom: 5em; padding-left: 1em;">DÍA</th>
                   <th colspan="4" class="text-center">RESIDUOS NO PELIGROSOS</th>
                   <th colspan="12" class="text-center">RESIDUOS PELIGROSOS</th>
                 </tr>
@@ -88,27 +138,27 @@
                   <th class="text-center" colspan="2">RADIACTIVOS</th>
                 </tr>
                 <tr>
-                  <th class="text-center">BIODEGRADABLES (Kg)</th>
-                  <th class="text-center">RECICLABES (Kg)</th>
-                  <th class="text-center">INERTES (Kg)</th>
-                  <th class="text-center">ORDINARIOS-COMUNES (Kg)</th>
-                  <th class="text-center">BIOSANITARIOS (Kg)</th>
-                  <th class="text-center">ANATOMOPATOLOGICOS (Kg)</th>
-                  <th class="text-center">CORTOPUNZANTES (Kg)</th>
-                  <th class="text-center">ANIMALES (Kg)</th>
-                  <th class="text-center">FARMACOS (Kg)</th>
-                  <th class="text-center">CITOTÓXICOS (Kg)</th>
-                  <th class="text-center">METALES PESADOS (Kg)</th>
-                  <th class="text-center">REACTIVOS (Kg)</th>
-                  <th class="text-center">CONTENEDORES PRESURIZADOS</th>
-                  <th class="text-center">ACEITES USADOS (kg)</th>
-                  <th class="text-center">FUENTES ABIERTAS</th>
-                  <th class="text-center">FUENTES CERRADAS</th>
+                  <th class="text-center" style="font-size: 12px;">BIODEGRADABLES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">RECICLABES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">INERTES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ORDINARIOS-COMUNES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">BIOSANITARIOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ANATOMOPATOLOGICOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CORTOPUNZANTES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">ANIMALES (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">FARMACOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CITOTÓXICOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">METALES PESADOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">REACTIVOS (Kg)</th>
+                  <th class="text-center" style="font-size: 12px;">CONTENEDORES PRESURIZADOS</th>
+                  <th class="text-center" style="font-size: 12px;">ACEITES USADOS (kg)</th>
+                  <th class="text-center" style="font-size: 12px;">FUENTES ABIERTAS</th>
+                  <th class="text-center" style="font-size: 12px;">FUENTES CERRADAS</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="i in index" class="text-center">
-                  <td>{{ i }}</td>
+                  <td>{{ i <= 9 ? '0'+i : i }}</td>
                   <td v-for="residueId in residueIds">
                     {{ getResidueValue(residueId, i) }}
                   </td>
@@ -127,7 +177,7 @@
     data(){
       return {
         list_residues: [],
-        index: 30,
+        index: 31,
         residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
         type: 'month',
         typeToLabel: {

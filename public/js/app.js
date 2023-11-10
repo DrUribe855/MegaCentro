@@ -2350,7 +2350,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       list_residues: [],
-      index: 30,
+      index: 31,
       residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
       type: 'month',
       typeToLabel: {
@@ -4084,10 +4084,21 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("v-app", [_c("v-main", [_c("v-toolbar", {
+  return _c("div", {
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
+  }, [_c("v-app", [_c("v-main", [_c("div", {
+    staticClass: "mt-6"
+  }, [_c("v-toolbar", {
     attrs: {
       flat: ""
     }
+  }, [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-sm-3 col-6"
   }, [_c("v-btn", {
     staticClass: "mr-4",
     attrs: {
@@ -4097,7 +4108,9 @@ var render = function render() {
     on: {
       click: _vm.setToday
     }
-  }, [_vm._v("\n          Mes de actual\n        ")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                Mes actual\n              ")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-3 col-6"
+  }, [_c("v-btn", {
     attrs: {
       fab: "",
       text: "",
@@ -4111,7 +4124,7 @@ var render = function render() {
     attrs: {
       small: ""
     }
-  }, [_vm._v("\n            mdi-chevron-left\n          ")])], 1), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                  mdi-chevron-left\n                ")])], 1), _vm._v(" "), _c("v-btn", {
     attrs: {
       fab: "",
       text: "",
@@ -4125,67 +4138,100 @@ var render = function render() {
     attrs: {
       small: ""
     }
-  }, [_vm._v("\n            mdi-chevron-right\n          ")])], 1), _vm._v(" "), _c("v-toolbar-title", [_vm._v("\n          " + _vm._s(_vm.date) + "\n        ")]), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-menu", {
+  }, [_vm._v("\n                  mdi-chevron-right\n                ")])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-5 col-6 pb-6"
+  }, [_c("v-toolbar-title", [_vm._v("\n                " + _vm._s(_vm.date) + "\n              ")])], 1)]), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-menu", {
     attrs: {
       bottom: "",
       right: ""
+    }
+  })], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "my-6"
+  }, [_c("div", {
+    staticClass: "row flex justify-content-center"
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("h1", [_vm._v("FORMULARIO RH1")])]), _vm._v(" "), _c("img", {
+    staticClass: "ml-6 img-fluid",
+    attrs: {
+      src: __webpack_require__(/*! ../img/Imagen1.png */ "./resources/js/components/img/Imagen1.png"),
+      alt: "Logo Megacentro",
+      width: "110em"
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "text-center my-6"
+  }, [_c("h3", [_vm._v("FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS")])])]), _vm._v(" "), _c("div", {
+    staticClass: "row mx-4 mt-4"
+  }, [_c("div", {
+    staticClass: "row col-12 m-0 p-0"
+  }, [_c("div", {
+    staticClass: "col-8"
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "NOMBRE DE LA INSTITUCIÓN"
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "FECHA"
     },
-    scopedSlots: _vm._u([{
-      key: "activator",
-      fn: function fn(_ref) {
-        var on = _ref.on,
-          attrs = _ref.attrs;
-        return [_c("v-btn", _vm._g(_vm._b({
-          attrs: {
-            outlined: "",
-            color: "grey darken-2"
-          }
-        }, "v-btn", attrs, false), on), [_c("span", [_vm._v(_vm._s(_vm.typeToLabel[_vm.type]))]), _vm._v(" "), _c("v-icon", {
-          attrs: {
-            right: ""
-          }
-        }, [_vm._v("\n                mdi-menu-down\n              ")])], 1)];
-      }
-    }])
-  }, [_vm._v(" "), _c("v-list", [_c("v-list-item", {
-    on: {
-      click: function click($event) {
-        _vm.type = "day";
-      }
+    model: {
+      value: _vm.date,
+      callback: function callback($$v) {
+        _vm.date = $$v;
+      },
+      expression: "date"
     }
-  }, [_c("v-list-item-title", [_vm._v("Day")])], 1), _vm._v(" "), _c("v-list-item", {
-    on: {
-      click: function click($event) {
-        _vm.type = "week";
-      }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "row col-12 m-0 p-0"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "DIRECCIÓN"
     }
-  }, [_c("v-list-item-title", [_vm._v("Week")])], 1), _vm._v(" "), _c("v-list-item", {
-    on: {
-      click: function click($event) {
-        _vm.type = "month";
-      }
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "NIVEL DE ATENCIÓN"
     }
-  }, [_c("v-list-item-title", [_vm._v("Month")])], 1), _vm._v(" "), _c("v-list-item", {
-    on: {
-      click: function click($event) {
-        _vm.type = "4day";
-      }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "CIUDAD"
     }
-  }, [_c("v-list-item-title", [_vm._v("4 days")])], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "TELÉFONO"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("div", [_c("v-text-field", {
+    attrs: {
+      label: "PROFESIONAL RESPOSABLE"
+    }
+  })], 1), _vm._v(" "), _c("div", [_c("v-text-field", {
+    attrs: {
+      label: "CARGO"
+    }
+  })], 1)])])]), _vm._v(" "), _c("div", {
     staticClass: "container"
   }, [_c("div", {
     staticClass: "table-responsive"
-  }, [_c("table", {
+  }, [_c("div", {
+    staticClass: "text-center mb-6"
+  }, [_c("h4", [_vm._v("TIPO DE RESIDUOS")])]), _vm._v(" "), _c("table", {
     staticClass: "table table-bordered"
   }, [_c("thead", [_c("tr", [_c("th", {
     staticStyle: {
-      "padding-bottom": "6em",
+      "padding-bottom": "5em",
       "padding-left": "1em"
     },
     attrs: {
       rowspan: "3"
     }
-  }, [_vm._v("FECHA")]), _vm._v(" "), _c("th", {
+  }, [_vm._v("DÍA")]), _vm._v(" "), _c("th", {
     staticClass: "text-center",
     attrs: {
       colspan: "4"
@@ -4216,44 +4262,92 @@ var render = function render() {
       colspan: "2"
     }
   }, [_vm._v("RADIACTIVOS")])]), _vm._v(" "), _c("tr", [_c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("BIODEGRADABLES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("RECICLABES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("INERTES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("ORDINARIOS-COMUNES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("BIOSANITARIOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("ANATOMOPATOLOGICOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("CORTOPUNZANTES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("ANIMALES (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("FARMACOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("CITOTÓXICOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("METALES PESADOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("REACTIVOS (Kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("CONTENEDORES PRESURIZADOS")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("ACEITES USADOS (kg)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("FUENTES ABIERTAS")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "12px"
+    }
   }, [_vm._v("FUENTES CERRADAS")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.index, function (i) {
     return _c("tr", {
       staticClass: "text-center"
-    }, [_c("td", [_vm._v(_vm._s(i))]), _vm._v(" "), _vm._l(_vm.residueIds, function (residueId) {
+    }, [_c("td", [_vm._v(_vm._s(i <= 9 ? "0" + i : i))]), _vm._v(" "), _vm._l(_vm.residueIds, function (residueId) {
       return _c("td", [_vm._v("\n                  " + _vm._s(_vm.getResidueValue(residueId, i)) + "\n                ")]);
     })], 2);
-  }), 0)])])])], 1)], 1)], 1);
+  }), 0)])])])])], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5905,6 +5999,16 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
 //     enabledTransports: ['ws', 'wss'],
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/img/Imagen1.png":
+/*!*************************************************!*\
+  !*** ./resources/js/components/img/Imagen1.png ***!
+  \*************************************************/
+/***/ ((module) => {
+
+module.exports = "/images/Imagen1.png?4a3040185f75883020363e61a4ce38d7";
 
 /***/ }),
 
