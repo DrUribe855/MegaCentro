@@ -37,6 +37,7 @@
                                 md="6"
                               >
                                 <v-text-field
+                                  name="clinicNumber"
                                   v-model="editedItem.clinic.clinic_number"
                                   label="Numero de consultorio"
                                   readonly
@@ -74,8 +75,9 @@
                               >
                                 <v-select
                                   id="select3"
+                                  v-model="editedItem.clinic.residue_id"
                                   v-if="subCategory === 'Peligrosos'"
-                                  :items="getOpcionesResiduo(tipo)"
+                                  :items="getOpcionesResiduo(type)"
                                   label="Tipo de residuo peligroso"
                                 ></v-select>
                               </v-col>
@@ -86,6 +88,7 @@
                               >
                                 <v-select
                                   id="select4"
+                                  v-model="editedItem.clinic.residue_id"
                                   v-if="subCategory === 'No peligrosos'"
                                   :items="opcionesNoPeligrosos.map(opcion => opcion.label)"
                                   label="Tipo de residuo no peligroso"
@@ -100,6 +103,7 @@
                                   id="select5"
                                   type="number"
                                   label="Cantidad recolectada"
+                                  v-model="editedItem.clinic.weight"
                                 ></v-text-field>
                               </v-col>
                             </v-row>
@@ -182,14 +186,12 @@
         id: '',
         clinic: {
           clinic_number: '',
+          residue_id: '',
+          weight: '',
         }
       },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+      clinicNumber: {
+
       },
       subCategory: "",
       type: "",
@@ -260,8 +262,8 @@
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.editedItem.clinic.clinic_number = item.clinic.clinic_number;  
+
         this.dialog = true
       },
 
@@ -293,12 +295,12 @@
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
+        axios.post('/collector/saveCollection', this.editedItem.clinic).then(resp => {
+          console.log('Recolección registrada exitosamente: ', resp.data);
+        }).catch(error => {
+          console.log(error.response);
+        });
+        
       },
       getOpcionesResiduo(tipoPeligroso) {
         switch (tipoPeligroso) {
@@ -311,7 +313,7 @@
           default:
             return [];
         }
-      },
+      }
     },
   }
 </script>

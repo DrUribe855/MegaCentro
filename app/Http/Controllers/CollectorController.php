@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Clinic_user;
+use App\Models\CollectionLog;
+use App\Models\Residue;
+use App\Models\Clinic;
 
 class CollectorController extends Controller
 {
@@ -21,7 +24,33 @@ class CollectorController extends Controller
 
     public function store(Request $request)
     {
-        //
+
+        $clinicNumber = $request->input('clinic_number');
+        $residueName = $request->input('residue_id');
+
+        $clinicId = Clinic::select('id')
+                    ->where('clinic_number', $clinicNumber)
+                    ->first();
+
+        $residueId = Residue::select('id')
+                    ->where('residue_name', $residueName)
+                    ->first();
+
+        $collectionLog = new CollectionLog();
+        $collectionLog->clinic_id = $clinicId->id;
+        $collectionLog->residue_id = $residueId->id;
+        $collectionLog->weight = $request->input('weight');
+        $collectionLog->save();
+
+        $data = [
+            'status' => true,
+            'collectionLog' => $collectionLog
+        ];
+
+        return response()->json($data);
+
+
+
     }
 
     public function show($id)

@@ -61,7 +61,7 @@ Route::post('/clinic/addUser', [ClinicController::class, 'addUser'])->middleware
 
 Route::get('/collector/index', [ CollectorController::class, 'index'])->middleware('can:collector.collections.generalShow');
 Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
-
+Route::post('/collector/saveCollection', [ CollectorController::class, 'store']);
 // ------------------------------- Rutas de encargado --------------------------------------- \\
 
 Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('can:manager.clinics.generalShow');

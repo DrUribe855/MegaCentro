@@ -3768,16 +3768,12 @@ __webpack_require__.r(__webpack_exports__);
       editedItem: {
         id: '',
         clinic: {
-          clinic_number: ''
+          clinic_number: '',
+          residue_id: '',
+          weight: ''
         }
       },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
+      clinicNumber: {},
       subCategory: "",
       type: "",
       opcionesPeligrosos: [{
@@ -3835,8 +3831,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     editItem: function editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem.clinic.clinic_number = item.clinic.clinic_number;
       this.dialog = true;
     },
     deleteItem: function deleteItem(item) {
@@ -3865,12 +3860,11 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     save: function save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
-      this.close();
+      axios.post('/collector/saveCollection', this.editedItem.clinic).then(function (resp) {
+        console.log('Recolección registrada exitosamente: ', resp.data);
+      })["catch"](function (error) {
+        console.log(error.response);
+      });
     },
     getOpcionesResiduo: function getOpcionesResiduo(tipoPeligroso) {
       switch (tipoPeligroso) {
@@ -5965,6 +5959,7 @@ var render = function render() {
           }
         }, [_c("v-text-field", {
           attrs: {
+            name: "clinicNumber",
             label: "Numero de consultorio",
             readonly: ""
           },
@@ -6024,8 +6019,15 @@ var render = function render() {
         }, [_vm.subCategory === "Peligrosos" ? _c("v-select", {
           attrs: {
             id: "select3",
-            items: _vm.getOpcionesResiduo(_vm.tipo),
+            items: _vm.getOpcionesResiduo(_vm.type),
             label: "Tipo de residuo peligroso"
+          },
+          model: {
+            value: _vm.editedItem.clinic.residue_id,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem.clinic, "residue_id", $$v);
+            },
+            expression: "editedItem.clinic.residue_id"
           }
         }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
           attrs: {
@@ -6040,6 +6042,13 @@ var render = function render() {
               return opcion.label;
             }),
             label: "Tipo de residuo no peligroso"
+          },
+          model: {
+            value: _vm.editedItem.clinic.residue_id,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem.clinic, "residue_id", $$v);
+            },
+            expression: "editedItem.clinic.residue_id"
           }
         }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
           attrs: {
@@ -6052,6 +6061,13 @@ var render = function render() {
             id: "select5",
             type: "number",
             label: "Cantidad recolectada"
+          },
+          model: {
+            value: _vm.editedItem.clinic.weight,
+            callback: function callback($$v) {
+              _vm.$set(_vm.editedItem.clinic, "weight", $$v);
+            },
+            expression: "editedItem.clinic.weight"
           }
         })], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
           attrs: {
