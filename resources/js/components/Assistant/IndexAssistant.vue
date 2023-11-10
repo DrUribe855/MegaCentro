@@ -204,7 +204,7 @@
         if (date != '') {
           axios.get(`/residue/generalShow/${date}`).then(res =>{
             console.log("Respuesta del servidor");
-            console.log("Datos de consulta ",res.data.date);
+            console.log("Datos de consulta ",res.data);
             this.list_residues = res.data.residues;
           }).catch(error => {
             console.log("Error en servidor");
@@ -215,13 +215,14 @@
       },
 
       getResidueValue(residueId, day) {
-        const residue = this.list_residues.find((r) => r.residue_id === residueId && r.day_of_month === day);
-
-        if (residue) {
-          return residue.total_weight;
-        } else {
-          return "0";
+        var weigth = 0;
+        for (let i = 0; i < this.list_residues.length; i++) {
+          if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
+            console.log("Funciono ", this.list_residues[i].total_weight);
+            weigth += this.list_residues[i].total_weight;
+          }
         }
+        return weigth;
       },
 
       setToday () {

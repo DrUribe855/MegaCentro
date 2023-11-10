@@ -11,7 +11,6 @@ class ResidueController extends Controller
 {
     public function generalShow($date){
         $residues = CollectionLog::select(
-            'created_at',
             'residue_id',
             DB::raw('DAY(created_at) as day_of_month'),
             DB::raw('SUM(weight) as total_weight')

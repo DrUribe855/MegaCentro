@@ -2396,7 +2396,7 @@ __webpack_require__.r(__webpack_exports__);
       if (date != '') {
         axios.get("/residue/generalShow/".concat(date)).then(function (res) {
           console.log("Respuesta del servidor");
-          console.log("Datos de consulta ", res.data.date);
+          console.log("Datos de consulta ", res.data);
           _this.list_residues = res.data.residues;
         })["catch"](function (error) {
           console.log("Error en servidor");
@@ -2406,14 +2406,14 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getResidueValue: function getResidueValue(residueId, day) {
-      var residue = this.list_residues.find(function (r) {
-        return r.residue_id === residueId && r.day_of_month === day;
-      });
-      if (residue) {
-        return residue.total_weight;
-      } else {
-        return "0";
+      var weigth = 0;
+      for (var i = 0; i < this.list_residues.length; i++) {
+        if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
+          console.log("Funciono ", this.list_residues[i].total_weight);
+          weigth += this.list_residues[i].total_weight;
+        }
       }
+      return weigth;
     },
     setToday: function setToday() {
       this.focus = new Date();
@@ -2810,6 +2810,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import Swal from 'sweetalert2';
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     'clinic-edit': _Clinic_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -3078,6 +3080,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+// import Swal from 'sweetalert2';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -3273,6 +3276,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
