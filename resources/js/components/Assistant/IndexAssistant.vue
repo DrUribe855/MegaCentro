@@ -190,22 +190,22 @@
                         <th class="text-center" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>
-                        <th class="text-center p-0" style="font-size: 10.6px;">BIODEGRADABLES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">RECICLABES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">INERTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">ORDINARIOS-COMUNES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">ANATOMOPATOLOGICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">CORTOPUNZANTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">ANIMALES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">FARMACOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">CITOTÓXICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">METALES PESADOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">REACTIVOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">CONTENEDORES PRESURIZADOS</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">ACEITES USADOS (kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">FUENTES ABIERTAS</th>
-                        <th class="text-center p-0" style="font-size: 10.6px;">FUENTES CERRADAS</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">BIODEGRADABLES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">RECICLABES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">INERTES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">ORDINARIOS-COMUNES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">BIOSANITARIOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">ANATOMOPATOLOGICOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">CORTOPUNZANTES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">ANIMALES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">FARMACOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">CITOTÓXICOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">METALES PESADOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">REACTIVOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">CONTENEDORES PRESURIZADOS</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">ACEITES USADOS (kg)</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">FUENTES ABIERTAS</th>
+                        <th class="text-center p-0" style="font-size: 10.5px;">FUENTES CERRADAS</th>
                       </tr>
                     </thead>
                     <tbody>

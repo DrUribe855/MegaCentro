@@ -4535,82 +4535,82 @@ var render = function render() {
   }, [_vm._v("RADIACTIVOS")])]), _vm._v(" "), _c("tr", [_c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("BIODEGRADABLES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("RECICLABES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("INERTES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("ORDINARIOS-COMUNES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("BIOSANITARIOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("ANATOMOPATOLOGICOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("CORTOPUNZANTES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("ANIMALES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("FARMACOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("CITOTÓXICOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("METALES PESADOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("REACTIVOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("CONTENEDORES PRESURIZADOS")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("ACEITES USADOS (kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("FUENTES ABIERTAS")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.6px"
+      "font-size": "10.5px"
     }
   }, [_vm._v("FUENTES CERRADAS")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.index, function (i) {
     return _c("tr", {
