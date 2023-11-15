@@ -245,7 +245,7 @@
     data: () => ({
       search: '',
       selectedFilter: '',
-      itemsTower: ['1','2','3'],
+      itemsTower: ['1','2'],
       filters: ['CONSULTORIOS', 'TORRES', 'RESPONSABLES CON CONSULTORIOS', 'RESPONSABLES SIN CONSULTORIOS'],
       showFilterTower: false,
       showFilterClinic: false,
@@ -323,7 +323,7 @@
           this.showFilterClinic = false 
           this.selectedFilter = ''
         }else if (this.selectedFilter == 'RESPONSABLES SIN CONSULTORIOS'){
-          this.responsibleClinic();
+          this.initialize();
           this.showBtn = true
           this.showFilterClinic = false
           this.selectedFilter = ''
@@ -376,22 +376,17 @@
       initialize () {
         axios.get('/clinic/generalShow').then(res => {
           console.log("Respuesta del servidor");
-          console.log(res.data);
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
+          if (this.desserts.length == 0) {
+            this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
+            this.showBtn = true
+            this.showFilterClinic = false
+          }else{
+            this.showBtn = false;
+            this.showFilterClinic = false 
+          }
+          console.log(this.desserts.length);
           this.selectedClinic = ''
-        }).catch(error => {
-          console.log("Error en servidor");
-          console.log(error);
-          console.log(error.response);
-        });
-      },
-
-      responsibleClinic () {
-        axios.get('/clinic/generalShow').then(res => {
-          console.log("Respuesta del servidor");
-          console.log("Responsables sin consultorios",res.data);
-          this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
-          this.selectedFilter = ''
         }).catch(error => {
           console.log("Error en servidor");
           console.log(error);

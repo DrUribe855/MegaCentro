@@ -381,7 +381,7 @@
     export default {
     data () {
       return {
-        itemsTower: ['1','2','3'],
+        itemsTower: ['1','2'],
         items: ['OCUPADO', 'DESOCUPADO'],
         filters: ['RESPONSABLES', 'TORRES','CONSULTORIOS SIN RESPONSABLES', 'CONSULTORIOS CON RESPONSABLES'],
         tittle: 'Consultorios Sin Responsables',

@@ -230,9 +230,9 @@
             dialogEdit: false,
             dialogRegister: false,
             label: 'Ver por',
-            itemsTower: ['1','2','3'],
+            itemsTower: ['1','2'],
             items: ['OCUPADO', 'DESOCUPADO'],
-            filters: ['RESPONSABLES', 'CONSULTORIOS', 'TORRE #1', 'TORRE #2', 'TORRE #3'],
+            filters: ['RESPONSABLES', 'CONSULTORIOS', 'TORRE #1', 'TORRE #2'],
             headers: [
                 { text: 'N Torre', value: 'tower_id' },
                 { text: 'N Conuslta', value: 'clinic_number' },
@@ -284,8 +284,6 @@
                     this.initialize(1)
                 }else if (this.selectedFilter == 'TORRE #2') {
                     this.initialize(2)
-                }else if (this.selectedFilter == 'TORRE #3') {
-                    this.initialize(3)
                 }
                 console.log("Filtro seleccionado ",this.selectedFilter);
             },

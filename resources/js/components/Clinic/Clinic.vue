@@ -264,7 +264,7 @@
             return {
                 title: '',
                 items: ['OCUPADO', 'DESOCUPADO'],
-                itemsTower: ['1','2','3'],
+                itemsTower: ['1','2'],
                 dialog: false,
                 dialogEdit: false,
                 showAdd: false,

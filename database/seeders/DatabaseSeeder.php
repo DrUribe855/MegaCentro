@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
 
     public function fake_tower(){
         $j = 1;
-        for ($i=0; $i < 3; $i++) { 
+        for ($i=0; $i < 2; $i++) { 
             Tower::insert([
                 'id' => $j,
             ]);
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
     public function fake_clinic(){
         for ($i=0; $i < 300; $i++) { 
             $clinic_number = rand(100,500);
-            $tower_id = rand(1,3);
+            $tower_id = rand(1,2);
             while (Clinic::where('clinic_number', $clinic_number)->exists()) {
                 $clinic_number = rand(100, 500);
             }
