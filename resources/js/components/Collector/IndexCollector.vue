@@ -117,14 +117,14 @@
                             text
                             @click="close"
                           >
-                            Cancel
+                            Cancelar
                           </v-btn>
                           <v-btn
                             color="blue darken-1"
                             text
                             @click="save"
                           >
-                            Save
+                            Registrar
                           </v-btn>
                         </v-card-actions>
                       </v-card>
@@ -165,6 +165,9 @@
     </v-app>
 </template>
 <script>
+
+  import swal from 'sweetalert';
+
   export default {
     data: () => ({
       dialog: false,
@@ -262,8 +265,8 @@
       },
 
       editItem (item) {
+        console.log(item);
         this.editedItem.clinic.clinic_number = item.clinic.clinic_number;  
-
         this.dialog = true
       },
 
@@ -280,10 +283,6 @@
 
       close () {
         this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
       },
 
       closeDelete () {
@@ -297,6 +296,13 @@
       save () {
         axios.post('/collector/saveCollection', this.editedItem.clinic).then(resp => {
           console.log('Recolección registrada exitosamente: ', resp.data);
+          if(resp.data == 'Todos los datos deben ser validados'){
+            this.showAlert('Error', 'Todos los datos deben ser validados', 'error');
+          }else{
+            this.showAlert('Registrado', 'La recolección se ha registrado con éxito', 'success');
+            this.close();
+          }
+          this.getClinics();
         }).catch(error => {
           console.log(error.response);
         });
@@ -313,7 +319,14 @@
           default:
             return [];
         }
-      }
+      },
+      showAlert(title, text, icon){
+        swal({
+          title: title,
+          text: text,
+          icon: icon,
+        });
+      },
     },
   }
 </script>

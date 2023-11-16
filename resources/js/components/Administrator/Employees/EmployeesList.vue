@@ -144,14 +144,14 @@
                                     text
                                     @click="close"
                                   >
-                                    Cancel
+                                    Cancelar
                                   </v-btn>
                                   <v-btn
                                     color="blue darken-1"
                                     text
                                     @click="save"
                                   >
-                                    Save
+                                    Registrar
                                   </v-btn>
                                 </v-card-actions>
                               </v-card>
@@ -215,7 +215,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         customFilter: (itemsPerPage) => [5, 10].includes(itemsPerPage),
       },
       items: ['Activo', 'Inactivo'],
-      roles: ['Administrador','Auxiliar Contable', 'Recolector'],
+      roles: ['Administrador','Auxiliar Contable', 'Recolector','Dueño'],
       headers: [
         {
           text: 'Documento',

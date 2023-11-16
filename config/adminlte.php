@@ -304,19 +304,19 @@ return [
         [
             'text' => 'Responsables',
             'url'  => '/clinic/view',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-users',
             'can' => 'admin.managers.generalShow'
         ],
         [
             'text' => 'Información residuos',
             'url'  => '/assistant/index',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-list',
             'can' => 'assistant.statistics.generalShow'
         ],
         [
             'text' => 'Registrar recolección',
             'url'  => '/collector/index',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-trash',
             'can' => 'collector.collections.generalShow'
         ],
         [
