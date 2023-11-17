@@ -2585,7 +2585,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       },
       items: ['Activo', 'Inactivo'],
-      roles: ['Administrador', 'Auxiliar Contable', 'Recolector', 'Dueño'],
+      roles: ['Administrador', 'Auxiliar Contable', 'Recolector', 'Responsable', 'Dueño'],
       headers: [{
         text: 'Documento',
         align: 'start',
@@ -3287,6 +3287,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      title: '',
       search: '',
       selectedFilter: '',
       itemsTower: ['1', '2'],
@@ -3352,7 +3353,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.initialize();
+    this.initialize(0);
   },
   methods: {
     changeFilter: function changeFilter() {
@@ -3361,12 +3362,12 @@ __webpack_require__.r(__webpack_exports__);
       } else if (this.selectedFilter == 'TORRES') {
         this.showFilterTower = true;
       } else if (this.selectedFilter == 'RESPONSABLES CON CONSULTORIOS') {
-        this.initialize();
+        this.initialize(1);
         this.showBtn = false;
         this.showFilterClinic = false;
         this.selectedFilter = '';
       } else if (this.selectedFilter == 'RESPONSABLES SIN CONSULTORIOS') {
-        this.initialize();
+        this.initialize(2);
         this.showBtn = true;
         this.showFilterClinic = false;
         this.selectedFilter = '';
@@ -3411,20 +3412,43 @@ __webpack_require__.r(__webpack_exports__);
       this.infoResponsible = item;
       this.dialog = true;
     },
-    initialize: function initialize() {
+    initialize: function initialize(optionFilter) {
       var _this2 = this;
       axios.get('/clinic/generalShow').then(function (res) {
         console.log("Respuesta del servidor");
-        _this2.desserts = res.data.responsible.filter(function (item) {
-          return item.clinic_user.length > 0;
-        });
-        if (_this2.desserts.length == 0) {
+        console.log(res.data);
+        if (optionFilter == 0) {
+          _this2.desserts = res.data.responsible.filter(function (item) {
+            return item.clinic_user.length > 0;
+          });
+          if (_this2.desserts.length == 0) {
+            _this2.title = 'Responsables sin consultorio';
+            _this2.desserts = res.data.responsible.filter(function (item) {
+              return item.clinic_user.length == 0;
+            });
+            _this2.showBtn = true;
+            _this2.showFilterClinic = false;
+          } else {
+            _this2.desserts = res.data.responsible.filter(function (item) {
+              return item.clinic_user.length > 0;
+            });
+            _this2.title = 'Responsables con consultorio';
+            _this2.showBtn = false;
+            _this2.showFilterClinic = false;
+          }
+        }
+        if (optionFilter == 2) {
+          _this2.title = 'Responsables sin consultorio';
           _this2.desserts = res.data.responsible.filter(function (item) {
             return item.clinic_user.length == 0;
           });
           _this2.showBtn = true;
           _this2.showFilterClinic = false;
         } else {
+          _this2.desserts = res.data.responsible.filter(function (item) {
+            return item.clinic_user.length > 0;
+          });
+          _this2.title = 'Responsables con consultorio';
           _this2.showBtn = false;
           _this2.showFilterClinic = false;
         }
@@ -5429,7 +5453,7 @@ var render = function render() {
         return _vm.showRegister();
       }
     }
-  }, [_vm._v("\n                Nuevo Consultorio\n              ")]), _vm._v(" "), _c("v-card-title", [_vm._v("\n                Responsables\n                "), _vm._v(" "), _c("v-card-actions", {
+  }, [_vm._v("\n                Nuevo Consultorio\n              ")]), _vm._v(" "), _c("v-card-title", [_vm._v("\n                " + _vm._s(_vm.title) + "\n                "), _vm._v(" "), _c("v-card-actions", {
     staticClass: "ml-5"
   }, [_c("v-select", {
     attrs: {

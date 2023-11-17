@@ -19,7 +19,7 @@ class ClinicController extends Controller
     }
 
     public function generalShow(){
-        $responsibles = User::role('Encargado')->with('clinic_user.clinic')->get();
+        $responsibles = User::role('Responsable')->with('clinic_user.clinic')->get();
 
         $data = [
                     'status' => true,

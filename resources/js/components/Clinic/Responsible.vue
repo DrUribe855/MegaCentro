@@ -16,7 +16,7 @@
                   Nuevo Consultorio
                 </v-btn>
                 <v-card-title>
-                  Responsables
+                  {{ title }}
                   <!-- <v-spacer></v-spacer> -->
                   <v-card-actions class="ml-5">
                       <v-select
@@ -243,6 +243,7 @@
     },
 
     data: () => ({
+      title: '',
       search: '',
       selectedFilter: '',
       itemsTower: ['1','2'],
@@ -308,7 +309,7 @@
     },
 
     created () {
-      this.initialize()
+      this.initialize(0)
     },
 
     methods: {
@@ -318,12 +319,12 @@
         }else if(this.selectedFilter == 'TORRES'){
           this.showFilterTower = true
         }else if(this.selectedFilter == 'RESPONSABLES CON CONSULTORIOS'){
-          this.initialize();
+          this.initialize(1);
           this.showBtn = false;
           this.showFilterClinic = false 
           this.selectedFilter = ''
         }else if (this.selectedFilter == 'RESPONSABLES SIN CONSULTORIOS'){
-          this.initialize();
+          this.initialize(2);
           this.showBtn = true
           this.showFilterClinic = false
           this.selectedFilter = ''
@@ -373,15 +374,32 @@
         this.dialog = true
       },
 
-      initialize () {
+      initialize (optionFilter) {
         axios.get('/clinic/generalShow').then(res => {
           console.log("Respuesta del servidor");
-          this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
-          if (this.desserts.length == 0) {
+          console.log(res.data)
+          if (optionFilter == 0) {
+            this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);  
+            if (this.desserts.length == 0) {
+              this.title = 'Responsables sin consultorio';
+              this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
+              this.showBtn = true
+              this.showFilterClinic = false
+            }else{
+              this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
+              this.title = 'Responsables con consultorio';
+              this.showBtn = false;
+              this.showFilterClinic = false 
+            }
+          }
+          if (optionFilter == 2) {
+            this.title = 'Responsables sin consultorio';
             this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
             this.showBtn = true
             this.showFilterClinic = false
           }else{
+            this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
+            this.title = 'Responsables con consultorio';
             this.showBtn = false;
             this.showFilterClinic = false 
           }
