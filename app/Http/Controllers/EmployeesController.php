@@ -102,6 +102,7 @@ class EmployeesController extends Controller
         $originalDocument = $employees->document;
         $originalEmail = $employees->email;
         $role = Role::findOrCreate($request->input('role_name'));
+        $password = $request->input('password');
 
         // return response()->json($request);
 
@@ -151,19 +152,35 @@ class EmployeesController extends Controller
         }
 
         if($edit){
-            $employees->name = $request->input('name');
-            $employees->last_name = $request->input('last_name');
-            $employees->phone = $request->input('phone');
-            $employees->email = $request->input('email');
-            $employees->roles()->sync([$role->id]);
-            // $employees->password = $request->input('password');
-            $employees->status = $request->input('status');
-            $employees->save();
-            $data = [
-                        'status' => true,
-                        'employees' => $employees,
-                    ];
-            return response()->json($data);
+            if($password == ''){
+                $employees->name = $request->input('name');
+                $employees->last_name = $request->input('last_name');
+                $employees->phone = $request->input('phone');
+                $employees->email = $request->input('email');
+                $employees->roles()->sync([$role->id]);
+                $employees->status = $request->input('status');
+                $employees->save();
+                $data = [
+                            'status' => true,
+                            'employees' => $employees,
+                        ];
+                return response()->json($data);
+            }else{
+                $employees->name = $request->input('name');
+                $employees->last_name = $request->input('last_name');
+                $employees->phone = $request->input('phone');
+                $employees->email = $request->input('email');
+                $employees->roles()->sync([$role->id]);
+                $employees->password = Hash::make($request->input('password'));
+                $employees->status = $request->input('status');
+                $employees->save();
+                $data = [
+                            'status' => true,
+                            'employees' => $employees,
+                        ];
+                return response()->json($data);
+            }
+            
         }
 
     }

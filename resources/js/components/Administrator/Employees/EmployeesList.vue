@@ -104,8 +104,7 @@
                                           <v-text-field
                                             v-model="editedItem.password"
                                             label="Contraseña"
-                                            
-                                            
+                                            type="password"
                                           ></v-text-field>
                                           
                                         </v-col>

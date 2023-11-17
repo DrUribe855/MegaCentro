@@ -9,7 +9,7 @@
 
 @section('content')
 	<div id="app">
-		Vista index
+		<index></index>
 	</div>
 @stop
 @section('css')
