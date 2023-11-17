@@ -8,6 +8,8 @@ Vue.use(Vuetify);
  
 window.Vue = require('vue');
 
+Vue.component('index', require('./components/Index.vue').default);
+
 // Clinic
 Vue.component('clinic-list', require('./components/Clinic/Responsible.vue').default);
 Vue.component('clinic-edit', require('./components/Clinic/Clinic.vue').default);
