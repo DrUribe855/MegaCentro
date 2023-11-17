@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white">
+    <div class="bg-white" style="height: 100vh; overflow-y: scroll">
         <v-app>
             <v-main>
                 <v-card 
@@ -564,10 +564,11 @@
             this.dialogCollector = false
             this.dialogRegister = false
             this.registerClinic = {}
+            this.clinicPersonner = []
         },
 
         infoPersonnel(item, option){
-            axios.get(`/clinic/consultation/${item.id}`).then(res => {
+            axios.get(`/clinic/consultation/${item.id}/${option}`).then(res => {
                 console.log("Respuesta del servidor");
                 console.log("Datos de tabla ",res.data);
                 console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
@@ -615,11 +616,18 @@
         },
 
         saveUser(){
-            console.log(this.selectedUser);
-            console.log(this.dataClinic.id);
+            console.log("this.selectedUser ",this.selectedUser);
+            console.log("this.dataClinic.id ",this.dataClinic.id);
+            var status = 0;
+            if (this.titlePersonnel == 'Dueño') {
+                status = 1;
+            }else{
+                status = 2;
+            }
             var data = {
                 'clinic': this.dataClinic.id,
-                'user': this.selectedUser
+                'user': this.selectedUser,
+                'status': status,
             }
             axios.post('/clinic/addUser', data).then(res => {
                 console.log("Respuesta del servidor");
@@ -676,7 +684,7 @@
                 succesMode: true,
             }).then((willDelete) => {
                 if (willDelete) {
-                    axios.post('/clinic/deleteUser', item).then(res => {
+                    axios.post(`/clinic/deleteUser/${role}`, item).then(res => {
                         console.log("Respuesta del servidor");
                         console.log("Datos de delete ",res.data);
                         if (this.titlePersonnel == 'Dueño') {
