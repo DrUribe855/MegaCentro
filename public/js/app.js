@@ -2585,7 +2585,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       },
       items: ['Activo', 'Inactivo'],
-      roles: ['Administrador', 'Auxiliar Contable', 'Recolector'],
+      roles: ['Administrador', 'Auxiliar Contable', 'Recolector', 'Dueño'],
       headers: [{
         text: 'Documento',
         align: 'start',
@@ -4155,6 +4155,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -4247,6 +4250,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     editItem: function editItem(item) {
+      console.log(item);
       this.editedItem.clinic.clinic_number = item.clinic.clinic_number;
       this.dialog = true;
     },
@@ -4260,24 +4264,27 @@ __webpack_require__.r(__webpack_exports__);
       this.closeDelete();
     },
     close: function close() {
-      var _this2 = this;
       this.dialog = false;
+    },
+    closeDelete: function closeDelete() {
+      var _this2 = this;
+      this.dialogDelete = false;
       this.$nextTick(function () {
         _this2.editedItem = Object.assign({}, _this2.defaultItem);
         _this2.editedIndex = -1;
       });
     },
-    closeDelete: function closeDelete() {
-      var _this3 = this;
-      this.dialogDelete = false;
-      this.$nextTick(function () {
-        _this3.editedItem = Object.assign({}, _this3.defaultItem);
-        _this3.editedIndex = -1;
-      });
-    },
     save: function save() {
+      var _this3 = this;
       axios.post('/collector/saveCollection', this.editedItem.clinic).then(function (resp) {
         console.log('Recolección registrada exitosamente: ', resp.data);
+        if (resp.data == 'Todos los datos deben ser validados') {
+          _this3.showAlert('Error', 'Todos los datos deben ser validados', 'error');
+        } else {
+          _this3.showAlert('Registrado', 'La recolección se ha registrado con éxito', 'success');
+          _this3.close();
+        }
+        _this3.getClinics();
       })["catch"](function (error) {
         console.log(error.response);
       });
@@ -4293,6 +4300,13 @@ __webpack_require__.r(__webpack_exports__);
         default:
           return [];
       }
+    },
+    showAlert: function showAlert(title, text, icon) {
+      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+        title: title,
+        text: text,
+        icon: icon
+      });
     }
   }
 });
@@ -4590,7 +4604,7 @@ var render = function render() {
           on: {
             click: _vm.close
           }
-        }, [_vm._v("\n                                  Cancel\n                                ")]), _vm._v(" "), _c("v-btn", {
+        }, [_vm._v("\n                                  Cancelar\n                                ")]), _vm._v(" "), _c("v-btn", {
           attrs: {
             color: "blue darken-1",
             text: ""
@@ -4598,7 +4612,7 @@ var render = function render() {
           on: {
             click: _vm.save
           }
-        }, [_vm._v("\n                                  Save\n                                ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+        }, [_vm._v("\n                                  Registrar\n                                ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
           attrs: {
             "max-width": "500px"
           },
@@ -6625,7 +6639,7 @@ var render = function render() {
           on: {
             click: _vm.close
           }
-        }, [_vm._v("\n                        Cancel\n                      ")]), _vm._v(" "), _c("v-btn", {
+        }, [_vm._v("\n                        Cancelar\n                      ")]), _vm._v(" "), _c("v-btn", {
           attrs: {
             color: "blue darken-1",
             text: ""
@@ -6633,7 +6647,7 @@ var render = function render() {
           on: {
             click: _vm.save
           }
-        }, [_vm._v("\n                        Save\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+        }, [_vm._v("\n                        Registrar\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
           attrs: {
             "max-width": "500px"
           },

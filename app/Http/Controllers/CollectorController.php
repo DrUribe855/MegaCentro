@@ -27,27 +27,36 @@ class CollectorController extends Controller
 
         $clinicNumber = $request->input('clinic_number');
         $residueName = $request->input('residue_id');
+        $weight = $request->input('weight');
 
-        $clinicId = Clinic::select('id')
+        if($residueName &&  $weight){
+            $clinicId = Clinic::select('id')
                     ->where('clinic_number', $clinicNumber)
                     ->first();
 
-        $residueId = Residue::select('id')
-                    ->where('residue_name', $residueName)
-                    ->first();
+            $residueId = Residue::select('id')
+                        ->where('residue_name', $residueName)
+                        ->first();
 
-        $collectionLog = new CollectionLog();
-        $collectionLog->clinic_id = $clinicId->id;
-        $collectionLog->residue_id = $residueId->id;
-        $collectionLog->weight = $request->input('weight');
-        $collectionLog->save();
+            $collectionLog = new CollectionLog();
+            $collectionLog->clinic_id = $clinicId->id;
+            $collectionLog->residue_id = $residueId->id;
+            $collectionLog->weight = $request->input('weight');
+            $collectionLog->save();
 
-        $data = [
-            'status' => true,
-            'collectionLog' => $collectionLog
-        ];
+            Clinic::where('id', $clinicId->id)->update(['collection_status' => 'RECOLECTADO']);
 
-        return response()->json($data);
+            $data = [
+                'status' => true,
+                'clinics' => $collectionLog,
+            ];
+
+            return response()->json($data);
+        }else{
+            return response()->json('Todos los datos deben ser validados');
+        }
+        
+
 
 
 
