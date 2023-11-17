@@ -125,23 +125,36 @@ class ClinicController extends Controller
 
         $data = [
                     'status' => true,
+                    'id' => $id,
+                    'request' => $request,
                 ];
         return response()->json($data);
     }
 
-    public function consultation($id){
-        $consultation = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-        ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-        ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-        ->where('Clinics.id', '=', $id)
-        ->where('model_has_roles.role_id', '=', 3)
-        ->orWhere('model_has_roles.role_id', '=', 5)
-        ->get();
+    public function consultation($id, $status){
+        if ($status == 1) {
+            $consultation = Clinic_user::select('Users.*', 'Clinics.id AS clinic_id', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinic_users.clinic_id', '=', $id)
+            ->where('model_has_roles.role_id', '=', 5)
+            ->get();
+        }else{
+            $consultation = Clinic_user::select('Users.*', 'Clinics.id AS clinic_id', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinic_users.clinic_id', '=', $id)
+            ->where('model_has_roles.role_id', '=', 3)
+            ->get();
+        }
 
         $data = [
             'status' => true,
             'infoClinic' => $consultation,
+            'id' => $id,
+            'role' => $status,
         ];
 
         return response()->json($data);
@@ -210,46 +223,68 @@ class ClinicController extends Controller
             $status = false;
         }   
 
-        $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-        ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-        ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-        ->where('Clinics.id', '=', $clinic_id)
-        ->where('model_has_roles.role_id', '=', 3)
-        ->orWhere('model_has_roles.role_id', '=', 5)
-        ->get();
+        $records = null;
+        if ($request->input('status') == 1) {
+            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinic_users.clinic_id', '=', $clinic_id)
+            ->where('model_has_roles.role_id', '=', 5)
+            ->get();
+        }else if ($request->input('status') == 2) {
+            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinic_users.clinic_id', '=', $clinic_id)
+            ->where('model_has_roles.role_id', '=', 3)
+            ->get();
+        }
 
         $data = [
                     'status' => $status,
-                    'user' => $records
+                    'user' => $records,
                 ];   
-
         return response()->json($data);
+
     }
 
-    public function deleteUser(Request $request){
+    public function deleteUser($role, Request $request){
         $user = User::where('document', $request->input('document'))->get('id');
         $user_id = $user->first()->id;
-        $clinic_id = $request->input('id');
+
+        $clinic_id = $request->input('clinic_id');
         
         $clinic_user = Clinic_user::where('clinic_id', '=', $clinic_id)
         ->where('user_id', '=', $user_id)
         ->delete();
 
-        $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-        ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-        ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-        ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-        ->where('Clinics.id', '=', $clinic_id)
-        ->where('model_has_roles.role_id', '=', 3)
-        ->orWhere('model_has_roles.role_id', '=', 5)
-        ->get();
+        $records = null;
+        if ($role == 'dueños') {
+            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinics.id', '=', $clinic_id)
+            ->where('model_has_roles.role_id', '=', 5)
+            ->get();
+        }else if ($role == 'recolectores') {
+            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
+            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
+            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
+            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
+            ->where('Clinics.id', '=', $clinic_id)
+            ->where('model_has_roles.role_id', '=', 3)
+            ->get();
+        }
+
 
         $data = [
                     'status' => true,
                     'user_id' => $user_id,
                     'clinic_id' => $clinic_id, 
-                    'response' => $clinic_user,
+                    'response' => $role,
                     'users' => $records,
                 ];
 

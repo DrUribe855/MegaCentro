@@ -1,259 +1,261 @@
 <template>
-    <v-app>
-        <v-main>
-            <v-card>
-                <v-card-title>
-                    {{ infoUser.document }}
-                    <v-spacer></v-spacer>
-                    <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Buscar"
-                        single-line
-                        hide-details
-                    ></v-text-field>
-                </v-card-title>
-                <!-- Tabla de personal del consultorio -->
-                <v-dialog
-                    v-model="dialog"
-                    max-width="650px"
-                >
-                    <v-card>
-                        <v-card-title>
-                            <span class="text-h5">{{ titlePersonnel }}</span>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                                class="mx-1"
-                                x-small
-                                fab
-                                dark
-                                color="primary"
-                                @click="showUser(titlePersonnel)"
-                                >
-                                <v-icon dark>
-                                    mdi-plus
-                                </v-icon>
-                            </v-btn>
-                        </v-card-title>
+    <div>
+        <v-app>
+            <v-main>
+                <v-card>
+                    <v-card-title>
+                        {{ infoUser.document }}
+                        <v-spacer></v-spacer>
+                        <v-text-field
+                            v-model="search"
+                            append-icon="mdi-magnify"
+                            label="Buscar"
+                            single-line
+                            hide-details
+                        ></v-text-field>
+                    </v-card-title>
+                    <!-- Tabla de personal del consultorio -->
+                    <v-dialog
+                        v-model="dialog"
+                        max-width="650px"
+                    >
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">{{ titlePersonnel }}</span>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    class="mx-1"
+                                    x-small
+                                    fab
+                                    dark
+                                    color="primary"
+                                    @click="showUser(titlePersonnel)"
+                                    >
+                                    <v-icon dark>
+                                        mdi-plus
+                                    </v-icon>
+                                </v-btn>
+                            </v-card-title>
 
-                        <v-card-text>
-                            <v-card 
-                            >
-                                <v-card-title>
-                                    <v-text-field
-                                        v-model="searchPersonnel"
-                                        append-icon="mdi-magnify"
-                                        label="Search"
-                                        single-line
-                                        hide-details
-                                    ></v-text-field>
-                                </v-card-title>
-                                <v-data-table
-                                    :headers="infoClinic"
-                                    :items="clinicPersonner"
-                                    :search="searchPersonnel"
+                            <v-card-text>
+                                <v-card 
                                 >
-                                    <template v-slot:item.actions="{ item }">
-                                        <v-btn
-                                            class="mx-1"
-                                            x-small
-                                            fab
-                                            dark
-                                            color="red"
-                                            @click="remove(item)"
-                                            >
-                                            <v-icon dark>
-                                                mdi-minus
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
-                                </v-data-table>
-                            </v-card>
+                                    <v-card-title>
+                                        <v-text-field
+                                            v-model="searchPersonnel"
+                                            append-icon="mdi-magnify"
+                                            label="Search"
+                                            single-line
+                                            hide-details
+                                        ></v-text-field>
+                                    </v-card-title>
+                                    <v-data-table
+                                        :headers="infoClinic"
+                                        :items="clinicPersonner"
+                                        :search="searchPersonnel"
+                                    >
+                                        <template v-slot:item.actions="{ item }">
+                                            <v-btn
+                                                class="mx-1"
+                                                x-small
+                                                fab
+                                                dark
+                                                color="red"
+                                                @click="remove(item)"
+                                                >
+                                                <v-icon dark>
+                                                    mdi-minus
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                    </v-data-table>
+                                </v-card>
+                            </v-card-text>
+                
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    color="blue darken-1"
+                                    text
+                                    @click="close"
+                                    >
+                                    Cerrar
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                    <!-- Agregar personal -->
+                    <v-dialog
+                      v-model="showAdd"
+                      max-width="630px"
+                    >
+                      <v-card>
+                        <v-card-title>
+                          <span class="text-h5">Agregar {{ title }} al consultorio  {{ dataClinic.clinic_number }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-container>
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                sm="6"
+                                md="4"
+                              >
+                              <v-select
+                                v-model="selectedUser"
+                                :items="user"
+                                :menu-props="{ top: false, offsetY: true }"
+                                :label="textLable"
+                                item-text="document"
+                                item-value="id"
+                              ></v-select>
+                              </v-col>
+                            </v-row>
+                          </v-container>
                         </v-card-text>
-            
+
                         <v-card-actions>
+                        <v-spacer></v-spacer>
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="closeUser()"
+                          >
+                            Cancelar
+                          </v-btn>
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="saveUser()"
+                          >
+                            Agregar
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+
+                    <!-- Editar -->
+                    <v-dialog
+                        v-model="dialogEdit"
+                        max-width="550px"
+                        >
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">Editar</span>
+                            </v-card-title>
+
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col
+                                            cols="12"
+                                            sm="6"
+                                            md="4"
+                                        >
+                                            <v-text-field
+                                                type="number"
+                                                v-model="editedItem.clinic_number"
+                                                label="Numero Clinica"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col
+                                            cols="12"
+                                            sm="6"
+                                            md="4"
+                                        >
+                                            <v-select 
+                                                v-model="editedItem.tower_id"
+                                                :items="itemsTower"
+                                                :label="`Numero Torre ${editedItem.tower_id}`"
+                                                outline
+                                                border="false"
+                                            ></v-select>
+                                        </v-col>
+                                        <v-col
+                                            cols="12"
+                                            sm="6"
+                                            md="4"
+                                        >
+                                            <v-select
+                                                v-model="editedItem.status"
+                                                :items="items"
+                                                :label="editedItem.status"
+                                            ></v-select>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+                            <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
                                 color="blue darken-1"
                                 text
                                 @click="close"
-                                >
-                                Cerrar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-                <!-- Agregar personal -->
-                <v-dialog
-                  v-model="showAdd"
-                  max-width="630px"
-                >
-                  <v-card>
-                    <v-card-title>
-                      <span class="text-h5">Agregar {{ title }} al consultorio  {{ dataClinic.clinic_number }}</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                          <v-select
-                            v-model="selectedUser"
-                            :items="user"
-                            :menu-props="{ top: false, offsetY: true }"
-                            :label="textLable"
-                            item-text="document"
-                            item-value="id"
-                          ></v-select>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                    <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="closeUser()"
-                      >
-                        Cancelar
-                      </v-btn>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="saveUser()"
-                      >
-                        Agregar
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-
-                <!-- Editar -->
-                <v-dialog
-                    v-model="dialogEdit"
-                    max-width="550px"
-                    >
-                    <v-card>
-                        <v-card-title>
-                            <span class="text-h5">Editar</span>
-                        </v-card-title>
-
-                        <v-card-text>
-                            <v-container>
-                                <v-row>
-                                    <v-col
-                                        cols="12"
-                                        sm="6"
-                                        md="4"
-                                    >
-                                        <v-text-field
-                                            type="number"
-                                            v-model="editedItem.clinic_number"
-                                            label="Numero Clinica"
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col
-                                        cols="12"
-                                        sm="6"
-                                        md="4"
-                                    >
-                                        <v-select 
-                                            v-model="editedItem.tower_id"
-                                            :items="itemsTower"
-                                            :label="`Numero Torre ${editedItem.tower_id}`"
-                                            outline
-                                            border="false"
-                                        ></v-select>
-                                    </v-col>
-                                    <v-col
-                                        cols="12"
-                                        sm="6"
-                                        md="4"
-                                    >
-                                        <v-select
-                                            v-model="editedItem.status"
-                                            :items="items"
-                                            :label="editedItem.status"
-                                        ></v-select>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="close"
-                        >
-                            Cancelar
-                        </v-btn>
-                        <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="save"
-                        >
-                            Guardar
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-
-                <!-- Tabla principal -->
-                <v-data-table
-                    :headers="headers"
-                    :items="desserts"
-                    :search="search"
-                    >
-                    <template v-slot:item.actions="{ item }">
-                        <v-btn
-                            color="success"
-                            fab
-                            x-small
-                            dark
-                            @click="infoPersonnel(item, 1)">
-                            <v-icon>mdi-domain</v-icon>
-                        </v-btn>
-                        <v-btn
-                            color="warning"
-                            fab
-                            x-small
-                            dark
-                            @click="infoPersonnel(item, 2)">
-                            <v-icon>mdi-account-circle</v-icon>
-                        </v-btn>
-                        <v-btn
-                            class="mx-2"
-                            fab
-                            dark
-                            x-small
-                            color="primary"
-                            @click="showInfoEdit(item)"
                             >
-                            <v-icon dark>
-                                mdi-pencil
-                            </v-icon>
-                        </v-btn>
-                    </template>
-                </v-data-table>
-                <v-card-actions class="d-flex justify-left align-left">
-                    <v-btn
-                        depressed
-                        color="primary"
-                        @click="$parent.goToBack()"
-                    >
-                        volver
-                    </v-btn> 
-                </v-card-actions> 
-            </v-card>
-        </v-main>
-    </v-app>
+                                Cancelar
+                            </v-btn>
+                            <v-btn
+                                color="blue darken-1"
+                                text
+                                @click="save"
+                            >
+                                Guardar
+                            </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <!-- Tabla principal -->
+                    <v-data-table
+                        :headers="headers"
+                        :items="desserts"
+                        :search="search"
+                        >
+                        <template v-slot:item.actions="{ item }">
+                            <v-btn
+                                color="success"
+                                fab
+                                x-small
+                                dark
+                                @click="infoPersonnel(item, 1)">
+                                <v-icon>mdi-domain</v-icon>
+                            </v-btn>
+                            <v-btn
+                                color="warning"
+                                fab
+                                x-small
+                                dark
+                                @click="infoPersonnel(item, 2)">
+                                <v-icon>mdi-account-circle</v-icon>
+                            </v-btn>
+                            <v-btn
+                                class="mx-2"
+                                fab
+                                dark
+                                x-small
+                                color="primary"
+                                @click="showInfoEdit(item)"
+                                >
+                                <v-icon dark>
+                                    mdi-pencil
+                                </v-icon>
+                            </v-btn>
+                        </template>
+                    </v-data-table>
+                    <v-card-actions class="d-flex justify-left align-left">
+                        <v-btn
+                            depressed
+                            color="primary"
+                            @click="$parent.goToBack()"
+                        >
+                            volver
+                        </v-btn> 
+                    </v-card-actions> 
+                </v-card>
+            </v-main>
+        </v-app>
+    </div>
 </template>
 
 <script>
@@ -341,7 +343,7 @@
             },
 
             infoPersonnel(item, option){
-                axios.get(`/clinic/consultation/${item.id}`).then(res => {
+                axios.get(`/clinic/consultation/${item.id}/${option}`).then(res => {
                     console.log("Respuesta del servidor");
                     console.log("Datos de tabla ",res.data);
                     console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
@@ -446,9 +448,16 @@
             saveUser(){
                 console.log(this.selectedUser);
                 console.log(this.dataClinic.id);
+                var status = 0;
+                if (this.titlePersonnel == 'Dueño') {
+                    status = 1;
+                }else{
+                    status = 2;
+                }
                 var data = {
                     'clinic': this.dataClinic.id,
-                    'user': this.selectedUser
+                    'user': this.selectedUser,
+                    'status': status,
                 }
                 axios.post('/clinic/addUser', data).then(res => {
                     console.log("Respuesta del servidor");
@@ -505,7 +514,7 @@
                     succesMode: true,
                 }).then((willDelete) => {
                     if (willDelete) {
-                        axios.post('/clinic/deleteUser', item).then(res => {
+                        axios.post(`/clinic/deleteUser/${role}`, item).then(res => {
                             console.log("Respuesta del servidor");
                             console.log("Datos de delete ",res.data);
                             if (this.titlePersonnel == 'Dueño') {

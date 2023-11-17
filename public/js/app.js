@@ -3040,7 +3040,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     infoPersonnel: function infoPersonnel(item, option) {
       var _this2 = this;
-      axios.get("/clinic/consultation/".concat(item.id)).then(function (res) {
+      axios.get("/clinic/consultation/".concat(item.id, "/").concat(option)).then(function (res) {
         console.log("Respuesta del servidor");
         console.log("Datos de tabla ", res.data);
         console.log(res.data.infoClinic.filter(function (item) {
@@ -3146,9 +3146,16 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
       console.log(this.selectedUser);
       console.log(this.dataClinic.id);
+      var status = 0;
+      if (this.titlePersonnel == 'Dueño') {
+        status = 1;
+      } else {
+        status = 2;
+      }
       var data = {
         'clinic': this.dataClinic.id,
-        'user': this.selectedUser
+        'user': this.selectedUser,
+        'status': status
       };
       axios.post('/clinic/addUser', data).then(function (res) {
         console.log("Respuesta del servidor");
@@ -3209,7 +3216,7 @@ __webpack_require__.r(__webpack_exports__);
         succesMode: true
       }).then(function (willDelete) {
         if (willDelete) {
-          axios.post('/clinic/deleteUser', item).then(function (res) {
+          axios.post("/clinic/deleteUser/".concat(role), item).then(function (res) {
             console.log("Respuesta del servidor");
             console.log("Datos de delete ", res.data);
             if (_this6.titlePersonnel == 'Dueño') {
@@ -3941,10 +3948,11 @@ __webpack_require__.r(__webpack_exports__);
       this.dialogCollector = false;
       this.dialogRegister = false;
       this.registerClinic = {};
+      this.clinicPersonner = [];
     },
     infoPersonnel: function infoPersonnel(item, option) {
       var _this4 = this;
-      axios.get("/clinic/consultation/".concat(item.id)).then(function (res) {
+      axios.get("/clinic/consultation/".concat(item.id, "/").concat(option)).then(function (res) {
         console.log("Respuesta del servidor");
         console.log("Datos de tabla ", res.data);
         console.log(res.data.infoClinic.filter(function (item) {
@@ -3997,11 +4005,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveUser: function saveUser() {
       var _this6 = this;
-      console.log(this.selectedUser);
-      console.log(this.dataClinic.id);
+      console.log("this.selectedUser ", this.selectedUser);
+      console.log("this.dataClinic.id ", this.dataClinic.id);
+      var status = 0;
+      if (this.titlePersonnel == 'Dueño') {
+        status = 1;
+      } else {
+        status = 2;
+      }
       var data = {
         'clinic': this.dataClinic.id,
-        'user': this.selectedUser
+        'user': this.selectedUser,
+        'status': status
       };
       axios.post('/clinic/addUser', data).then(function (res) {
         console.log("Respuesta del servidor");
@@ -4062,7 +4077,7 @@ __webpack_require__.r(__webpack_exports__);
         succesMode: true
       }).then(function (willDelete) {
         if (willDelete) {
-          axios.post('/clinic/deleteUser', item).then(function (res) {
+          axios.post("/clinic/deleteUser/".concat(role), item).then(function (res) {
             console.log("Respuesta del servidor");
             console.log("Datos de delete ", res.data);
             if (_this7.titlePersonnel == 'Dueño') {
@@ -5065,7 +5080,7 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("v-app", [_c("v-main", [_c("v-card", [_c("v-card-title", [_vm._v("\n                " + _vm._s(_vm.infoUser.document) + "\n                "), _c("v-spacer"), _vm._v(" "), _c("v-text-field", {
+  return _c("div", [_c("v-app", [_c("v-main", [_c("v-card", [_c("v-card-title", [_vm._v("\n                    " + _vm._s(_vm.infoUser.document) + "\n                    "), _c("v-spacer"), _vm._v(" "), _c("v-text-field", {
     attrs: {
       "append-icon": "mdi-magnify",
       label: "Buscar",
@@ -5109,7 +5124,7 @@ var render = function render() {
     attrs: {
       dark: ""
     }
-  }, [_vm._v("\n                                mdi-plus\n                            ")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_c("v-card", [_c("v-card-title", [_c("v-text-field", {
+  }, [_vm._v("\n                                    mdi-plus\n                                ")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_c("v-card", [_c("v-card-title", [_c("v-text-field", {
     attrs: {
       "append-icon": "mdi-magnify",
       label: "Search",
@@ -5150,7 +5165,7 @@ var render = function render() {
           attrs: {
             dark: ""
           }
-        }, [_vm._v("\n                                            mdi-minus\n                                        ")])], 1)];
+        }, [_vm._v("\n                                                mdi-minus\n                                            ")])], 1)];
       }
     }])
   })], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
@@ -5161,7 +5176,7 @@ var render = function render() {
     on: {
       click: _vm.close
     }
-  }, [_vm._v("\n                            Cerrar\n                        ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+  }, [_vm._v("\n                                Cerrar\n                            ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "630px"
     },
@@ -5208,7 +5223,7 @@ var render = function render() {
         return _vm.closeUser();
       }
     }
-  }, [_vm._v("\n                    Cancelar\n                  ")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                        Cancelar\n                      ")]), _vm._v(" "), _c("v-btn", {
     attrs: {
       color: "blue darken-1",
       text: ""
@@ -5218,7 +5233,7 @@ var render = function render() {
         return _vm.saveUser();
       }
     }
-  }, [_vm._v("\n                    Agregar\n                  ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+  }, [_vm._v("\n                        Agregar\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "550px"
     },
@@ -5295,7 +5310,7 @@ var render = function render() {
     on: {
       click: _vm.close
     }
-  }, [_vm._v("\n                        Cancelar\n                    ")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                            Cancelar\n                        ")]), _vm._v(" "), _c("v-btn", {
     attrs: {
       color: "blue darken-1",
       text: ""
@@ -5303,7 +5318,7 @@ var render = function render() {
     on: {
       click: _vm.save
     }
-  }, [_vm._v("\n                        Guardar\n                    ")])], 1)], 1)], 1), _vm._v(" "), _c("v-data-table", {
+  }, [_vm._v("\n                            Guardar\n                        ")])], 1)], 1)], 1), _vm._v(" "), _c("v-data-table", {
     attrs: {
       headers: _vm.headers,
       items: _vm.desserts,
@@ -5354,7 +5369,7 @@ var render = function render() {
           attrs: {
             dark: ""
           }
-        }, [_vm._v("\n                            mdi-pencil\n                        ")])], 1)];
+        }, [_vm._v("\n                                mdi-pencil\n                            ")])], 1)];
       }
     }])
   }), _vm._v(" "), _c("v-card-actions", {
@@ -5369,7 +5384,7 @@ var render = function render() {
         return _vm.$parent.goToBack();
       }
     }
-  }, [_vm._v("\n                    volver\n                ")])], 1)], 1)], 1)], 1);
+  }, [_vm._v("\n                        volver\n                    ")])], 1)], 1)], 1)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5393,7 +5408,11 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "bg-white"
+    staticClass: "bg-white",
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
   }, [!_vm.showFilterTower ? _c("div", [!_vm.showFilterClinic ? _c("div", [!_vm.showEdit ? _c("v-app", [_c("v-main", [[_c("v-card", {
     attrs: {
       align: "end"
@@ -5698,7 +5717,12 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("v-app", [_c("v-main", [[_c("v-card", {
+  return _c("div", {
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
+  }, [_c("v-app", [_c("v-main", [[_c("v-card", {
     attrs: {
       align: "end"
     }
@@ -5992,7 +6016,11 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "bg-white"
+    staticClass: "bg-white",
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll"
+    }
   }, [_c("v-app", [_c("v-main", [_c("v-card", {
     attrs: {
       align: "end"

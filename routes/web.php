@@ -52,9 +52,9 @@ Route::get('/clinic/generalShowClinic', [ ClinicController::class, 'generalShowC
 Route::get('/clinic/showClinicResponsible', [ ClinicController::class, 'showClinicResponsible' ])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/showTower/{tower}', [ ClinicController::class, 'showTower' ])->middleware('can:admin.managers.generalShow');
 Route::post('/clinic/infoClinic/{id}', [ ClinicController::class, 'infoClinic' ])->middleware('can:admin.managers.generalShow');
-Route::get('/clinic/consultation/{id}', [ClinicController::class, 'consultation'])->middleware('can:admin.managers.generalShow');
+Route::get('/clinic/consultation/{id}/{status}', [ClinicController::class, 'consultation'])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/consultationUser', [ClinicController::class, 'consultationUser'])->middleware('can:admin.managers.generalShow');
-Route::post('/clinic/deleteUser', [ClinicController::class, 'deleteUser'])->middleware('can:admin.managers.edit');
+Route::post('/clinic/deleteUser/{role}', [ClinicController::class, 'deleteUser'])->middleware('can:admin.managers.edit');
 Route::post('/clinic/addClinic', [ClinicController::class, 'addClinic'])->middleware('can:admin.managers.create');
 Route::post('/clinic/addUser', [ClinicController::class, 'addUser'])->middleware('can:admin.managers.create');
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white"> 
+  <div class="bg-white" style="height: 100vh; overflow-y: scroll"> 
     <div v-if="!showFilterTower">
       <div v-if="!showFilterClinic">
         <v-app v-if="!showEdit">
