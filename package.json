@@ -21,6 +21,7 @@
         "vue-loader": "^15.9.7"
     },
     "dependencies": {
+        "accounting": "^0.4.1",
         "html2pdf.js": "^0.9.0",
         "sweetalert": "^2.1.2",
         "vue-paginate": "^2.1.0",

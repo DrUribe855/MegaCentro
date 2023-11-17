@@ -57,7 +57,7 @@
                     class="ma-2 white--text"
                     @click="loader = 'loading3'"
                   >
-                    EXEL
+                    EXCEL
                     <v-icon
                       right
                       dark
@@ -229,6 +229,7 @@
 
 <script>
   import html2pdf from "html2pdf.js"
+  import accounting from 'accounting';
   export default {
     data(){
       return {
@@ -317,6 +318,12 @@
           if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
             console.log("Funciono ", this.list_residues[i].total_weight);
             weigth += this.list_residues[i].total_weight;
+            weigth = accounting.formatMoney(weigth, {
+              symbol: '', 
+              precision: '',
+              thousand: ',',
+              decimal: '.'
+            });
           }
         }
         return weigth;
