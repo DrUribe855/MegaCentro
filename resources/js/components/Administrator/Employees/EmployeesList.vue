@@ -214,7 +214,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         customFilter: (itemsPerPage) => [5, 10].includes(itemsPerPage),
       },
       items: ['Activo', 'Inactivo'],
-      roles: ['Administrador','Auxiliar Contable', 'Recolector','Dueño'],
+      roles: ['Administrador','Auxiliar Contable', 'Recolector','Responsable','Dueño'],
       headers: [
         {
           text: 'Documento',

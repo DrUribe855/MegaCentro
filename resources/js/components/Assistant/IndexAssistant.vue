@@ -228,8 +228,8 @@
 </template>
 
 <script>
-  import html2pdf from "html2pdf.js"
-  import accounting from 'accounting';
+  import html2pdf from "html2pdf.js";
+  import accounting from 'accounting'
   export default {
     data(){
       return {
