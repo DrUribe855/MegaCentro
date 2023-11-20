@@ -391,8 +391,7 @@
               this.showBtn = false;
               this.showFilterClinic = false 
             }
-          }
-          if (optionFilter == 2) {
+          }else if (optionFilter == 2) {
             this.title = 'Responsables sin consultorio';
             this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
             this.showBtn = true
@@ -403,7 +402,6 @@
             this.showBtn = false;
             this.showFilterClinic = false 
           }
-          console.log(this.desserts.length);
           this.selectedClinic = ''
         }).catch(error => {
           console.log("Error en servidor");

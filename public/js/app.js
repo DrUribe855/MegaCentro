@@ -3436,8 +3436,7 @@ __webpack_require__.r(__webpack_exports__);
             _this2.showBtn = false;
             _this2.showFilterClinic = false;
           }
-        }
-        if (optionFilter == 2) {
+        } else if (optionFilter == 2) {
           _this2.title = 'Responsables sin consultorio';
           _this2.desserts = res.data.responsible.filter(function (item) {
             return item.clinic_user.length == 0;
@@ -3452,7 +3451,6 @@ __webpack_require__.r(__webpack_exports__);
           _this2.showBtn = false;
           _this2.showFilterClinic = false;
         }
-        console.log(_this2.desserts.length);
         _this2.selectedClinic = '';
       })["catch"](function (error) {
         console.log("Error en servidor");
