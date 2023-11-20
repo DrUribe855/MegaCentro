@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Clinic extends Model
 {
     use HasFactory;
+
+    protected $table = "clinics";
+
     protected $fillable = [
         'clinic_number',
         'user_id',
         'tower_id',
-        'status', 
+        'status',
     ];
 
     public function towers(): BelongsTo{
