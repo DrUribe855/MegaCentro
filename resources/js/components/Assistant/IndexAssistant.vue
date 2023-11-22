@@ -287,11 +287,11 @@
           image:        { type: 'jpeg', quality: 0.98 },
           html2canvas:  { scale: 3 },
           jsPDF:        { 
-              unit: 'mm', 
-              format: 'a4', 
-              orientation: 'landscape', 
-              width: 500, 
-              height: 297 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'landscape', 
+            width: 500, 
+            height: 297 
           }
         };
         html2pdf().from(element).set(opt).save();
@@ -316,7 +316,6 @@
         var weigth = 0;
         for (let i = 0; i < this.list_residues.length; i++) {
           if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
-            console.log("Funciono ", this.list_residues[i].total_weight);
             weigth += this.list_residues[i].total_weight;
             weigth = accounting.formatMoney(weigth, {
               symbol: '', 

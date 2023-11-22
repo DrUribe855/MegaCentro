@@ -150,8 +150,7 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
                                             <v-text-field
                                                 type="number"
                                                 v-model="editedItem.clinic_number"
@@ -161,8 +160,17 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
+                                            <v-text-field
+                                                type="number"
+                                                v-model="editedItem.floor"
+                                                label="Numero Piso"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col
+                                            cols="12"
+                                            sm="6"
+                                            md="4">
                                             <v-select 
                                                 v-model="editedItem.tower_id"
                                                 :items="itemsTower"
@@ -174,8 +182,7 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
                                             <v-select
                                                 v-model="editedItem.status"
                                                 :items="items"
@@ -276,6 +283,7 @@
                 headers: [
                     { text: 'N Consultorio', value: 'clinic_number' },
                     { text: 'N Torre', value: 'tower_id' },
+                    { text: 'N Piso', value: 'floor' },
                     { text: 'Estado', value: 'status' },
                     { text: '', value: 'actions', sortable: false },
                 ],
@@ -285,21 +293,17 @@
                 editedIndex: -1,
                 editedItem: {
                     clinic_number: '',
-                    tower_id: '',
-                    status: '',
-                },
-                defaultItem: {
-                    clinic_number: '',
+                    floor: '',
                     tower_id: '',
                     status: '',
                 },
                 infoUser: '',
                 // Tabla dueños
                 infoClinic: [
-                    { text: 'Documento', value: 'document' },
-                    { text: 'Nombre', value: 'name' },
-                    { text: 'Telefono', value: 'phone' },
-                    { text: 'Correo', value: 'email' },
+                    { text: 'Documento', value: 'user.document' },
+                    { text: 'Nombre', value: 'user.name' },
+                    { text: 'Telefono', value: 'user.phone' },
+                    { text: 'Correo', value: 'user.email' },
                     { text: '', value: 'actions', sortable: false },
                 ],
                 clinicPersonner: [],
@@ -344,15 +348,14 @@
 
             infoPersonnel(item, option){
                 axios.get(`/clinic/consultation/${item.id}/${option}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de tabla ",res.data);
-                    console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
+                    console.log("Respuesta del servidor dueño o recolenctor");
+                    console.log("Datos de tabla",res.data);
                     if (option == 1) {
                         this.titlePersonnel = 'Dueño'
-                        this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 5)   
+                        this.clinicPersonner = res.data.infoClinic  
                     }else{
                         this.titlePersonnel = 'Recolector'
-                        this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 3)
+                        this.clinicPersonner = res.data.infoClinic
                     }
                     this.dialog = true
                 }).catch(error => {
@@ -366,7 +369,6 @@
             showInfoEdit(item){
                 this.editedIndex = this.desserts.indexOf(item)
                 this.editedItem = Object.assign({}, item)
-                console.log("03 ",item);
                 this.dialogEdit = true
             },
 
@@ -455,8 +457,8 @@
                     status = 2;
                 }
                 var data = {
-                    'clinic': this.dataClinic.id,
-                    'user': this.selectedUser,
+                    'clinic_id': this.dataClinic.id,
+                    'user_id': this.selectedUser,
                     'status': status,
                 }
                 axios.post('/clinic/addUser', data).then(res => {
@@ -471,10 +473,10 @@
                     }else if (res.data.status == true) {
                         if (this.titlePersonnel == 'Dueño') {
                             this.alertTrue('El dueño se agrego correctamente');
-                            this.clinicPersonner = res.data.user.filter(item => item.role_id === 5)
+                            this.clinicPersonner = res.data.user
                         }else if(this.titlePersonnel == 'Recolector'){
                             this.alertTrue('El recolector se agrego correctamente');
-                            this.clinicPersonner = res.data.user.filter(item => item.role_id === 3)
+                            this.clinicPersonner = res.data.user
                         }
                         this.showAdd = false   
                     }
@@ -518,9 +520,9 @@
                             console.log("Respuesta del servidor");
                             console.log("Datos de delete ",res.data);
                             if (this.titlePersonnel == 'Dueño') {
-                                this.clinicPersonner = res.data.users.filter(item => item.role_id === 5)
+                                this.clinicPersonner = res.data.users
                             }else if(this.titlePersonnel == 'Recolector'){
-                                this.clinicPersonner = res.data.users.filter(item => item.role_id === 3)
+                                this.clinicPersonner = res.data.users
                             }
                             this.searchPersonnel = ''
                             swal(

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white" style="height: 100vh; overflow-y: scroll">
+    <div class="bg-white">
         <v-app>
             <v-main>
                 <v-card 
@@ -173,8 +173,7 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
                                             <v-text-field
                                             type="number"
                                             v-model="editedItem.clinic_number"
@@ -184,8 +183,17 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
+                                            <v-text-field
+                                            type="number"
+                                            v-model="editedItem.floor"
+                                            label="Numero Piso"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col
+                                            cols="12"
+                                            sm="6"
+                                            md="4">
                                             <v-select 
                                                 v-model="editedItem.tower_id"
                                                 :items="itemsTower"
@@ -197,8 +205,7 @@
                                         <v-col
                                             cols="12"
                                             sm="6"
-                                            md="4"
-                                        >
+                                            md="4">
                                             <v-select
                                                 v-model="editedItem.status"
                                                 :items="items"
@@ -232,7 +239,7 @@
                     <!-- Registra Consultorios -->
                     <v-dialog
                         v-model="dialogRegister"
-                        max-width="500px"
+                        max-width="600px"
                         >
                         <v-card>
                             <v-card-title>
@@ -257,6 +264,17 @@
                                     cols="12"
                                     sm="6"
                                     md="4"
+                                    >
+                                    <v-text-field
+                                    type="number"
+                                    v-model="registerClinic.floor"
+                                    label="Numero Piso"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
                                 >
                                     <v-select 
                                     v-model="registerClinic.tower_id"
@@ -274,7 +292,7 @@
                                     <v-select
                                     v-model="registerClinic.status"
                                     :items="items"
-                                    label="Registrar el consultorio"
+                                    label="Seleccione el estado"
                                     ></v-select>
                                 </v-col>
                                 </v-row>
@@ -306,7 +324,6 @@
                         :headers="headers"
                         :items="desserts"
                         :search="search"
-                        :items-per-page="5"
                         >
                         <template v-slot:item.actions="{ item }">
                             <v-btn
@@ -328,7 +345,6 @@
                         :headers="headersClinic"
                         :items="dessertsClinic"
                         :search="search"
-                        :items-per-page="5"
                         >
                         <template v-slot:item.actions="{ item }">
                             <v-btn
@@ -394,6 +410,7 @@
         editedIndex: -1,
         editedItem: {
             clinic_number: '',
+            floor: '',
             tower_id: '',
             status: '',
         },
@@ -401,45 +418,36 @@
         headers: [
           { text: 'N Consultorio', value: 'clinic_number' },
           { text: 'N Torre', value: 'tower_id' },
+          { text: 'N Piso', value: 'floor' },
           { text: 'Estado', value: 'status' },
           { text: 'Opciones', value: 'actions', sortable: false },
         ],
         desserts: [],
         // Datos de la tabla con consultorios con responsables
         headersClinic: [
-          { text: 'N Consultorio', value: 'clinic_number' },
-          { text: 'N Torre', value: 'tower_id' },
-          { text: 'Estado', value: 'status' },
-          { text: 'Nombre', value: 'name' },
-          { text: 'Documento', value: 'document' },
+          { text: 'N Consultorio', value: 'clinic.clinic_number' },
+          { text: 'N Torre', value: 'clinic.tower_id' },
+          { text: 'N Piso', value: 'clinic.floor' },
+          { text: 'Estado', value: 'clinic.status' },
+          { text: 'Nombre', value: 'user.name' },
+          { text: 'Documento', value: 'user.document' },
           { text: 'Opciones', value: 'actions', sortable: false },
         ],
         dessertsClinic: [],
 
         titlePersonnel: '',
 
-        // Variables de dueños
+        // Variables del personal
         dialog: false,
         searchPersonnel: '',
         infoClinic: [
-            { text: 'Documento', value: 'document' },
-            { text: 'Nombre', value: 'name' },
-            { text: 'Telefono', value: 'phone' },
-            { text: 'Correo', value: 'email' },
+            { text: 'Documento', value: 'user.document' },
+            { text: 'Nombre', value: 'user.name' },
+            { text: 'Telefono', value: 'user.phone' },
+            { text: 'Correo', value: 'user.email' },
             { text: 'Opciones', value: 'actions', sortable: false },
         ],
         ownerDesserts: [],
-
-        // Variables de recolector 
-        dialogCollector: false,
-        searchCollector: '',
-        collector: [
-            { text: 'Documento', value: 'document' },
-            { text: 'Nombre', value: 'name' },
-            { text: 'Telefono', value: 'phone' },
-            { text: 'Correo', value: 'email' },
-        ],
-        collectorDesserts: [],
 
         clinicPersonner: [],
 
@@ -455,9 +463,12 @@
 
         registerClinic: {
             clinic_number: '',
+            floor: '',
             tower_id: '',
             status: '',
         },
+
+        typeShowInfo: true,
       }
     },
 
@@ -471,7 +482,10 @@
             axios.get('/clinic/generalShowClinic').then(res => {
                 console.log("Respuesta del servidor");
                 console.log("datos initialize ",res.data);
-                this.desserts = res.data.clinics
+                this.desserts = res.data.clinics;
+                if (this.desserts.length == 0) {
+                    this.showTables = true
+                }
             }).catch(error => {
                 console.log("Error en servidor");
                 console.log(error);
@@ -509,9 +523,15 @@
         },
 
         showInfoEdit(item){
-            this.editedIndex = this.desserts.indexOf(item)
-            this.editedItem = Object.assign({}, item)
-            console.log("03 ",this.editedItem);
+            if (item.clinic != null) {
+                this.editedIndex = this.desserts.indexOf(item.clinic);
+                this.editedItem = Object.assign({}, item.clinic);
+                this.typeShowInfo = false;
+            }else{
+                this.editedIndex = this.desserts.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                this.typeShowInfo = true;
+            }
             this.dialogEdit = true
         },
 
@@ -539,9 +559,13 @@
                     if (willDelete) {
                         axios.put(`/clinic/update/${this.editedItem.id}`, {data: this.editedItem}).then(res => {
                             console.log("Respuesta del servidor");
-                            console.log(res.data);
-                            this.clinicResponsible();
-                            this.dialogEdit= false
+                            console.log("Res edit ",res.data);
+                            if (this.typeShowInfo) {
+                                this.initialize();
+                            }else{
+                                this.clinicResponsible();
+                            }
+                            this.dialogEdit = false
                             swal(
                                 'Cambio Exitoso!',
                                 'Se edito correctamente',
@@ -561,23 +585,21 @@
         close () {
             this.dialogEdit = false
             this.dialog = false
-            this.dialogCollector = false
             this.dialogRegister = false
             this.registerClinic = {}
             this.clinicPersonner = []
         },
 
         infoPersonnel(item, option){
-            axios.get(`/clinic/consultation/${item.id}/${option}`).then(res => {
-                console.log("Respuesta del servidor");
-                console.log("Datos de tabla ",res.data);
-                console.log(res.data.infoClinic.filter(item => item.role === 'Dueno'));
+            axios.get(`/clinic/consultation/${item.clinic_id}/${option}`).then(res => {
+                console.log("Respuesta del servidor dueño o recolenctor");
+                console.log("Datos de tabla",res.data.infoClinic);
                 if (option == 1) {
                     this.titlePersonnel = 'Dueño'
-                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 5)   
+                    this.clinicPersonner = res.data.infoClinic  
                 }else{
                     this.titlePersonnel = 'Recolector'
-                    this.clinicPersonner = res.data.infoClinic.filter(item => item.role_id === 3)
+                    this.clinicPersonner = res.data.infoClinic
                 }
                 this.dialog = true
             }).catch(error => {
@@ -591,7 +613,7 @@
         showUser(title){
             axios.get('/clinic/consultationUser').then(res => {
                 console.log("Respuesta del servidor");
-                console.log("datos ",res.data);
+                console.log("datos add ",res.data);
                 if (title == 'Dueño') {
                     this.title = 'dueño'
                     this.textLable = 'Agregar Dueño'
@@ -617,7 +639,7 @@
 
         saveUser(){
             console.log("this.selectedUser ",this.selectedUser);
-            console.log("this.dataClinic.id ",this.dataClinic.id);
+            console.log("this.dataClinic.id ",this.dataClinic.clinic_id);
             var status = 0;
             if (this.titlePersonnel == 'Dueño') {
                 status = 1;
@@ -625,8 +647,8 @@
                 status = 2;
             }
             var data = {
-                'clinic': this.dataClinic.id,
-                'user': this.selectedUser,
+                'clinic_id': this.dataClinic.clinic_id,
+                'user_id': this.selectedUser,
                 'status': status,
             }
             axios.post('/clinic/addUser', data).then(res => {
@@ -641,10 +663,10 @@
                 }else if (res.data.status == true) {
                     if (this.titlePersonnel == 'Dueño') {
                         this.alertTrue('El dueño se agrego correctamente');
-                        this.clinicPersonner = res.data.user.filter(item => item.role_id === 5)
+                        this.clinicPersonner = res.data.user
                     }else if(this.titlePersonnel == 'Recolector'){
                         this.alertTrue('El recolector se agrego correctamente');
-                        this.clinicPersonner = res.data.user.filter(item => item.role_id === 3)
+                        this.clinicPersonner = res.data.user
                     }
                     this.showAdd = false   
                 }
@@ -688,9 +710,9 @@
                         console.log("Respuesta del servidor");
                         console.log("Datos de delete ",res.data);
                         if (this.titlePersonnel == 'Dueño') {
-                            this.clinicPersonner = res.data.users.filter(item => item.role_id === 5)
+                            this.clinicPersonner = res.data.users
                         }else if(this.titlePersonnel == 'Recolector'){
-                            this.clinicPersonner = res.data.users.filter(item => item.role_id === 3)
+                            this.clinicPersonner = res.data.users
                         }
                         this.searchPersonnel = ''
                         swal(
@@ -726,6 +748,9 @@
             }else if (this.registerClinic.status == "") {
                 this.alertFalse('Parece que el campo estado esta vacío');
                 validate = false
+            }else if (this.registerClinic.floor == "") {
+                this.alertFalse('Parece que el campo piso esta vacío');
+                validate = false
             }
             if (validate) {
                 axios.post('/clinic/register', this.registerClinic).then(res => {
@@ -734,8 +759,11 @@
                     this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
                     this.registerClinic = {}
                     this.dialogRegister = false
-                    this.showFilterClinic = true
                     this.initialize()
+                    if (this.selectedFilter = 'CONSULTORIOS CON RESPONSABLES') {
+                        this.selectedFilter = 'CONSULTORIOS SIN RESPONSABLES'
+                        this.changeFilter()
+                    }
                 }).catch(error => {
                     console.log("Error en servidor");
                     console.log(error);

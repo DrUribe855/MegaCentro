@@ -19,8 +19,6 @@ class ResidueController extends Controller
         ->groupBy('created_at', 'residue_id')
         ->get();
         
-        // $residues = ResidueType::with('residues.collection_log')->get();
-
         $data = [
             'status' => true,
             'residues' => $residues,

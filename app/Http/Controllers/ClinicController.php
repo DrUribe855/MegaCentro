@@ -30,13 +30,9 @@ class ClinicController extends Controller
     }
 
     public function consultationUser(){
-        $consultationOwner = User::role(['Dueño'])
-            ->leftJoin('clinic_users', 'users.id', '=', 'clinic_users.user_id')
-            ->get('users.*');
+        $consultationOwner = User::role(['Dueño'])->get();
 
-        $consultationCollector = User::role(['Recolector'])
-            ->leftJoin('clinic_users', 'users.id', '=', 'clinic_users.user_id')
-            ->get('users.*');
+        $consultationCollector = User::role(['Recolector'])->get();
 
         $data = [
             'status' => true,
@@ -48,10 +44,7 @@ class ClinicController extends Controller
     }
 
     public function generalShowClinic(){
-        $records = Clinic::select('Clinics.*')
-            ->LEFTJOIN ('Clinic_users', 'Clinics.id', '=', 'Clinic_users.clinic_id')
-            ->where('Clinic_users.clinic_id')
-            ->get();
+        $records = Clinic::doesnthave('clinic_user')->get();
 
         $data = [
                     'status' => true,
@@ -62,10 +55,9 @@ class ClinicController extends Controller
     }
 
     public function showClinicResponsible(){
-        $clinicResponsible = User::role('Encargado')
-        ->join('clinic_users', 'users.id', '=', 'clinic_users.user_id')
-        ->join('clinics', 'clinic_users.clinic_id', '=', 'clinics.id')
-        ->get();
+        $clinicResponsible = Clinic_user::whereHas('user', function($query){
+            $query->role('Responsable');
+        })->with('clinic', 'user')->get();
 
         $data = [
             'status' => true,
@@ -76,9 +68,7 @@ class ClinicController extends Controller
     }
 
     public function showTower($tower){
-        $consultation = Clinic::select('clinics.*')
-        ->where('Clinics.tower_id', '=', $tower)
-        ->get();
+        $consultation = Clinic::where('Clinics.tower_id', $tower)->get();
         
         $data = [
                     'status' => true,
@@ -93,23 +83,20 @@ class ClinicController extends Controller
             'clinic_number' => 'required',
             'tower_id' => 'required',
             'status' => 'required',
+            'floor' => 'required',
         ]);
 
-        $clinic = new Clinic();
+        // $clinic = new Clinic($request->all()); => me da error con esta line en el campo de floor
+        $clinic = new Clinic($request->all());
         $clinic->clinic_number = $request->input('clinic_number');
+        $clinic->floor = $request->input('floor');
         $clinic->tower_id = $request->input('tower_id');
         $clinic->status = $request->input('status');
         $clinic->save(); 
 
-        $clinicResponsible = User::role('Encargado')
-        ->join('clinic_users', 'users.id', '=', 'clinic_users.user_id')
-        ->join('clinics', 'clinic_users.clinic_id', '=', 'clinics.id')
-        ->get();
-
         $data = [
                     'status' => true,
                     'clinic' => $clinic,
-                    'clinicResponsible' => $clinicResponsible,
                 ];
 
         return response()->json($data);
@@ -119,34 +106,33 @@ class ClinicController extends Controller
         $dataEdit = $request->input('data');
         $clinic = Clinic::find($id);
         $clinic->tower_id = $dataEdit['tower_id'];
+        $clinic->floor = $dataEdit['floor'];
         $clinic->status = $dataEdit['status'];
         $clinic->clinic_number = $dataEdit['clinic_number'];
         $clinic->save();
 
         $data = [
                     'status' => true,
-                    'id' => $id,
-                    'request' => $request,
                 ];
         return response()->json($data);
     }
 
     public function consultation($id, $status){
         if ($status == 1) {
-            $consultation = Clinic_user::select('Users.*', 'Clinics.id AS clinic_id', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinic_users.clinic_id', '=', $id)
-            ->where('model_has_roles.role_id', '=', 5)
+            $consultation = Clinic_user::whereHas('user', function($query){
+                $query->role('Dueño');
+            })->whereHas('clinic', function($query) use($id){
+                $query->where('clinic_id', $id);
+            })
+            ->with('user')
             ->get();
         }else{
-            $consultation = Clinic_user::select('Users.*', 'Clinics.id AS clinic_id', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinic_users.clinic_id', '=', $id)
-            ->where('model_has_roles.role_id', '=', 3)
+            $consultation = Clinic_user::whereHas('user', function($query){
+                $query->role('Recolector');
+            })->whereHas('clinic', function($query) use($id){
+                $query->where('clinic_id', $id);
+            })
+            ->with('user')
             ->get();
         }
 
@@ -160,11 +146,10 @@ class ClinicController extends Controller
         return response()->json($data);
     }
 
-    public function infoClinic($id){ 
-        $clinic = Clinic::SELECT('Clinics.*')
-        ->JOIN('Clinic_users', 'Clinics.id', '=', 'Clinic_users.clinic_id')
-        ->WHERE('Clinic_users.user_id', '=', $id)
-        ->GET();    
+    public function infoClinic($id){    
+        $clinic = Clinic::whereHas('clinic_user', function($query) use($id){
+            $query->where('user_id', $id);
+        })->get();
 
         $data = [
                     'status' => true,
@@ -176,13 +161,11 @@ class ClinicController extends Controller
 
     public function addClinic(Request $request){
         $request->validate([
-            'clinic' => 'required'
+            'clinic_id' => 'required'
         ]);
 
-        $id = $request->input('clinic');
-        $clinic_user = new Clinic_user();
-        $clinic_user->user_id = $request->input('user');
-        $clinic_user->clinic_id = $id;
+        $id = $request->input('clinic_id');
+        $clinic_user = new Clinic_user($request->all());
         $clinic_user->save();
 
         $clinic = Clinic::find($id);
@@ -202,21 +185,19 @@ class ClinicController extends Controller
 
     public function addUser(Request $request){
         $request->validate([
-            'clinic' => 'required',
-            'user' => 'required',
+            'clinic_id' => 'required',
+            'user_id' => 'required',
         ]);
 
-        $clinic_id = $request->input('clinic');
-        $user_id = $request->input('user');
+        $clinic_id = $request->input('clinic_id');
+        $user_id = $request->input('user_id');
         $search = Clinic_user::where('user_id', '=', $user_id)
         ->where('clinic_id', '=', $clinic_id)
         ->count();
 
         $status = false;
         if ($search == 0) {
-            $clinic_user = new Clinic_user();
-            $clinic_user->user_id = $user_id;
-            $clinic_user->clinic_id = $clinic_id;
+            $clinic_user = new Clinic_user($request->all());
             $clinic_user->save(); 
             $status = true;
         }else{
@@ -225,20 +206,20 @@ class ClinicController extends Controller
 
         $records = null;
         if ($request->input('status') == 1) {
-            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinic_users.clinic_id', '=', $clinic_id)
-            ->where('model_has_roles.role_id', '=', 5)
+            $records = Clinic_user::whereHas('user', function($query){
+                $query->role('Dueño');
+            })->whereHas('clinic', function($query) use($clinic_id){
+                $query->where('clinic_id', $clinic_id);
+            })
+            ->with('user')
             ->get();
         }else if ($request->input('status') == 2) {
-            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinic_users.clinic_id', '=', $clinic_id)
-            ->where('model_has_roles.role_id', '=', 3)
+            $records = Clinic_user::whereHas('user', function($query){
+                $query->role('Recolector');
+            })->whereHas('clinic', function($query) use($clinic_id){
+                $query->where('clinic_id', $clinic_id);
+            })
+            ->with('user')
             ->get();
         }
 
@@ -251,32 +232,28 @@ class ClinicController extends Controller
     }
 
     public function deleteUser($role, Request $request){
-        $user = User::where('document', $request->input('document'))->get('id');
+        $user = User::where('document', $request->input('user.document'))->get('id');
         $user_id = $user->first()->id;
 
         $clinic_id = $request->input('clinic_id');
         
-        $clinic_user = Clinic_user::where('clinic_id', '=', $clinic_id)
-        ->where('user_id', '=', $user_id)
+        Clinic_user::where('clinic_id', $clinic_id)
+        ->where('user_id', $user_id)
         ->delete();
 
         $records = null;
         if ($role == 'dueños') {
-            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinics.id', '=', $clinic_id)
-            ->where('model_has_roles.role_id', '=', 5)
-            ->get();
+            $records = Clinic_user::whereHas('user', function($query){
+                $query->role('Dueño');
+            })->whereHas('clinic', function($query) use($clinic_id){
+                $query->where('clinic_id', $clinic_id);
+            })->with('user')->get();
         }else if ($role == 'recolectores') {
-            $records = Clinic_user::select('Users.*', 'Clinics.*', 'model_has_roles.role_id')
-            ->join('Users', 'Clinic_users.user_id', '=', 'Users.id')
-            ->join('Clinics', 'Clinic_users.clinic_id', '=', 'clinics.id')
-            ->join('model_has_roles', 'Users.id', '=', 'model_has_roles.model_id')
-            ->where('Clinics.id', '=', $clinic_id)
-            ->where('model_has_roles.role_id', '=', 3)
-            ->get();
+            $records = Clinic_user::whereHas('user', function($query){
+                $query->role('Recolector');
+            })->whereHas('clinic', function($query) use($clinic_id){
+                $query->where('clinic_id', $clinic_id);
+            })->with('user')->get();
         }
 
 

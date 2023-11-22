@@ -2863,7 +2863,6 @@ __webpack_require__.r(__webpack_exports__);
       var weigth = 0;
       for (var i = 0; i < this.list_residues.length; i++) {
         if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
-          console.log("Funciono ", this.list_residues[i].total_weight);
           weigth += this.list_residues[i].total_weight;
           weigth = accounting__WEBPACK_IMPORTED_MODULE_1___default().formatMoney(weigth, {
             symbol: '',
@@ -2967,6 +2966,9 @@ __webpack_require__.r(__webpack_exports__);
         text: 'N Torre',
         value: 'tower_id'
       }, {
+        text: 'N Piso',
+        value: 'floor'
+      }, {
         text: 'Estado',
         value: 'status'
       }, {
@@ -2978,11 +2980,7 @@ __webpack_require__.r(__webpack_exports__);
       editedIndex: -1,
       editedItem: {
         clinic_number: '',
-        tower_id: '',
-        status: ''
-      },
-      defaultItem: {
-        clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
       },
@@ -2990,16 +2988,16 @@ __webpack_require__.r(__webpack_exports__);
       // Tabla dueños
       infoClinic: [{
         text: 'Documento',
-        value: 'document'
+        value: 'user.document'
       }, {
         text: 'Nombre',
-        value: 'name'
+        value: 'user.name'
       }, {
         text: 'Telefono',
-        value: 'phone'
+        value: 'user.phone'
       }, {
         text: 'Correo',
-        value: 'email'
+        value: 'user.email'
       }, {
         text: '',
         value: 'actions',
@@ -3041,21 +3039,14 @@ __webpack_require__.r(__webpack_exports__);
     infoPersonnel: function infoPersonnel(item, option) {
       var _this2 = this;
       axios.get("/clinic/consultation/".concat(item.id, "/").concat(option)).then(function (res) {
-        console.log("Respuesta del servidor");
-        console.log("Datos de tabla ", res.data);
-        console.log(res.data.infoClinic.filter(function (item) {
-          return item.role === 'Dueno';
-        }));
+        console.log("Respuesta del servidor dueño o recolenctor");
+        console.log("Datos de tabla", res.data);
         if (option == 1) {
           _this2.titlePersonnel = 'Dueño';
-          _this2.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role_id === 5;
-          });
+          _this2.clinicPersonner = res.data.infoClinic;
         } else {
           _this2.titlePersonnel = 'Recolector';
-          _this2.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role_id === 3;
-          });
+          _this2.clinicPersonner = res.data.infoClinic;
         }
         _this2.dialog = true;
       })["catch"](function (error) {
@@ -3068,7 +3059,6 @@ __webpack_require__.r(__webpack_exports__);
     showInfoEdit: function showInfoEdit(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      console.log("03 ", item);
       this.dialogEdit = true;
     },
     close: function close() {
@@ -3153,8 +3143,8 @@ __webpack_require__.r(__webpack_exports__);
         status = 2;
       }
       var data = {
-        'clinic': this.dataClinic.id,
-        'user': this.selectedUser,
+        'clinic_id': this.dataClinic.id,
+        'user_id': this.selectedUser,
         'status': status
       };
       axios.post('/clinic/addUser', data).then(function (res) {
@@ -3169,14 +3159,10 @@ __webpack_require__.r(__webpack_exports__);
         } else if (res.data.status == true) {
           if (_this5.titlePersonnel == 'Dueño') {
             _this5.alertTrue('El dueño se agrego correctamente');
-            _this5.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role_id === 5;
-            });
+            _this5.clinicPersonner = res.data.user;
           } else if (_this5.titlePersonnel == 'Recolector') {
             _this5.alertTrue('El recolector se agrego correctamente');
-            _this5.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role_id === 3;
-            });
+            _this5.clinicPersonner = res.data.user;
           }
           _this5.showAdd = false;
         }
@@ -3220,13 +3206,9 @@ __webpack_require__.r(__webpack_exports__);
             console.log("Respuesta del servidor");
             console.log("Datos de delete ", res.data);
             if (_this6.titlePersonnel == 'Dueño') {
-              _this6.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role_id === 5;
-              });
+              _this6.clinicPersonner = res.data.users;
             } else if (_this6.titlePersonnel == 'Recolector') {
-              _this6.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role_id === 3;
-              });
+              _this6.clinicPersonner = res.data.users;
             }
             _this6.searchPersonnel = '';
             swal('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
@@ -3312,16 +3294,6 @@ __webpack_require__.r(__webpack_exports__);
         sortable: false
       }],
       desserts: [],
-      defaultItem: {
-        clinic: {
-          clinic_number: '',
-          status: '',
-          user: {
-            document: ''
-          }
-        },
-        tower_id: ''
-      },
       items: ['OCUPADO', 'DESOCUPADO'],
       clinics: [],
       dataInfo: [],
@@ -3332,6 +3304,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       registerClinic: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
       },
@@ -3473,8 +3446,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
       console.log("Clinica seleccionada ", this.selectedClinic);
       var data = {
-        'clinic': this.selectedClinic,
-        'user': this.infoResponsible.id
+        'clinic_id': this.selectedClinic,
+        'user_id': this.infoResponsible.id
       };
       axios.post('/clinic/addClinic', data).then(function (res) {
         console.log("Respuesta del servidor");
@@ -3583,6 +3556,9 @@ __webpack_require__.r(__webpack_exports__);
         text: 'N Conuslta',
         value: 'clinic_number'
       }, {
+        text: 'N Piso',
+        value: 'floor'
+      }, {
         text: 'Estado',
         value: 'status'
       }, {
@@ -3594,11 +3570,13 @@ __webpack_require__.r(__webpack_exports__);
       editedIndex: -1,
       editedItem: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
       },
       registerClinic: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
       }
@@ -3777,6 +3755,7 @@ __webpack_require__.r(__webpack_exports__);
       editedIndex: -1,
       editedItem: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
       },
@@ -3787,6 +3766,9 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         text: 'N Torre',
         value: 'tower_id'
+      }, {
+        text: 'N Piso',
+        value: 'floor'
       }, {
         text: 'Estado',
         value: 'status'
@@ -3799,19 +3781,22 @@ __webpack_require__.r(__webpack_exports__);
       // Datos de la tabla con consultorios con responsables
       headersClinic: [{
         text: 'N Consultorio',
-        value: 'clinic_number'
+        value: 'clinic.clinic_number'
       }, {
         text: 'N Torre',
-        value: 'tower_id'
+        value: 'clinic.tower_id'
+      }, {
+        text: 'N Piso',
+        value: 'clinic.floor'
       }, {
         text: 'Estado',
-        value: 'status'
+        value: 'clinic.status'
       }, {
         text: 'Nombre',
-        value: 'name'
+        value: 'user.name'
       }, {
         text: 'Documento',
-        value: 'document'
+        value: 'user.document'
       }, {
         text: 'Opciones',
         value: 'actions',
@@ -3819,44 +3804,27 @@ __webpack_require__.r(__webpack_exports__);
       }],
       dessertsClinic: [],
       titlePersonnel: '',
-      // Variables de dueños
+      // Variables del personal
       dialog: false,
       searchPersonnel: '',
       infoClinic: [{
         text: 'Documento',
-        value: 'document'
+        value: 'user.document'
       }, {
         text: 'Nombre',
-        value: 'name'
+        value: 'user.name'
       }, {
         text: 'Telefono',
-        value: 'phone'
+        value: 'user.phone'
       }, {
         text: 'Correo',
-        value: 'email'
+        value: 'user.email'
       }, {
         text: 'Opciones',
         value: 'actions',
         sortable: false
       }],
       ownerDesserts: [],
-      // Variables de recolector 
-      dialogCollector: false,
-      searchCollector: '',
-      collector: [{
-        text: 'Documento',
-        value: 'document'
-      }, {
-        text: 'Nombre',
-        value: 'name'
-      }, {
-        text: 'Telefono',
-        value: 'phone'
-      }, {
-        text: 'Correo',
-        value: 'email'
-      }],
-      collectorDesserts: [],
       clinicPersonner: [],
       dataClinic: {
         clinic_number: ''
@@ -3867,9 +3835,11 @@ __webpack_require__.r(__webpack_exports__);
       selectedUser: null,
       registerClinic: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: ''
-      }
+      },
+      typeShowInfo: true
     };
   },
   created: function created() {
@@ -3883,6 +3853,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log("Respuesta del servidor");
         console.log("datos initialize ", res.data);
         _this.desserts = res.data.clinics;
+        if (_this.desserts.length == 0) {
+          _this.showTables = true;
+        }
       })["catch"](function (error) {
         console.log("Error en servidor");
         console.log(error);
@@ -3918,9 +3891,15 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.selectedFilter);
     },
     showInfoEdit: function showInfoEdit(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      console.log("03 ", this.editedItem);
+      if (item.clinic != null) {
+        this.editedIndex = this.desserts.indexOf(item.clinic);
+        this.editedItem = Object.assign({}, item.clinic);
+        this.typeShowInfo = false;
+      } else {
+        this.editedIndex = this.desserts.indexOf(item);
+        this.editedItem = Object.assign({}, item);
+        this.typeShowInfo = true;
+      }
       this.dialogEdit = true;
     },
     save: function save() {
@@ -3950,8 +3929,12 @@ __webpack_require__.r(__webpack_exports__);
               data: _this3.editedItem
             }).then(function (res) {
               console.log("Respuesta del servidor");
-              console.log(res.data);
-              _this3.clinicResponsible();
+              console.log("Res edit ", res.data);
+              if (_this3.typeShowInfo) {
+                _this3.initialize();
+              } else {
+                _this3.clinicResponsible();
+              }
               _this3.dialogEdit = false;
               sweetalert__WEBPACK_IMPORTED_MODULE_0___default()('Cambio Exitoso!', 'Se edito correctamente', 'success');
             })["catch"](function (error) {
@@ -3967,29 +3950,21 @@ __webpack_require__.r(__webpack_exports__);
     close: function close() {
       this.dialogEdit = false;
       this.dialog = false;
-      this.dialogCollector = false;
       this.dialogRegister = false;
       this.registerClinic = {};
       this.clinicPersonner = [];
     },
     infoPersonnel: function infoPersonnel(item, option) {
       var _this4 = this;
-      axios.get("/clinic/consultation/".concat(item.id, "/").concat(option)).then(function (res) {
-        console.log("Respuesta del servidor");
-        console.log("Datos de tabla ", res.data);
-        console.log(res.data.infoClinic.filter(function (item) {
-          return item.role === 'Dueno';
-        }));
+      axios.get("/clinic/consultation/".concat(item.clinic_id, "/").concat(option)).then(function (res) {
+        console.log("Respuesta del servidor dueño o recolenctor");
+        console.log("Datos de tabla", res.data.infoClinic);
         if (option == 1) {
           _this4.titlePersonnel = 'Dueño';
-          _this4.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role_id === 5;
-          });
+          _this4.clinicPersonner = res.data.infoClinic;
         } else {
           _this4.titlePersonnel = 'Recolector';
-          _this4.clinicPersonner = res.data.infoClinic.filter(function (item) {
-            return item.role_id === 3;
-          });
+          _this4.clinicPersonner = res.data.infoClinic;
         }
         _this4.dialog = true;
       })["catch"](function (error) {
@@ -4003,7 +3978,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
       axios.get('/clinic/consultationUser').then(function (res) {
         console.log("Respuesta del servidor");
-        console.log("datos ", res.data);
+        console.log("datos add ", res.data);
         if (title == 'Dueño') {
           _this5.title = 'dueño';
           _this5.textLable = 'Agregar Dueño';
@@ -4028,7 +4003,7 @@ __webpack_require__.r(__webpack_exports__);
     saveUser: function saveUser() {
       var _this6 = this;
       console.log("this.selectedUser ", this.selectedUser);
-      console.log("this.dataClinic.id ", this.dataClinic.id);
+      console.log("this.dataClinic.id ", this.dataClinic.clinic_id);
       var status = 0;
       if (this.titlePersonnel == 'Dueño') {
         status = 1;
@@ -4036,8 +4011,8 @@ __webpack_require__.r(__webpack_exports__);
         status = 2;
       }
       var data = {
-        'clinic': this.dataClinic.id,
-        'user': this.selectedUser,
+        'clinic_id': this.dataClinic.clinic_id,
+        'user_id': this.selectedUser,
         'status': status
       };
       axios.post('/clinic/addUser', data).then(function (res) {
@@ -4052,14 +4027,10 @@ __webpack_require__.r(__webpack_exports__);
         } else if (res.data.status == true) {
           if (_this6.titlePersonnel == 'Dueño') {
             _this6.alertTrue('El dueño se agrego correctamente');
-            _this6.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role_id === 5;
-            });
+            _this6.clinicPersonner = res.data.user;
           } else if (_this6.titlePersonnel == 'Recolector') {
             _this6.alertTrue('El recolector se agrego correctamente');
-            _this6.clinicPersonner = res.data.user.filter(function (item) {
-              return item.role_id === 3;
-            });
+            _this6.clinicPersonner = res.data.user;
           }
           _this6.showAdd = false;
         }
@@ -4103,13 +4074,9 @@ __webpack_require__.r(__webpack_exports__);
             console.log("Respuesta del servidor");
             console.log("Datos de delete ", res.data);
             if (_this7.titlePersonnel == 'Dueño') {
-              _this7.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role_id === 5;
-              });
+              _this7.clinicPersonner = res.data.users;
             } else if (_this7.titlePersonnel == 'Recolector') {
-              _this7.clinicPersonner = res.data.users.filter(function (item) {
-                return item.role_id === 3;
-              });
+              _this7.clinicPersonner = res.data.users;
             }
             _this7.searchPersonnel = '';
             sweetalert__WEBPACK_IMPORTED_MODULE_0___default()('Cambio Exitoso!', "Se quito el ".concat(message, " del la lista de ").concat(role), 'success');
@@ -4140,6 +4107,9 @@ __webpack_require__.r(__webpack_exports__);
       } else if (this.registerClinic.status == "") {
         this.alertFalse('Parece que el campo estado esta vacío');
         validate = false;
+      } else if (this.registerClinic.floor == "") {
+        this.alertFalse('Parece que el campo piso esta vacío');
+        validate = false;
       }
       if (validate) {
         axios.post('/clinic/register', this.registerClinic).then(function (res) {
@@ -4148,8 +4118,11 @@ __webpack_require__.r(__webpack_exports__);
           _this8.alertTrue("Se registro el consultorio ".concat(res.data.clinic.clinic_number, " correctamente!"));
           _this8.registerClinic = {};
           _this8.dialogRegister = false;
-          _this8.showFilterClinic = true;
           _this8.initialize();
+          if (_this8.selectedFilter = 'CONSULTORIOS CON RESPONSABLES') {
+            _this8.selectedFilter = 'CONSULTORIOS SIN RESPONSABLES';
+            _this8.changeFilter();
+          }
         })["catch"](function (error) {
           console.log("Error en servidor");
           console.log(error);
@@ -5293,6 +5266,24 @@ var render = function render() {
       sm: "6",
       md: "4"
     }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.editedItem.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.editedItem, "floor", $$v);
+      },
+      expression: "editedItem.floor"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
   }, [_c("v-select", {
     attrs: {
       items: _vm.itemsTower,
@@ -5533,7 +5524,7 @@ var render = function render() {
     }], null, false, 1513459952)
   }), _vm._v(" "), _c("v-dialog", {
     attrs: {
-      "max-width": "500px"
+      "max-width": "600px"
     },
     model: {
       value: _vm.dialogRegister,
@@ -5561,6 +5552,24 @@ var render = function render() {
         _vm.$set(_vm.registerClinic, "clinic_number", $$v);
       },
       expression: "registerClinic.clinic_number"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.registerClinic.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.registerClinic, "floor", $$v);
+      },
+      expression: "registerClinic.floor"
     }
   })], 1), _vm._v(" "), _c("v-col", {
     attrs: {
@@ -5740,12 +5749,7 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticStyle: {
-      height: "100vh",
-      "overflow-y": "scroll"
-    }
-  }, [_c("v-app", [_c("v-main", [[_c("v-card", {
+  return _c("div", [_c("v-app", [_c("v-main", [[_c("v-card", {
     attrs: {
       align: "end"
     }
@@ -5862,6 +5866,24 @@ var render = function render() {
       sm: "6",
       md: "4"
     }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.editedItem.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.editedItem, "floor", $$v);
+      },
+      expression: "editedItem.floor"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
   }, [_c("v-select", {
     attrs: {
       items: _vm.itemsTower,
@@ -5916,7 +5938,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                                    Guardar\n                                ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
-      "max-width": "500px"
+      "max-width": "600px"
     },
     model: {
       value: _vm.dialogRegister,
@@ -5944,6 +5966,24 @@ var render = function render() {
         _vm.$set(_vm.registerClinic, "clinic_number", $$v);
       },
       expression: "registerClinic.clinic_number"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.registerClinic.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.registerClinic, "floor", $$v);
+      },
+      expression: "registerClinic.floor"
     }
   })], 1), _vm._v(" "), _c("v-col", {
     attrs: {
@@ -6039,11 +6079,7 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "bg-white",
-    staticStyle: {
-      height: "100vh",
-      "overflow-y": "scroll"
-    }
+    staticClass: "bg-white"
   }, [_c("v-app", [_c("v-main", [_c("v-card", {
     attrs: {
       align: "end"
@@ -6269,6 +6305,24 @@ var render = function render() {
       sm: "6",
       md: "4"
     }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.editedItem.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.editedItem, "floor", $$v);
+      },
+      expression: "editedItem.floor"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
   }, [_c("v-select", {
     attrs: {
       items: _vm.itemsTower,
@@ -6323,7 +6377,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                                Guardar\n                            ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
-      "max-width": "500px"
+      "max-width": "600px"
     },
     model: {
       value: _vm.dialogRegister,
@@ -6358,6 +6412,24 @@ var render = function render() {
       sm: "6",
       md: "4"
     }
+  }, [_c("v-text-field", {
+    attrs: {
+      type: "number",
+      label: "Numero Piso"
+    },
+    model: {
+      value: _vm.registerClinic.floor,
+      callback: function callback($$v) {
+        _vm.$set(_vm.registerClinic, "floor", $$v);
+      },
+      expression: "registerClinic.floor"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "4"
+    }
   }, [_c("v-select", {
     attrs: {
       items: _vm.itemsTower,
@@ -6381,7 +6453,7 @@ var render = function render() {
   }, [_c("v-select", {
     attrs: {
       items: _vm.items,
-      label: "Registrar el consultorio"
+      label: "Seleccione el estado"
     },
     model: {
       value: _vm.registerClinic.status,
@@ -6414,8 +6486,7 @@ var render = function render() {
     attrs: {
       headers: _vm.headers,
       items: _vm.desserts,
-      search: _vm.search,
-      "items-per-page": 5
+      search: _vm.search
     },
     scopedSlots: _vm._u([{
       key: "item.actions",
@@ -6445,8 +6516,7 @@ var render = function render() {
     attrs: {
       headers: _vm.headersClinic,
       items: _vm.dessertsClinic,
-      search: _vm.search,
-      "items-per-page": 5
+      search: _vm.search
     },
     scopedSlots: _vm._u([{
       key: "item.actions",

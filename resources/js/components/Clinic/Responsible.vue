@@ -74,7 +74,7 @@
                 <!-- Registrar consultorio -->
                 <v-dialog
                     v-model="dialogRegister"
-                    max-width="500px"
+                    max-width="600px"
                   >
                   <v-card>
                     <v-card-title>
@@ -87,8 +87,7 @@
                           <v-col
                             cols="12"
                             sm="6"
-                            md="4"
-                            >
+                            md="4">
                             <v-text-field
                               type="number"
                               v-model="registerClinic.clinic_number"
@@ -98,8 +97,17 @@
                           <v-col
                             cols="12"
                             sm="6"
-                            md="4"
-                          >
+                            md="4">
+                            <v-text-field
+                              type="number"
+                              v-model="registerClinic.floor"
+                              label="Numero Piso"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4">
                             <v-select 
                               v-model="registerClinic.tower_id"
                               :items="itemsTower"
@@ -111,8 +119,7 @@
                           <v-col
                             cols="12"
                             sm="6"
-                            md="4"
-                        >
+                            md="4">
                             <v-select
                               v-model="registerClinic.status"
                               :items="items"
@@ -261,16 +268,6 @@
       ],
       desserts: [],
 
-      defaultItem: {
-        clinic: {
-          clinic_number: '',
-          status: '',
-          user: {
-            document: '',
-          }
-        },
-        tower_id: '',
-      },
       items: ['OCUPADO', 'DESOCUPADO'],
       clinics: [],
       dataInfo: [],
@@ -284,6 +281,7 @@
 
       registerClinic: {
         clinic_number: '',
+        floor: '',
         tower_id: '',
         status: '',
       },
@@ -426,8 +424,8 @@
       save () {
         console.log("Clinica seleccionada ",this.selectedClinic);
         var data = {
-          'clinic': this.selectedClinic,
-          'user': this.infoResponsible.id
+          'clinic_id': this.selectedClinic,
+          'user_id': this.infoResponsible.id
         }
         axios.post('/clinic/addClinic', data).then(res => {
           console.log("Respuesta del servidor");

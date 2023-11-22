@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100vh; overflow-y: scroll">
+    <div>
         <v-app>
             <v-main>
                 <template>
@@ -77,8 +77,7 @@
                                             <v-col
                                                 cols="12"
                                                 sm="6"
-                                                md="4"
-                                            >
+                                                md="4">
                                                 <v-text-field
                                                     type="number"
                                                     v-model="editedItem.clinic_number"
@@ -88,8 +87,17 @@
                                             <v-col
                                                 cols="12"
                                                 sm="6"
-                                                md="4"
-                                            >
+                                                md="4">
+                                                <v-text-field
+                                                    type="number"
+                                                    v-model="editedItem.floor"
+                                                    label="Numero Piso"
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col
+                                                cols="12"
+                                                sm="6"
+                                                md="4">
                                                 <v-select 
                                                     v-model="editedItem.tower_id"
                                                     :items="itemsTower"
@@ -101,8 +109,7 @@
                                             <v-col
                                                 cols="12"
                                                 sm="6"
-                                                md="4"
-                                            >
+                                                md="4">
                                                 <v-select
                                                     v-model="editedItem.status"
                                                     :items="items"
@@ -136,7 +143,7 @@
                         <!-- Registrar consultorio -->
                         <v-dialog
                             v-model="dialogRegister"
-                            max-width="500px"
+                            max-width="600px"
                             >
                             <v-card>
                                 <v-card-title>
@@ -161,7 +168,17 @@
                                         cols="12"
                                         sm="6"
                                         md="4"
-                                    >
+                                        >
+                                        <v-text-field
+                                            type="number"
+                                            v-model="registerClinic.floor"
+                                            label="Numero Piso"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col
+                                        cols="12"
+                                        sm="6"
+                                        md="4">
                                         <v-select 
                                         v-model="registerClinic.tower_id"
                                         :items="itemsTower"
@@ -173,8 +190,7 @@
                                     <v-col
                                         cols="12"
                                         sm="6"
-                                        md="4"
-                                    >
+                                        md="4">
                                         <v-select
                                         v-model="registerClinic.status"
                                         :items="items"
@@ -236,6 +252,7 @@
             headers: [
                 { text: 'N Torre', value: 'tower_id' },
                 { text: 'N Conuslta', value: 'clinic_number' },
+                { text: 'N Piso', value: 'floor' },
                 { text: 'Estado', value: 'status' },
                 { text: 'Opciones', value: 'actions', sortable: false },
             ],
@@ -244,12 +261,14 @@
             editedIndex: -1,
             editedItem: {
                 clinic_number: '',
+                floor: '',
                 tower_id: '',
                 status: '',
             },
 
             registerClinic: {
                 clinic_number: '',
+                floor: '',
                 tower_id: '',
                 status: '',
             },
