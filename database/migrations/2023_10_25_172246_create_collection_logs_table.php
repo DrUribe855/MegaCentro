@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('collection_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('clinic_id');
-            $table->unsignedBigInteger('residue_id');
-            $table->float('weight');
+            $table->unsignedBigInteger('user_id');
+            $table->Integer('month');
+            $table->Integer('year');
+            $table->enum('horario', ['Diurno', 'Nocturno', 'Extra']);
             $table->timestamps();
 
-            $table->foreign('clinic_id')->references('id')->on('clinics');
-            $table->foreign('residue_id')->references('id')->on('residues');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

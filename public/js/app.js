@@ -4183,84 +4183,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
-/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _CollectionForm_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CollectionForm.vue */ "./resources/js/components/Collector/CollectionForm.vue");
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
+/* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_1__);
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    'collection-form': _CollectionForm_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
-      dialog: false,
-      dialogDelete: false,
-      headers: [{
-        text: 'Numero de consultorio',
-        align: 'center',
-        sortable: false,
-        value: 'clinic.clinic_number'
-      }, {
-        text: 'N° Torre',
-        value: 'clinic.tower_id',
-        align: 'center'
-      }, {
-        text: 'Estado de recolección',
-        value: 'clinic.collection_status',
-        align: 'center'
-      }, {
-        text: 'Registrar recolección',
-        value: 'actions',
-        sortable: false,
-        align: 'center'
-      }],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        id: '',
-        clinic: {
-          clinic_number: '',
-          residue_id: '',
-          weight: ''
-        }
-      },
-      clinicNumber: {},
-      subCategory: "",
-      type: "",
-      opcionesPeligrosos: [{
-        value: "infecciosos o riesgo biologico",
-        label: "Infecciosos o riesgo biologico"
-      }, {
-        value: "quimicos",
-        label: "Quimicos"
-      }, {
-        value: "radioactivos",
-        label: "Radioactivos"
-      }],
-      opcionesNoPeligrosos: [{
-        value: "biodegradables",
-        label: "Biodegradables"
-      }, {
-        value: "reciclables",
-        label: "Reciclables"
-      }, {
-        value: "inertes",
-        label: "Inertes"
-      }, {
-        value: "ordinarios_comunes",
-        label: "Ordinarios - Comunes"
-      }]
+      clinics: [],
+      month: "",
+      year: ""
     };
   },
-  computed: {
-    formTitle: function formTitle() {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
-    }
-  },
-  watch: {
-    dialog: function dialog(val) {
-      val || this.close();
-    },
-    dialogDelete: function dialogDelete(val) {
-      val || this.closeDelete();
-    }
-  },
+  computed: {},
   created: function created() {
     this.getClinics();
   },
@@ -4270,67 +4209,31 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/collector/clinics').then(function (res) {
         console.log('Respuesta del servidor');
         console.log(res.data);
-        _this.desserts = res.data.clinics;
+        _this.clinics = res.data.clinics;
+        console.log(_this.clinics);
       })["catch"](function (error) {
         console.log('Error en axios: ');
         console.log(error);
         console.log(error.response);
       });
     },
-    editItem: function editItem(item) {
-      console.log(item);
-      this.editedItem.clinic.clinic_number = item.clinic.clinic_number;
-      this.dialog = true;
-    },
-    deleteItem: function deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-    deleteItemConfirm: function deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
-    close: function close() {
-      this.dialog = false;
-    },
-    closeDelete: function closeDelete() {
-      var _this2 = this;
-      this.dialogDelete = false;
-      this.$nextTick(function () {
-        _this2.editedItem = Object.assign({}, _this2.defaultItem);
-        _this2.editedIndex = -1;
-      });
-    },
     save: function save() {
-      var _this3 = this;
+      var _this2 = this;
       axios.post('/collector/saveCollection', this.editedItem.clinic).then(function (resp) {
         console.log('Recolección registrada exitosamente: ', resp.data);
         if (resp.data == 'Todos los datos deben ser validados') {
-          _this3.showAlert('Error', 'Todos los datos deben ser validados', 'error');
+          _this2.showAlert('Error', 'Todos los datos deben ser validados', 'error');
         } else {
-          _this3.showAlert('Registrado', 'La recolección se ha registrado con éxito', 'success');
-          _this3.close();
+          _this2.showAlert('Registrado', 'La recolección se ha registrado con éxito', 'success');
+          _this2.close();
         }
-        _this3.getClinics();
+        _this2.getClinics();
       })["catch"](function (error) {
         console.log(error.response);
       });
     },
-    getOpcionesResiduo: function getOpcionesResiduo(tipoPeligroso) {
-      switch (tipoPeligroso) {
-        case "Infecciosos o riesgo biologico":
-          return ["Biosanitarios", "Anatomopatologicos", "Cortopunzantes", "Animales"];
-        case "Quimicos":
-          return ["Farmacos", "Citotóxicos", "Metales pesados", "Reactivos", "Contenedores presurizados", "Aceites usados"];
-        case "Radioactivos":
-          return ["Fuentes abiertas", "Fuentes cerradas"];
-        default:
-          return [];
-      }
-    },
     showAlert: function showAlert(title, text, icon) {
-      sweetalert__WEBPACK_IMPORTED_MODULE_0___default()({
+      sweetalert__WEBPACK_IMPORTED_MODULE_1___default()({
         title: title,
         text: text,
         icon: icon
@@ -6610,6 +6513,123 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* binding */ render),
+/* harmony export */   staticRenderFns: () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("v-app", [_c("v-main", [_c("v-form", {
+    staticClass: "ml-3"
+  }, [_c("v-container", {
+    staticStyle: {
+      "overflow-x": "scroll"
+    }
+  }, [_c("v-row", [_c("v-col", {
+    attrs: {
+      md: "1"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos biodegradables",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      md: "1"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos reciclables",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos inertes",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos ordinarios",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos biosanitarios",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos anatomopatologicos",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos cortopunzantes",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos animales",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos fármacos",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos citotóxicos",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos metales pesados",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de residuos reactivos",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de contenedores presurizados",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Kilos de aceites usados",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Fuentes abiertas",
+      required: ""
+    }
+  })], 1), _vm._v(" "), _c("v-col", [_c("v-text-field", {
+    attrs: {
+      label: "Fuentes cerradas",
+      required: ""
+    }
+  })], 1)], 1)], 1)], 1)], 1)], 1);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Collector/IndexCollector.vue?vue&type=template&id=4569aea8&":
 /*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Collector/IndexCollector.vue?vue&type=template&id=4569aea8& ***!
@@ -6625,237 +6645,123 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("v-app", [_c("v-main", [_c("v-data-table", {
-    staticClass: "elevation-1",
+  return _c("v-app", [_c("v-main", [_c("div", {
+    staticStyle: {
+      height: "100vh",
+      "overflow-y": "scroll",
+      "overflow-x": "scroll"
+    }
+  }, [_c("div", {
+    staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded"
+  }, [_c("h1", {
+    staticClass: "ml-3"
+  }, [_vm._v("Consultorios asignados")]), _vm._v(" "), _c("v-form", {
+    staticClass: "ml-3"
+  }, [_c("v-container", [_c("v-row", [_c("v-col", {
     attrs: {
-      headers: _vm.headers,
-      items: _vm.desserts,
-      "sort-by": "calories"
+      cols: "12",
+      md: "4"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Ingrese el mes",
+      required: ""
     },
-    scopedSlots: _vm._u([{
-      key: "top",
-      fn: function fn() {
-        return [_c("v-toolbar", {
-          attrs: {
-            flat: ""
-          }
-        }, [_c("v-toolbar-title", [_vm._v("Consultorios asignados")]), _vm._v(" "), _c("v-divider", {
-          staticClass: "mx-4",
-          attrs: {
-            inset: "",
-            vertical: ""
-          }
-        }), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-dialog", {
-          attrs: {
-            "max-width": "500px"
-          },
-          model: {
-            value: _vm.dialog,
-            callback: function callback($$v) {
-              _vm.dialog = $$v;
-            },
-            expression: "dialog"
-          }
-        }, [_c("v-card", [_c("v-card-title", [_c("span", {
-          staticClass: "text-h5"
-        }, [_vm._v(" Registro de recolección ")])]), _vm._v(" "), _c("v-card-text", [_c("v-container", [_c("v-row", [_c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            name: "clinicNumber",
-            label: "Numero de consultorio",
-            readonly: ""
-          },
-          model: {
-            value: _vm.editedItem.clinic.clinic_number,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem.clinic, "clinic_number", $$v);
-            },
-            expression: "editedItem.clinic.clinic_number"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_c("v-select", {
-          attrs: {
-            id: "select1",
-            items: ["Peligrosos", "No peligrosos"],
-            label: "Categoría de residuo"
-          },
-          model: {
-            value: _vm.subCategory,
-            callback: function callback($$v) {
-              _vm.subCategory = $$v;
-            },
-            expression: "subCategory"
-          }
-        })], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_vm.subCategory === "Peligrosos" ? _c("v-select", {
-          attrs: {
-            id: "select2",
-            items: _vm.opcionesPeligrosos.map(function (opcion) {
-              return opcion.label;
-            }),
-            label: "Tipo de residuo peligroso"
-          },
-          model: {
-            value: _vm.type,
-            callback: function callback($$v) {
-              _vm.type = $$v;
-            },
-            expression: "type"
-          }
-        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_vm.subCategory === "Peligrosos" ? _c("v-select", {
-          attrs: {
-            id: "select3",
-            items: _vm.getOpcionesResiduo(_vm.type),
-            label: "Tipo de residuo peligroso"
-          },
-          model: {
-            value: _vm.editedItem.clinic.residue_id,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem.clinic, "residue_id", $$v);
-            },
-            expression: "editedItem.clinic.residue_id"
-          }
-        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_vm.subCategory === "No peligrosos" ? _c("v-select", {
-          attrs: {
-            id: "select4",
-            items: _vm.opcionesNoPeligrosos.map(function (opcion) {
-              return opcion.label;
-            }),
-            label: "Tipo de residuo no peligroso"
-          },
-          model: {
-            value: _vm.editedItem.clinic.residue_id,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem.clinic, "residue_id", $$v);
-            },
-            expression: "editedItem.clinic.residue_id"
-          }
-        }) : _vm._e()], 1), _vm._v(" "), _c("v-col", {
-          attrs: {
-            cols: "12",
-            sm: "6",
-            md: "6"
-          }
-        }, [_c("v-text-field", {
-          attrs: {
-            id: "select5",
-            type: "number",
-            label: "Cantidad recolectada"
-          },
-          model: {
-            value: _vm.editedItem.clinic.weight,
-            callback: function callback($$v) {
-              _vm.$set(_vm.editedItem.clinic, "weight", $$v);
-            },
-            expression: "editedItem.clinic.weight"
-          }
-        })], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.close
-          }
-        }, [_vm._v("\n                        Cancelar\n                      ")]), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.save
-          }
-        }, [_vm._v("\n                        Registrar\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
-          attrs: {
-            "max-width": "500px"
-          },
-          model: {
-            value: _vm.dialogDelete,
-            callback: function callback($$v) {
-              _vm.dialogDelete = $$v;
-            },
-            expression: "dialogDelete"
-          }
-        }, [_c("v-card", [_c("v-card-title", {
-          staticClass: "text-h5"
-        }, [_vm._v("Are you sure you want to delete this item?")]), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.closeDelete
-          }
-        }, [_vm._v("Cancel")]), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.deleteItemConfirm
-          }
-        }, [_vm._v("OK")]), _vm._v(" "), _c("v-spacer")], 1)], 1)], 1)], 1)];
+    model: {
+      value: _vm.month,
+      callback: function callback($$v) {
+        _vm.month = $$v;
       },
-      proxy: true
-    }, {
-      key: "item.actions",
-      fn: function fn(_ref) {
-        var item = _ref.item;
-        return [_c("v-icon", {
-          staticClass: "mr-2",
-          attrs: {
-            small: "",
-            color: "green"
-          },
-          on: {
-            click: function click($event) {
-              return _vm.editItem(item);
-            }
-          }
-        }, [_vm._v("\n                mdi-plus\n              ")])];
+      expression: "month"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      md: "4"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Ingrese el año",
+      required: ""
+    },
+    model: {
+      value: _vm.year,
+      callback: function callback($$v) {
+        _vm.year = $$v;
+      },
+      expression: "year"
+    }
+  })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", _vm._l(_vm.clinics, function (clinic) {
+    return _c("div", {
+      staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4"
+    }, [_c("p", [_vm._v("Numero de consultorio: " + _vm._s(clinic.clinic.clinic_number))]), _vm._v(" "), _c("p", [_vm._v("Numero de torre: " + _vm._s(clinic.clinic.tower_id))]), _vm._v(" "), _c("div", [_c("v-form", {
+      staticClass: "ml-3"
+    }, [_c("v-container", {
+      staticStyle: {
+        "overflow-x": "scroll"
       }
-    }, {
-      key: "no-data",
-      fn: function fn() {
-        return [_c("v-btn", {
-          attrs: {
-            color: "primary"
-          },
-          on: {
-            click: _vm.getClinics
-          }
-        }, [_vm._v("\n                Reset\n              ")])];
-      },
-      proxy: true
-    }])
-  })], 1)], 1);
+    }, [_c("v-row", [_c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Kilos de residuos biodegradables",
+        required: ""
+      }
+    })], 1), _vm._v(" "), _c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Kilos de residuos reciclables",
+        required: ""
+      }
+    })], 1), _vm._v(" "), _c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Kilos de residuos inertes",
+        required: ""
+      }
+    })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", [_c("v-form", {
+      staticClass: "ml-3"
+    }, [_c("v-container", {
+      staticStyle: {
+        "overflow-x": "scroll"
+      }
+    }, [_c("v-row", [_c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Cantidad de bolsas",
+        required: ""
+      }
+    })], 1), _vm._v(" "), _c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Kilos de residuos reciclables",
+        required: ""
+      }
+    })], 1), _vm._v(" "), _c("v-col", {
+      attrs: {
+        md: "3"
+      }
+    }, [_c("v-text-field", {
+      attrs: {
+        label: "Kilos de residuos inertes",
+        required: ""
+      }
+    })], 1)], 1)], 1)], 1)], 1)]);
+  }), 0)])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -17729,6 +17635,43 @@ component.options.__file = "resources/js/components/Clinic/ViewClinic.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/Collector/CollectionForm.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/components/Collector/CollectionForm.vue ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CollectionForm.vue?vue&type=template&id=3c0723cf& */ "./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+var script = {}
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  script,
+  _CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__.render,
+  _CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Collector/CollectionForm.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/Collector/IndexCollector.vue":
 /*!**************************************************************!*\
   !*** ./resources/js/components/Collector/IndexCollector.vue ***!
@@ -18125,6 +18068,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ViewClinic_vue_vue_type_template_id_c8a4728e___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ViewClinic_vue_vue_type_template_id_c8a4728e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ViewClinic.vue?vue&type=template&id=c8a4728e& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/ViewClinic.vue?vue&type=template&id=c8a4728e&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf& ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CollectionForm_vue_vue_type_template_id_3c0723cf___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CollectionForm.vue?vue&type=template&id=3c0723cf& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Collector/CollectionForm.vue?vue&type=template&id=3c0723cf&");
 
 
 /***/ }),
