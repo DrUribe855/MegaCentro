@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Clinic_user extends Model
 {
     use HasFactory;
+
+    protected $table = "clinic_users";
+
     protected $fillable = [
         'user_id',
         'clinic_id',
-        'role', 
+        'role',
     ];
 
     public function user() : BelongsTo{
