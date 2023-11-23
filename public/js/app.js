@@ -2781,6 +2781,7 @@ __webpack_require__.r(__webpack_exports__);
       loaderPdf: null,
       loadingPdf: false,
       list_residues: [],
+      data_residues: [[], []],
       index: 31,
       residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
       type: 'month',
@@ -2818,7 +2819,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.setToday();
-    this.initialize(this.dateAxios);
+    this.initialize(this.dateAxios, 0);
   },
   methods: {
     pdf: function pdf() {
@@ -2844,7 +2845,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       html2pdf_js__WEBPACK_IMPORTED_MODULE_0___default()().from(element).set(opt).save();
     },
-    initialize: function initialize(date) {
+    initialize: function initialize(date, i) {
       var _this3 = this;
       console.log("date ", date);
       if (date != '') {
@@ -2852,6 +2853,9 @@ __webpack_require__.r(__webpack_exports__);
           console.log("Respuesta del servidor");
           console.log("Datos de consulta ", res.data);
           _this3.list_residues = res.data.residues;
+          if (i == 0) {
+            _this3.getResidueValue();
+          }
         })["catch"](function (error) {
           console.log("Error en servidor");
           console.log(error);
@@ -2859,20 +2863,34 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
-    getResidueValue: function getResidueValue(residueId, day) {
-      var weigth = 0;
-      for (var i = 0; i < this.list_residues.length; i++) {
-        if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
-          weigth += this.list_residues[i].total_weight;
-          weigth = accounting__WEBPACK_IMPORTED_MODULE_1___default().formatMoney(weigth, {
-            symbol: '',
-            precision: '',
-            thousand: ',',
-            decimal: '.'
-          });
+    revalidateResidue: function revalidateResidue(residueId, index) {
+      if (this.data_residues[residueId] && this.data_residues[residueId][index] !== undefined) {
+        return this.data_residues[residueId][index];
+      }
+      return '0';
+    },
+    getResidueValue: function getResidueValue() {
+      for (var i = 0; i < this.residueIds.length; i++) {
+        for (var j = 0; j < this.index; j++) {
+          if (!this.data_residues[i]) {
+            this.$set(this.data_residues, i, []);
+          }
+          if (!this.data_residues[i][j]) {
+            this.$set(this.data_residues[i], j, 0);
+          }
+          for (var l = 0; l < this.list_residues.length; l++) {
+            if (this.list_residues[l].day == j && this.list_residues[l].residue_id == i) {
+              this.data_residues[i][j] = this.list_residues[l].total_weight;
+              this.data_residues[i][j] = accounting__WEBPACK_IMPORTED_MODULE_1___default().formatMoney(this.data_residues[i][j], {
+                symbol: '',
+                precision: '',
+                thousand: ',',
+                decimal: '.'
+              });
+            }
+          }
         }
       }
-      return weigth;
     },
     setToday: function setToday() {
       this.focus = new Date();
@@ -2885,7 +2903,7 @@ __webpack_require__.r(__webpack_exports__);
       this.position = monthNumber <= 9 ? this.position = '0' + monthNumber : this.position = monthNumber;
       this.date = month + ' ' + year;
       this.dateAxios = year + '-' + monthNumber;
-      this.initialize(this.dateAxios);
+      this.initialize(this.dateAxios, 1);
     },
     prev: function prev() {
       var newFocus = new Date(this.focus);
@@ -2906,7 +2924,7 @@ __webpack_require__.r(__webpack_exports__);
       }
       this.dateAxios = year + '-' + this.position;
       console.log("FECHA ", this.dateAxios);
-      this.initialize(this.dateAxios);
+      this.initialize(this.dateAxios, 1);
     },
     next: function next() {
       var newFocus = new Date(this.focus);
@@ -2926,7 +2944,7 @@ __webpack_require__.r(__webpack_exports__);
         this.position = '0' + this.position++;
       }
       this.dateAxios = year + '-' + this.position;
-      this.initialize(this.dateAxios);
+      this.initialize(this.dateAxios, 1);
       console.log(this.date);
     }
   }
@@ -4871,7 +4889,9 @@ var render = function render() {
       type: "text",
       value: "CARRERA 18 # 12-75 PINARES SAN MARTIN"
     }
-  })]), _vm._v(" "), _c("div", [_c("label", {
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_c("label", {
     staticClass: "form-label"
   }, [_vm._v("NIVEL DE ATENCIÓN")]), _vm._v(" "), _c("input", {
     staticClass: "form-control",
@@ -4888,7 +4908,9 @@ var render = function render() {
       type: "text",
       value: "PEREIRA"
     }
-  })]), _vm._v(" "), _c("div", [_c("label", {
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_c("label", {
     staticClass: "form-label"
   }, [_vm._v("TELÉFONO")]), _vm._v(" "), _c("input", {
     staticClass: "form-control",
@@ -4906,7 +4928,9 @@ var render = function render() {
       type: "text",
       value: "DANIELA MONTOYA"
     }
-  })]), _vm._v(" "), _c("div", [_c("label", {
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_c("label", {
     staticClass: "form-label"
   }, [_vm._v("CARGO")]), _vm._v(" "), _c("input", {
     staticClass: "form-control",
@@ -4970,88 +4994,88 @@ var render = function render() {
   }, [_vm._v("RADIACTIVOS")])]), _vm._v(" "), _c("tr", [_c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("BIODEGRADABLES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("RECICLABES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("INERTES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("ORDINARIOS-COMUNES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("BIOSANITARIOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("ANATOMOPATOLOGICOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("CORTOPUNZANTES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("ANIMALES (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("FARMACOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("CITOTÓXICOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("METALES PESADOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("REACTIVOS (Kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("CONTENEDORES PRESURIZADOS")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("ACEITES USADOS (kg)")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("FUENTES ABIERTAS")]), _vm._v(" "), _c("th", {
     staticClass: "text-center p-0",
     staticStyle: {
-      "font-size": "10.5px"
+      "font-size": "10px"
     }
   }, [_vm._v("FUENTES CERRADAS")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.index, function (i) {
     return _c("tr", {
       staticClass: "text-center"
     }, [_c("td", [_vm._v(_vm._s(i <= 9 ? "0" + i : i))]), _vm._v(" "), _vm._l(_vm.residueIds, function (residueId) {
-      return _c("td", [_vm._v("\n                        " + _vm._s(_vm.getResidueValue(residueId, i)) + "\n                      ")]);
+      return _c("td", [_vm._v("\n                        " + _vm._s(_vm.revalidateResidue(residueId, i)) + "\n                      ")]);
     })], 2);
   }), 0)])])])])])])])], 1)], 1);
 };

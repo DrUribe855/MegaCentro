@@ -106,17 +106,10 @@
                   <div class="col-8">
                     <label class="form-label">NOMBRE DE LA INSTITUCIÓN</label>
                     <input type="text" class="form-control" value="MEGACENTRO PINARES PROPIEDAD HORIZONTAL">
-                    <!-- <v-text-field
-                      label="NOMBRE DE LA INSTITUCIÓN"
-                    ></v-text-field> -->
                   </div>
                   <div class="col-4">
                     <label class="form-label">FECHA</label>
                     <input type="text" class="form-control" v-model="date">
-                    <!-- <v-text-field
-                      v-model="date"
-                      label="FECHA" 
-                    ></v-text-field>-->
                   </div>
                 </div>
                 <div class="row col-12 m-0 p-0">
@@ -124,48 +117,30 @@
                     <div>
                       <label class="form-label">DIRECCIÓN</label>
                       <input type="text" class="form-control" value="CARRERA 18 # 12-75 PINARES SAN MARTIN">
-                      <!-- <v-text-field
-                        label="DIRECCIÓN"
-                      ></v-text-field> -->
                     </div>
-                    <div>
+                    <div class="mt-3">
                       <label class="form-label">NIVEL DE ATENCIÓN</label>
                       <input type="text" class="form-control">
-                      <!-- <v-text-field
-                        label="NIVEL DE ATENCIÓN"
-                      ></v-text-field> -->
                     </div>
                   </div>
                   <div class="col-4">
                     <div>
                       <label class="form-label">CIUDAD</label>
                       <input type="text" class="form-control" value="PEREIRA">
-                      <!-- <v-text-field
-                        label="CIUDAD"
-                      ></v-text-field> -->
                     </div>
-                    <div>
+                    <div class="mt-3">
                       <label class="form-label">TELÉFONO</label>
                       <input type="text" class="form-control" value="3213222">
-                      <!-- <v-text-field
-                        label="TELÉFONO"
-                      ></v-text-field> -->
                     </div>
                   </div>
                   <div class="col-4">
                     <div>
                       <label class="form-label">PROFESIONAL RESPOSABLE</label>
                       <input type="text" class="form-control" value="DANIELA MONTOYA">
-                      <!-- <v-text-field
-                        label="PROFESIONAL RESPOSABLE"
-                      ></v-text-field> -->
                     </div>
-                    <div>
+                    <div class="mt-3">
                       <label class="form-label">CARGO</label>
                       <input type="text" class="form-control" value="AUXILIAR CONTABLE">
-                      <!-- <v-text-field
-                        label="CARGO"
-                      ></v-text-field> -->
                     </div>
                   </div>
                 </div>
@@ -175,7 +150,6 @@
                   <div class="text-center mb-6">
                     <h4>TIPO DE RESIDUOS</h4>
                   </div>
-                  </style>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -190,29 +164,29 @@
                         <th class="text-center" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>
-                        <th class="text-center p-0" style="font-size: 10.5px;">BIODEGRADABLES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">RECICLABES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">INERTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">ORDINARIOS-COMUNES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">ANATOMOPATOLOGICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">CORTOPUNZANTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">ANIMALES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">FARMACOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">CITOTÓXICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">METALES PESADOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">REACTIVOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">CONTENEDORES PRESURIZADOS</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">ACEITES USADOS (kg)</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">FUENTES ABIERTAS</th>
-                        <th class="text-center p-0" style="font-size: 10.5px;">FUENTES CERRADAS</th>
+                        <th class="text-center p-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">RECICLABES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">INERTES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">ANIMALES (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">FARMACOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS</th>
+                        <th class="text-center p-0" style="font-size: 10px;">ACEITES USADOS (kg)</th>
+                        <th class="text-center p-0" style="font-size: 10px;">FUENTES ABIERTAS</th>
+                        <th class="text-center p-0" style="font-size: 10px;">FUENTES CERRADAS</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="i in index" class="text-center">
                         <td>{{ i <= 9 ? '0'+i : i }}</td>
                         <td v-for="residueId in residueIds">
-                          {{ getResidueValue(residueId, i) }}
+                          {{ revalidateResidue(residueId, i) }}
                         </td>
                       </tr>
                     </tbody>
@@ -238,6 +212,7 @@
         loaderPdf: null,
         loadingPdf: false,
         list_residues: [],
+        data_residues: [[],[]],
         index: 31,
         residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
         type: 'month',
@@ -274,7 +249,7 @@
     },
     created(){
       this.setToday();
-      this.initialize(this.dateAxios);
+      this.initialize(this.dateAxios, 0);
     },
 
     methods: {
@@ -297,13 +272,16 @@
         html2pdf().from(element).set(opt).save();
       },
 
-      initialize(date){
+      initialize(date, i){
         console.log("date ", date);
         if (date != '') {
           axios.get(`/residue/generalShow/${date}`).then(res =>{
             console.log("Respuesta del servidor");
             console.log("Datos de consulta ",res.data);
             this.list_residues = res.data.residues;
+            if (i == 0) {
+              this.getResidueValue();
+            }
           }).catch(error => {
             console.log("Error en servidor");
             console.log(error);
@@ -312,20 +290,38 @@
         }
       },
 
-      getResidueValue(residueId, day) {
-        var weigth = 0;
-        for (let i = 0; i < this.list_residues.length; i++) {
-          if (this.list_residues[i].residue_id === residueId && this.list_residues[i].day_of_month === day) {
-            weigth += this.list_residues[i].total_weight;
-            weigth = accounting.formatMoney(weigth, {
-              symbol: '', 
-              precision: '',
-              thousand: ',',
-              decimal: '.'
-            });
+      revalidateResidue(residueId, index){
+        if (
+          this.data_residues[residueId] &&
+          this.data_residues[residueId][index] !== undefined
+        ) {
+          return this.data_residues[residueId][index];
+        }
+        return '0';
+      },
+
+      getResidueValue() {
+        for (let i = 0; i < this.residueIds.length; i++) {
+          for (let j = 0; j < this.index; j++) {
+            if (!this.data_residues[i]) {
+              this.$set(this.data_residues, i, []);
+            }
+            if (!this.data_residues[i][j]) {
+              this.$set(this.data_residues[i], j, 0);
+            }
+            for (let l = 0; l < this.list_residues.length; l++) {
+              if (this.list_residues[l].day == j && this.list_residues[l].residue_id == i) {
+                this.data_residues[i][j] = this.list_residues[l].total_weight;
+                this.data_residues[i][j] = accounting.formatMoney(this.data_residues[i][j], {
+                  symbol: '', 
+                  precision: '',
+                  thousand: ',',
+                  decimal: '.'
+                });
+              }
+            }
           }
         }
-        return weigth;
       },
 
       setToday () {
@@ -337,7 +333,7 @@
         this.position = monthNumber <= 9 ? this.position = '0'+ monthNumber : this.position = monthNumber;
         this.date = month+ ' '+ year;
         this.dateAxios = year+'-'+monthNumber;
-        this.initialize(this.dateAxios);
+        this.initialize(this.dateAxios, 1);
       },
 
       prev () {
@@ -357,7 +353,7 @@
         }
         this.dateAxios = year+'-'+this.position;
         console.log("FECHA ",this.dateAxios);
-        this.initialize(this.dateAxios);
+        this.initialize(this.dateAxios, 1);
       },
 
       next () {
@@ -376,7 +372,7 @@
           this.position = '0'+this.position++;
         }
         this.dateAxios = year+'-'+this.position;
-        this.initialize(this.dateAxios);
+        this.initialize(this.dateAxios, 1);
         console.log(this.date);
       },
     }

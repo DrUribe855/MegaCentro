@@ -10,15 +10,10 @@ use Illuminate\Support\Facades\DB;
 class ResidueController extends Controller
 {
     public function generalShow($date){
-        $residues = CollectionLog::select(
-            'residue_id',
-            DB::raw('DAY(created_at) as day_of_month'),
-            DB::raw('SUM(weight) as total_weight')
-        )
-        ->where('created_at', 'LIKE',  $date. '%')
-        ->groupBy('created_at', 'residue_id')
+        $residues = CollectionLog::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, residue_id, SUM(weight) as total_weight')
+        ->groupBy('year', 'month', 'day', 'residue_id')
         ->get();
-        
+
         $data = [
             'status' => true,
             'residues' => $residues,
