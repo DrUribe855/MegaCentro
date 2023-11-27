@@ -45,7 +45,7 @@
                   </div>
                   <div>
                     <v-toolbar-title>
-                      {{ date }}
+                      {{ date.toUpperCase() }}
                     </v-toolbar-title>
                   </div>
                 </div>
@@ -109,7 +109,7 @@
                   </div>
                   <div class="col-4">
                     <label class="form-label">FECHA</label>
-                    <input type="text" class="form-control" v-model="date">
+                    <input type="text" class="form-control" :value="date.toUpperCase()">
                   </div>
                 </div>
                 <div class="row col-12 m-0 p-0">
@@ -130,17 +130,17 @@
                     </div>
                     <div class="mt-3">
                       <label class="form-label">TELÉFONO</label>
-                      <input type="text" class="form-control" value="3213222">
+                      <input type="text" class="form-control" :value="user.phone">
                     </div>
                   </div>
                   <div class="col-4">
                     <div>
                       <label class="form-label">PROFESIONAL RESPOSABLE</label>
-                      <input type="text" class="form-control" value="DANIELA MONTOYA">
+                      <input type="text" class="form-control" :value=" user.name && user.last_name != undefined ? user.name.toUpperCase()+' '+user.last_name.toUpperCase() : ''">
                     </div>
                     <div class="mt-3">
                       <label class="form-label">CARGO</label>
-                      <input type="text" class="form-control" value="AUXILIAR CONTABLE">
+                      <input type="text" class="form-control" :value="role.toUpperCase()">
                     </div>
                   </div>
                 </div>
@@ -213,6 +213,8 @@
         loadingPdf: false,
         list_residues: [],
         data_residues: [[],[]],
+        user: {},
+        role: '',
         index: 31,
         residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
         type: 'month',
@@ -249,7 +251,7 @@
     },
     created(){
       this.setToday();
-      this.initialize(this.dateAxios, 0);
+      this.initialize(this.dateAxios);
     },
 
     methods: {
@@ -272,16 +274,16 @@
         html2pdf().from(element).set(opt).save();
       },
 
-      initialize(date, i){
+      initialize(date){
         console.log("date ", date);
         if (date != '') {
           axios.get(`/residue/generalShow/${date}`).then(res =>{
             console.log("Respuesta del servidor");
             console.log("Datos de consulta ",res.data);
             this.list_residues = res.data.residues;
-            if (i == 0) {
-              this.getResidueValue();
-            }
+            this.user = res.data.user;
+            this.role = res.data.role;
+            this.getResidueValue();
           }).catch(error => {
             console.log("Error en servidor");
             console.log(error);
@@ -306,18 +308,22 @@
             if (!this.data_residues[i]) {
               this.$set(this.data_residues, i, []);
             }
-            if (!this.data_residues[i][j]) {
-              this.$set(this.data_residues[i], j, 0);
-            }
-            for (let l = 0; l < this.list_residues.length; l++) {
-              if (this.list_residues[l].day == j && this.list_residues[l].residue_id == i) {
-                this.data_residues[i][j] = this.list_residues[l].total_weight;
-                this.data_residues[i][j] = accounting.formatMoney(this.data_residues[i][j], {
-                  symbol: '', 
-                  precision: '',
-                  thousand: ',',
-                  decimal: '.'
-                });
+            this.$set(this.data_residues[i], j, 0);
+          }
+        }
+        if (this.list_residues.length != 0) {
+          for (let i = 0; i < this.residueIds.length; i++) {
+            for (let j = 0; j < this.index; j++) {
+              for (let l = 0; l < this.list_residues.length; l++) {
+                if (this.list_residues[l].day == j && this.list_residues[l].id_residue == i) {
+                  this.data_residues[i][j] = this.list_residues[l].total_weight;
+                  this.data_residues[i][j] = accounting.formatMoney(this.data_residues[i][j], {
+                    symbol: '', 
+                    precision: '',
+                    thousand: ',',
+                    decimal: '.'
+                  });
+                }
               }
             }
           }
@@ -333,7 +339,7 @@
         this.position = monthNumber <= 9 ? this.position = '0'+ monthNumber : this.position = monthNumber;
         this.date = month+ ' '+ year;
         this.dateAxios = year+'-'+monthNumber;
-        this.initialize(this.dateAxios, 1);
+        this.initialize(this.dateAxios);
       },
 
       prev () {
@@ -353,7 +359,7 @@
         }
         this.dateAxios = year+'-'+this.position;
         console.log("FECHA ",this.dateAxios);
-        this.initialize(this.dateAxios, 1);
+        this.initialize(this.dateAxios);
       },
 
       next () {
@@ -372,7 +378,7 @@
           this.position = '0'+this.position++;
         }
         this.dateAxios = year+'-'+this.position;
-        this.initialize(this.dateAxios, 1);
+        this.initialize(this.dateAxios);
         console.log(this.date);
       },
     }

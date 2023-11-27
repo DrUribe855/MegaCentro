@@ -307,11 +307,27 @@ return [
             'icon' => 'fas fa-fw fa-users',
             'can' => 'admin.managers.generalShow'
         ],
+        // [
+        //     'text' => 'Información residuos',
+        //     'url'  => '/assistant/index',
+        //     'icon' => 'fas fa-fw fa-list',
+        //     'can' => 'assistant.statistics.generalShow'
+        // ],
         [
-            'text' => 'Información residuos',
-            'url'  => '/assistant/index',
-            'icon' => 'fas fa-fw fa-list',
-            'can' => 'assistant.statistics.generalShow'
+            'text'    => 'Información residuos',
+            'icon'    => 'fas fa-fw fa-list',
+            'submenu' => [
+                [
+                    'text' => 'Formulario RH',
+                    'url'  => '/assistant/index',
+                    'can' => 'assistant.statistics.generalShow'
+                ],
+                [
+                    'text' => 'RH Continuacion',
+                    'url'  => '/assistant/continuation',
+                    'can' => 'assistant.statistics.generalShow'
+                ],
+            ],
         ],
         [
             'text' => 'Registrar recolección',

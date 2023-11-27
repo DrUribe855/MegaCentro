@@ -9,4 +9,8 @@ class AssistantController extends Controller
     public function index(){
         return view('./Assistant/index');
     }
+
+    public function showContinuation(){
+        return view('/Assistant/continuation');
+    }
 }

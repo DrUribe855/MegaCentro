@@ -10,6 +10,7 @@ class Waste_collection extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'id_residue',
         'weight',
         'garbage_bags', 
     ];

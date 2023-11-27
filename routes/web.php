@@ -41,6 +41,7 @@ Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'u
 // Auth::routes();
 
 Route::get('/assistant/index', [ AssistantController::class, 'index'])->middleware('can:admin.managers.generalShow');
+Route::get('/assistant/continuation', [ AssistantController::class, 'showContinuation'])->middleware('can:admin.managers.generalShow');
 
 // --------------------------- Rutas de modulo encargados -------------------------------- \\ 
 
@@ -74,3 +75,4 @@ Auth::routes();
 // ------------------------------- Rutas de residuos --------------------------------------- 
 
 Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalShow']);
+Route::get('/residue/showContinuation/{date}', [ResidueController::class, 'showContinuation']);
