@@ -6554,8 +6554,7 @@ var render = function render() {
   return _c("v-app", [_c("v-main", [_c("div", {
     staticStyle: {
       height: "100vh",
-      "overflow-y": "scroll",
-      "overflow-x": "scroll"
+      "overflow-y": "scroll"
     }
   }, [_c("div", {
     staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded"
@@ -6599,47 +6598,26 @@ var render = function render() {
     }
   })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", _vm._l(_vm.clinics, function (clinic) {
     return _c("div", {
-      staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4"
-    }, [_c("p", [_vm._v("Numero de consultorio: " + _vm._s(clinic.clinic.clinic_number))]), _vm._v(" "), _c("p", [_vm._v("Numero de torre: " + _vm._s(clinic.clinic.tower_id))]), _vm._v(" "), _c("div", [_c("v-form", {
+      staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4 back"
+    }, [_c("div", {
+      staticClass: "container-scroll"
+    }, [_c("div", {
+      staticClass: "input-item"
+    }, [_c("input", {
+      attrs: {
+        type: "text",
+        placeholder: "Input 1"
+      }
+    })]), _vm._v(" "), _c("div", {
+      staticClass: "input-item"
+    }, [_c("input", {
+      attrs: {
+        type: "text",
+        placeholder: "Input 2"
+      }
+    })])]), _vm._v(" "), _c("div", [_c("v-form", {
       staticClass: "ml-3"
-    }, [_c("v-container", {
-      staticStyle: {
-        "overflow-x": "scroll"
-      }
-    }, [_c("v-row", [_c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos biodegradables",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos reciclables",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos inertes",
-        required: ""
-      }
-    })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", [_c("v-form", {
-      staticClass: "ml-3"
-    }, [_c("v-container", {
-      staticStyle: {
-        "overflow-x": "scroll"
-      }
-    }, [_c("v-row", [_c("v-col", {
+    }, [_c("v-container", {}, [_c("v-row", [_c("v-col", {
       attrs: {
         md: "3"
       }
