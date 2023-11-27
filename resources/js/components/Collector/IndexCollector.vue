@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <div style="height: 100vh; overflow-y: scroll; overflow-x: scroll;">
+      <div style="height: 100vh; overflow-y: scroll;">
         <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
           <h1 class="ml-3">Consultorios asignados</h1>
           <v-form class="ml-3">
@@ -33,143 +33,19 @@
           </v-form>
         </div>
         <div>
-          <div v-for="clinic in clinics" class="shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4">
-            <p>Numero de consultorio: {{clinic.clinic.clinic_number}}</p>
-            <p>Numero de torre: {{clinic.clinic.tower_id}}</p>
-            <div>
-                <v-form class="ml-3">
-                  <v-container style="overflow-x: scroll;">
-                    <v-row>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos biodegradables"
-                          required
-                        ></v-text-field>
-                      </v-col>
-
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos reciclables"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos inertes"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <!-- <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos ordinarios"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos biosanitarios"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos anatomopatologicos"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos cortopunzantes"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos animales"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos fármacos"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                        md="3"
-                      >
-                        <v-text-field
-                          label="Kilos de residuos citotóxicos"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Kilos de residuos metales pesados"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Kilos de residuos reactivos"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Kilos de contenedores presurizados"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Kilos de aceites usados"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Fuentes abiertas"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col
-                      >
-                        <v-text-field
-                          label="Fuentes cerradas"
-                          required
-                        ></v-text-field>
-                      </v-col> -->
-                    </v-row>
-                </v-container>
-              </v-form>
+          <div v-for="clinic in clinics" class="shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4 back">
+            <div class="container-scroll">
+              <div class="input-item">
+                  <input type="text" placeholder="Input 1">
+              </div>
+              <div class="input-item">
+                  <input type="text" placeholder="Input 2">
+              </div>
+              <!-- Repite estos bloques para tus 16 inputs -->
             </div>
-            <div>
+          <div>
               <v-form class="ml-3">
-                  <v-container style="overflow-x: scroll;">
+                  <v-container style="">
                     <v-row>
                       <v-col
                         md="3"
