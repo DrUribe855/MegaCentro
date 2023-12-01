@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_residue');
             $table->float('weight');
             $table->Integer('garbage_bags');
+            $table->date('collection_date')->nullable();
             $table->timestamps();
 
             $table->foreign('id_collection_log')->references('id')->on('collection_logs');

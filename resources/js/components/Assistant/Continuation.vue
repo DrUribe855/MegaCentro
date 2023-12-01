@@ -30,13 +30,13 @@
                                 </div>
                             </div>
                             <div class="ml-2">
-                                <v-btn :loading="loading3" :disabled="loading3" color="green" class="ma-2 white--text"
+                                <!-- <v-btn :loading="loading3" :disabled="loading3" color="green" class="ma-2 white--text"
                                     @click="loader = 'loading3'">
                                     EXCEL
                                     <v-icon right dark>
                                         mdi-cloud-upload
                                     </v-icon>
-                                </v-btn>
+                                </v-btn> -->
                                 <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
                                     @click="pdf">
                                     PDF
@@ -84,21 +84,37 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(list, i) in list_residues">
-                                            <td class="text-center">{{ i+1 }}</td>
-                                            <td class="text-center">{{ list.total_weight != '' ? list.total_weight : '0' }}</td>
+                                        <tr v-for="i in index">
+                                            <td class="text-center">{{ i <= 9 ? '0'+i : i }}</td>
+                                            <td class="text-center">{{ revalidateData(i,0) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ list.garbage_bags != '' ? list.garbage_bags : '0' }}</td>
+                                            <td class="text-center">{{ revalidateData(i,1) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center">1</td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ list.hour != '' ? list.hour : '0' }}</td>
+                                            <td class="text-center">{{  }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center">TOTAL</td>
+                                            <td class="text-center">{{ revalidateData(0,2) }}</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">{{ revalidateData(0,3) }}</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center bg-red">queda pendiente</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
+                                            <td class="text-center">0</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -123,12 +139,15 @@ export default {
             loadingPdf: false,
             validateTable: false,
             list_residues: [],
-            index: 31,
+            data_residues: [],
+            data_garbage_bags: [],
+            index: 0,
             type: 'month',
             focus: new Date(),
             date: '',
             dateAxios: '',
             position: 0,
+            total: 0,
         }
     },
     watch: {
@@ -152,7 +171,6 @@ export default {
     },
     created() {
         this.setToday();
-        this.initialize(this.dateAxios);
     },
 
     methods: {
@@ -161,7 +179,7 @@ export default {
             var element = document.getElementById('element-to-pdf');
             var opt = {
                 margin: 2.1,
-                filename: 'Reporte RH mensual.pdf',
+                filename: 'Reporte RH mensual continuacion.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 3 },
                 jsPDF: {
@@ -180,16 +198,10 @@ export default {
             if (date != '') {
                 axios.get(`/residue/showContinuation/${date}`).then(res => {
                     console.log("Respuesta del servidor");
-                    console.log("Datos de consulta ", res.data.residues);
+                    console.log("Datos de consulta ", res.data);
                     this.list_residues = res.data.residues;
-                    for (let i = 0; i < this.list_residues.length; i++) {
-                        this.list_residues[i].total_weight = accounting.formatMoney(this.list_residues[i].total_weight, {
-                            symbol: '',
-                            precision: '',
-                            thousand: ',',
-                            decimal: '.'
-                        });
-                    }
+                    this.index = res.data.date;
+                    this.total = res.data.total;
                     this.getResidueValue();
                 }).catch(error => {
                     console.log("Error en servidor");
@@ -197,6 +209,52 @@ export default {
                     console.log(error.response);
                 });
             }
+        },
+
+        revalidateData(index, type) {
+            if (this.data_residues[index] !== undefined && type == 0) {
+                return this.data_residues[index];
+            }else if (this.data_garbage_bags[index] != undefined && type == 1){
+                return this.data_garbage_bags[index];
+            }else if (this.total[index] != undefined) {
+                if (type == 2) {
+                    return this.formater(this.total[index].total_weight)
+                }else{
+                    return this.formater(this.total[index].garbage_bags)
+                }
+            }
+            return '0';
+        },
+
+        getResidueValue() {
+            this.data_residues = [];
+            this.data_garbage_bags = [];
+            for (let i = 0; i < this.index; i++) {
+                if (!this.data_residues[i]) {
+                    this.$set(this.data_residues, i);
+                }
+            }
+            if (this.list_residues.length != 0) {
+                for (let i = 1; i <= this.index; i++) {
+                    for (let l = 0; l < this.list_residues.length; l++) {
+                        if (this.list_residues[l].day == i) {
+                            this.data_garbage_bags[i] = this.formater(this.list_residues[l].garbage_bags);
+                            this.data_residues[i] = this.formater(this.list_residues[l].total_weight);
+                        }
+                    }
+                }
+                // console.log("sad",this.data_garbage_bags);
+            }
+        },
+
+        formater(total){
+            total = accounting.formatMoney(total, {
+                symbol: '',
+                precision: '',
+                thousand: ',',
+                decimal: '.'
+            });
+            return total;
         },
 
         setToday() {

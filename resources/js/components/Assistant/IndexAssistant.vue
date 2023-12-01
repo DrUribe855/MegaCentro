@@ -50,7 +50,7 @@
                   </div>
                 </div>
                 <div class="ml-2">
-                  <v-btn
+                  <!-- <v-btn
                     :loading="loading3"
                     :disabled="loading3"
                     color="green"
@@ -64,7 +64,7 @@
                     >
                       mdi-cloud-upload
                     </v-icon>
-                  </v-btn>
+                  </v-btn> -->
                   <v-btn
                     :loading="loadingPdf"
                     :disabled="loadingPdf"
@@ -153,40 +153,46 @@
                   <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th rowspan="3" style="padding-bottom: 5em; padding-left: 1em; width: 0.2%">DÍA</th>
-                        <th colspan="4" class="text-center" style="width: 10%;">RESIDUOS NO PELIGROSOS</th>
-                        <th colspan="12" class="text-center" style="width: 20%;">RESIDUOS PELIGROSOS</th>
+                        <th rowspan="3" class="text-center px-0" style="padding-bottom: 5em; padding-left: 1em; width: 0.2%">DÍA</th>
+                        <th colspan="4" class="text-center px-0" style="width: 10%;">RESIDUOS NO PELIGROSOS</th>
+                        <th colspan="12" class="text-center px-0" style="width: 20%;">RESIDUOS PELIGROSOS</th>
                       </tr>
                       <tr>
-                        <th class="text-center" colspan="4"></th>
-                        <th class="text-center" colspan="4">INFECCIOSOS O RIESGO BIOLOGICO</th>
-                        <th class="text-center" colspan="6">QUIMICOS</th>
-                        <th class="text-center" colspan="2">RADIACTIVOS</th>
+                        <th class="text-center px-0" colspan="4"></th>
+                        <th class="text-center px-0" colspan="4">INFECCIOSOS O RIESGO BIOLOGICO</th>
+                        <th class="text-center px-0" colspan="6">QUIMICOS</th>
+                        <th class="text-center px-0" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>
-                        <th class="text-center p-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">RECICLABES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">INERTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">ANIMALES (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">FARMACOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS</th>
-                        <th class="text-center p-0" style="font-size: 10px;">ACEITES USADOS (kg)</th>
-                        <th class="text-center p-0" style="font-size: 10px;">FUENTES ABIERTAS</th>
-                        <th class="text-center p-0" style="font-size: 10px;">FUENTES CERRADAS</th>
+                        <th class="text-center px-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">RECICLABES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">INERTES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ANIMALES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ACEITES USADOS (kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">FUENTES ABIERTAS</th>
+                        <th class="text-center px-0" style="font-size: 10px;">FUENTES CERRADAS</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="i in index" class="text-center">
-                        <td>{{ i <= 9 ? '0'+i : i }}</td>
-                        <td v-for="residueId in residueIds">
+                      <tr v-for="i in index">
+                        <td class="text-center px-0">{{ i <= 9 ? '0'+i : i }}</td>
+                        <td class="text-center px-0" v-for="residueId in residueIds">
                           {{ revalidateResidue(residueId, i) }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-center px-0">TOTAL</td>
+                        <td class="text-center px-0" v-for="residueId in residueIds">
+                          {{ revalidateTotal(residueId) }}
                         </td>
                       </tr>
                     </tbody>
@@ -228,6 +234,8 @@
         date: '',
         dateAxios: '',
         position: 0,
+        total_weight: [],
+        data_total: [],
       }
     },
     watch: {
@@ -251,7 +259,7 @@
     },
     created(){
       this.setToday();
-      this.initialize(this.dateAxios);
+      // this.initialize(this.dateAxios);
     },
 
     methods: {
@@ -259,8 +267,8 @@
         this.loaderPdf = 'loadingPdf'
         var element = document.getElementById('element-to-pdf');
         var opt = {
-          margin:       2.1,
-          filename:     'Reporte RH mensual.pdf',
+          margin:       0.5,
+          filename:     `Reporte RH mensual ${this.date}.pdf`,
           image:        { type: 'jpeg', quality: 0.98 },
           html2canvas:  { scale: 3 },
           jsPDF:        { 
@@ -280,9 +288,11 @@
           axios.get(`/residue/generalShow/${date}`).then(res =>{
             console.log("Respuesta del servidor");
             console.log("Datos de consulta ",res.data);
+            this.total_weight = res.data.total;
             this.list_residues = res.data.residues;
             this.user = res.data.user;
             this.role = res.data.role;
+            this.index = res.data.date;
             this.getResidueValue();
           }).catch(error => {
             console.log("Error en servidor");
@@ -293,18 +303,37 @@
       },
 
       revalidateResidue(residueId, index){
-        if (
-          this.data_residues[residueId] &&
-          this.data_residues[residueId][index] !== undefined
-        ) {
+        if (this.data_residues[residueId] && this.data_residues[residueId][index] !== undefined) {
           return this.data_residues[residueId][index];
         }
         return '0';
       },
 
+      revalidateTotal(residueId){
+        if (this.data_total[residueId] !== undefined) {
+          return this.data_total[residueId];
+        }
+        return '0';
+      },
+
+      formater(total){
+        total = accounting.formatMoney(total, {
+          symbol: '',
+          precision: '',
+          thousand: ',',
+          decimal: '.'
+        });
+        return total;
+      },
+
       getResidueValue() {
+        console.log("01 ",this.total_weight);
+        this.data_total = [];
         for (let i = 0; i < this.residueIds.length; i++) {
-          for (let j = 0; j < this.index; j++) {
+          if (!this.data_total[i]) {
+            this.$set(this.data_total, i);
+          }
+          for (let j = 1; j <= this.index; j++) {
             if (!this.data_residues[i]) {
               this.$set(this.data_residues, i, []);
             }
@@ -313,16 +342,17 @@
         }
         if (this.list_residues.length != 0) {
           for (let i = 0; i < this.residueIds.length; i++) {
-            for (let j = 0; j < this.index; j++) {
+            for (let p = 0; p < this.total_weight.length; p++) {
+              if (this.total_weight[p].id_residue == i) {
+                this.data_total[i] = this.total_weight[p].weight;
+                this.data_total[i] = this.formater(this.data_total[i]);
+              }
+            }
+            for (let j = 1; j <= this.index; j++) {
               for (let l = 0; l < this.list_residues.length; l++) {
                 if (this.list_residues[l].day == j && this.list_residues[l].id_residue == i) {
                   this.data_residues[i][j] = this.list_residues[l].total_weight;
-                  this.data_residues[i][j] = accounting.formatMoney(this.data_residues[i][j], {
-                    symbol: '', 
-                    precision: '',
-                    thousand: ',',
-                    decimal: '.'
-                  });
+                  this.data_residues[i][j] = this.formater(this.data_residues[i][j]);
                 }
               }
             }

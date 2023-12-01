@@ -23,6 +23,8 @@ Vue.component('employees-list', require('./components/Administrator/Employees/Em
 //Assistant
 Vue.component('index-assistant', require('./components/Assistant/IndexAssistant.vue').default);
 Vue.component('continuation-assistant', require('./components/Assistant/Continuation.vue').default);
+Vue.component('unified-document', require('./components/Assistant/Unified.vue').default);
+Vue.component('unified-continuation', require('./components/Assistant/UnifiedContinuation.vue').default);
 
 //Collector
 Vue.component('index-collector', require('./components/Collector/IndexCollector.vue').default);

@@ -13,4 +13,12 @@ class AssistantController extends Controller
     public function showContinuation(){
         return view('/Assistant/continuation');
     }
+
+    public function showUnified(){
+        return view('/Assistant/unified');
+    }
+
+    public function showUnifiedContinuation(){
+        return view('/Assistant/unifiedContinuation');
+    }
 }

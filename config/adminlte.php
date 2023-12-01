@@ -316,6 +316,7 @@ return [
         [
             'text'    => 'Información residuos',
             'icon'    => 'fas fa-fw fa-list',
+            'can' => 'assistant.statistics.generalShow',
             'submenu' => [
                 [
                     'text' => 'Formulario RH',
@@ -323,8 +324,18 @@ return [
                     'can' => 'assistant.statistics.generalShow'
                 ],
                 [
-                    'text' => 'RH Continuacion',
+                    'text' => 'RH Continuación',
                     'url'  => '/assistant/continuation',
+                    'can' => 'assistant.statistics.generalShow'
+                ],
+                [
+                    'text' => 'Unificado anual',
+                    'url'  => '/assistant/unified',
+                    'can' => 'assistant.statistics.generalShow'
+                ],
+                [
+                    'text' => 'Unificado continuación',
+                    'url'  => '/assistant/unifiedContinuation',
                     'can' => 'assistant.statistics.generalShow'
                 ],
             ],
