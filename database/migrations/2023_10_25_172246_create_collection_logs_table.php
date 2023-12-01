@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('clinic_id');
             $table->Integer('month');
             $table->Integer('year');
-            $table->enum('horario', ['Diurno', 'Nocturno', 'Extra']);
+            $table->enum('schedule', ['Diurno', 'Nocturno', 'Extra']);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

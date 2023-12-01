@@ -8,6 +8,7 @@ use App\Models\Clinic_user;
 use App\Models\CollectionLog;
 use App\Models\Residue;
 use App\Models\Clinic;
+use App\Models\Waste_collection;
 
 class CollectorController extends Controller
 {
@@ -24,41 +25,29 @@ class CollectorController extends Controller
 
     public function store(Request $request)
     {
+        $clinics = $request->datos;
+        $general_data = $request->data_general;
 
-        $clinicNumber = $request->input('clinic_number');
-        $residueName = $request->input('residue_id');
-        $weight = $request->input('weight');
-
-        if($residueName &&  $weight){
-            $clinicId = Clinic::select('id')
-                    ->where('clinic_number', $clinicNumber)
-                    ->first();
-
-            $residueId = Residue::select('id')
-                        ->where('residue_name', $residueName)
-                        ->first();
-
-            $collectionLog = new CollectionLog();
-            $collectionLog->clinic_id = $clinicId->id;
-            $collectionLog->residue_id = $residueId->id;
-            $collectionLog->weight = $request->input('weight');
-            $collectionLog->save();
-
-            Clinic::where('id', $clinicId->id)->update(['collection_status' => 'RECOLECTADO']);
-
-            $data = [
-                'status' => true,
-                'clinics' => $collectionLog,
-            ];
-
-            return response()->json($data);
-        }else{
-            return response()->json('Todos los datos deben ser validados');
-        }
-        
-
-
-
+        // return response()->json($clinics[0]["clinic_id"]);
+        foreach ($clinics as $key => $clinic) {
+            $collection = new CollectionLog();
+            $collection->user_id = auth()->user()->id;
+            $collection->clinic_id = $clinic["clinic_id"];
+            $collection->year = $general_data["year"];
+            $collection->month = $general_data["month"];
+            $collection->schedule = $general_data["schedule"];
+            $collection->save();
+            
+            foreach ($clinic["data"] as $key => $residue) {
+                $residues = new Waste_collection();
+                $residues->id_collection_log = $collection->id;
+                $residues->id_residue = $residue["residue_id"];
+                $residues->weight = $residue["weight"];
+                $residues->garbage_bags = $residue["bags"];
+                $residues->save();
+            }
+        }   
+         
 
     }
 
@@ -88,11 +77,12 @@ class CollectorController extends Controller
         })
         ->with('clinic')
         ->get();
-        // return $clinics;
+        $residues = Residue::get();
 
         $data = [
             'status' => true,
-            'clinics' => $clinics
+            'clinics' => $clinics,
+            'residues' => $residues,
         ];
 
         return response()->json($data);
