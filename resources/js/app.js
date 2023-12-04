@@ -31,7 +31,7 @@ Vue.component('index-collector', require('./components/Collector/IndexCollector.
  
 //Manager
 Vue.component('index-manager', require('./components/Manager/IndexManager.vue').default);
-
+Vue.component('collector-residue', require('./components/Manager/CollectorResidue.vue').default);
 
 Vue.component('login', require('./components/Login.vue').default);
 

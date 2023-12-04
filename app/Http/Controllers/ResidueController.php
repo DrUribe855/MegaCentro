@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clinic;
+use App\Models\Clinic_user;
+use App\Models\CollectionLog;
 use Illuminate\Http\Request;
 use App\Models\Waste_collection;
 use App\Models\ResidueType;
 use Illuminate\Support\Facades\DB;
+use Psy\Command\WhereamiCommand;
 
 class ResidueController extends Controller
 {
+    // Reportes 
     public function generalShow($date){
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
         ->where('created_at', 'LIKE',  $date. '%')
@@ -103,5 +108,33 @@ class ResidueController extends Controller
         ];
 
         return response()->json($data); 
+    }
+    // fin reportes
+
+    // Recolecciones almacenadas
+    public function showCollectorResidue(){
+        $records = CollectionLog::whereHas('user', function($query){
+            $query->role('Recolector');
+            $query->whereHas('clinic_user', function($query){
+                $query->whereHas('clinic');
+            });
+        })
+        ->whereHas('clinic')
+        ->with('user', 'clinic')
+        ->get();
+
+        $records->transform(function ($record) {
+            $record->date = $record->created_at->format('Y-m-d');
+            $record->dateTemp = $record->created_at->format('Ymd');
+            unset($record->created_at);
+            return $record;
+        });
+
+        $data = [
+            'status' => true,
+            'records' => $records,
+        ];
+
+        return response()->json($data);
     }
 }

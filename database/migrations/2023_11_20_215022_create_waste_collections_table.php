@@ -10,14 +10,13 @@ return new class extends Migration
     {
         Schema::create('waste_collections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_collection_log');
+            $table->unsignedBigInteger('collection_log_id');
             $table->unsignedBigInteger('id_residue');
             $table->float('weight');
             $table->Integer('garbage_bags');
-            $table->date('collection_date')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_collection_log')->references('id')->on('collection_logs');
+            $table->foreign('collection_log_id')->references('id')->on('collection_logs');
             $table->foreign('id_residue')->references('id')->on('residues');
         });
     }

@@ -35,4 +35,8 @@ class User extends Authenticatable
     public function clinic_user() : HasMany{
         return $this->hasMany(Clinic_user::class);
     }
+
+    public function collection_log() : HasMany{
+        return $this->hasMany(CollectionLog::class);
+    }
 }

@@ -352,6 +352,12 @@ return [
             'icon' => 'fas fa-fw fa-user',
             'can' => 'manager.clinics.generalShow'
         ],
+        [
+            'text' => 'Recolectar residuos',
+            'url'  => '/manager/collector_residue',
+            'icon' => 'fas fa-fw fa-user',
+            // 'can' => 'manager.clinics.generalShow'
+        ],
     ],
 
     /*

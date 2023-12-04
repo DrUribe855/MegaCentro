@@ -12,6 +12,9 @@ class ManagerController extends Controller
         return view('Manager/index');
     }
 
+    public function collectorResidue(){
+        return view('Manager/collectorResidue');
+    }
      
     public function create()
     {

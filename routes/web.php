@@ -69,6 +69,7 @@ Route::post('/collector/saveCollection', [ CollectorController::class, 'store'])
 // ------------------------------- Rutas de encargado --------------------------------------- \\
 
 Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('can:manager.clinics.generalShow');
+Route::get('/manager/collector_residue', [ ManagerController::class, 'collectorResidue']);// ->middleware('can:manager.clinics.generalShow');
 
 // Rutas de login
 
@@ -80,3 +81,4 @@ Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalSho
 Route::get('/residue/showContinuation/{date}', [ResidueController::class, 'showContinuation']);
 Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnified']);
 Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation']);
+Route::get('/residue/showCollectorResidue', [ResidueController::class, 'showCollectorResidue']);

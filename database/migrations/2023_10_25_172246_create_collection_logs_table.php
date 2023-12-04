@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('collection_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('clinic_id');
             $table->Integer('month');
             $table->Integer('year');
             $table->enum('horario', ['Diurno', 'Nocturno', 'Extra']);
+            $table->date('collection_date')->nullable();
+            $table->enum('stored_stated', ['ALMACENADO', 'RECOLECTADO']); // Estado del almacenado
+            $table->enum('schedule', ['Diurno', 'Nocturno', 'Extra']);
             $table->timestamps();
-
+            
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('clinic_id')->references('id')->on('clinics');
         });
     }
 
