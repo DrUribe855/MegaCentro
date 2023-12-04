@@ -27,28 +27,64 @@ class CollectorController extends Controller
     {
         $clinics = $request->datos;
         $general_data = $request->data_general;
+        $anioActual = getdate();
+        if($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == ''){
+            $data = [
+                'message' => "Año incorrecto",
+                'status' => false,
+            ];
 
-        // return response()->json($clinics[0]["clinic_id"]);
-        foreach ($clinics as $key => $clinic) {
-            $collection = new CollectionLog();
-            $collection->user_id = auth()->user()->id;
-            $collection->clinic_id = $clinic["clinic_id"];
-            $collection->year = $general_data["year"];
-            $collection->month = $general_data["month"];
-            $collection->schedule = $general_data["schedule"];
-            $collection->save();
-            
-            foreach ($clinic["data"] as $key => $residue) {
-                $residues = new Waste_collection();
-                $residues->id_collection_log = $collection->id;
-                $residues->id_residue = $residue["residue_id"];
-                $residues->weight = $residue["weight"];
-                $residues->garbage_bags = $residue["bags"];
-                $residues->save();
-            }
-        }   
-         
+            return response()->json($data);
 
+        }else if($general_data['month'] > 12 || $general_data['month'] < 1){
+            $data = [
+                'message' => 'Mes invalido',
+                'status' => false,
+            ];
+
+            return response()->json($data);
+
+        }else if($general_data['schedule'] == ''){
+            $data = [
+                'message' => 'Horario no ingresado',
+                'status' => false,
+            ];
+
+            return response()->json($data);
+
+        }else{
+            foreach ($clinics as $key => $clinic) {
+                $collection = new CollectionLog();
+                $collection->user_id = auth()->user()->id;
+                $collection->clinic_id = $clinic["clinic_id"];
+                $collection->year = $general_data["year"];
+                $collection->month = $general_data["month"];
+                $collection->schedule = $general_data["schedule"];
+                $collection->save();
+                
+                foreach ($clinic["data"] as $key => $residue) {
+                    if($residue["weight"] > 0){
+                        if($residue["bags"] >= 1 ){
+                            $residues = new Waste_collection();
+                            $residues->id_collection_log = $collection->id;
+                            $residues->id_residue = $residue["residue_id"];
+                            $residues->weight = $residue["weight"];
+                            $residues->garbage_bags = $residue["bags"];
+                            $residues->save();    
+                        }else{
+                            $data = [
+                                'message' => "Bolsas vacias",
+                                'id_residue' => $residue["residue_id"],
+                                'clinic' => $clinic["clinic_id"],
+                            ];
+
+                            return response()->json($data);
+                        }
+                    }  
+                }
+            }   
+
+        }
     }
 
     public function show($id)

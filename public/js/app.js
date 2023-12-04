@@ -4408,6 +4408,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     save: function save() {
+      var _this2 = this;
       var request = {
         datos: this.datos,
         data_general: this.general_data
@@ -4415,6 +4416,13 @@ __webpack_require__.r(__webpack_exports__);
       console.log("request: ", request);
       axios.post('/collector/saveCollection', request).then(function (resp) {
         console.log("request: ", resp);
+        if (resp.data.message == 'Año incorrecto' && resp.data.status == false) {
+          _this2.showAlert('Error', 'Ingrese un año válido', 'error');
+        } else if (resp.data.message == 'Mes invalido' && resp.data.status == false) {
+          _this2.showAlert('Error', 'Ingrese un mes válido', 'error');
+        } else if (resp.data.message == 'Horario no ingresado' && resp.data.status == false) {
+          _this2.showAlert('Error', 'Ingrese un horario', 'error');
+        }
       })["catch"](function (error) {
         console.log(error.response);
       });

@@ -163,6 +163,13 @@
         console.log("request: ",request);
         axios.post('/collector/saveCollection', request).then(resp => {
           console.log("request: ", resp);
+          if(resp.data.message == 'Año incorrecto' && resp.data.status == false){
+            this.showAlert('Error', 'Ingrese un año válido', 'error');
+          }else if(resp.data.message == 'Mes invalido' && resp.data.status == false){
+            this.showAlert('Error', 'Ingrese un mes válido', 'error');
+          }else if(resp.data.message == 'Horario no ingresado' && resp.data.status == false){
+            this.showAlert('Error', 'Ingrese un horario', 'error');
+          }
         }).catch(error => {
           console.log(error.response);
         });
