@@ -81,4 +81,5 @@ Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalSho
 Route::get('/residue/showContinuation/{date}', [ResidueController::class, 'showContinuation']);
 Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnified']);
 Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation']);
-Route::get('/residue/showCollectorResidue', [ResidueController::class, 'showCollectorResidue']);
+Route::get('/residue/showCollectorResidue/{type}', [ResidueController::class, 'showCollectorResidue']);
+Route::post('/residue/registerCollector/{id}/{date}', [ResidueController::class, 'registerCollector']);

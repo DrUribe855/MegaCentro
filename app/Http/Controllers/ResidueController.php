@@ -45,7 +45,9 @@ class ResidueController extends Controller
     public function showContinuation($date){
         $residues = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $date. '%')
+        ->whereHas('collection_logs')
         ->groupBy('month', 'created_at')
+        ->with('collection_logs')
         ->get();
 
         $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
@@ -70,6 +72,7 @@ class ResidueController extends Controller
 
     public function showUnified($date){
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, id_residue, SUM(weight) as total_weight')
+        ->whereHas('collection_logs')
         ->whereRaw('YEAR(created_at) LIKE ?', [$date . '%'])
         ->groupBy('year', 'month', 'id_residue')
         ->get();
@@ -112,27 +115,63 @@ class ResidueController extends Controller
     // fin reportes
 
     // Recolecciones almacenadas
-    public function showCollectorResidue(){
-        $records = CollectionLog::whereHas('user', function($query){
-            $query->role('Recolector');
-            $query->whereHas('clinic_user', function($query){
-                $query->whereHas('clinic');
+    public function showCollectorResidue($typeTable){
+        if ($typeTable == 'true') {
+            $records = CollectionLog::whereHas('user', function($query){
+                $query->role('Recolector');
+                $query->whereHas('clinic_user', function($query){
+                    $query->whereHas('clinic');
+                });
+            })
+            ->where('stored_stated', 'ALMACENADO')
+            ->whereHas('clinic')
+            ->with('user', 'clinic')
+            ->get();
+    
+            $records->transform(function ($record) {
+                $record->date = $record->created_at->format('Y-m-d');
+                $record->dateTemp = $record->created_at->format('Ymd');
+                unset($record->created_at);
+                return $record;
+            });            
+        }else{
+            $records = CollectionLog::whereHas('user', function($query){
+                $query->role('Recolector');
+                $query->whereHas('clinic_user', function($query){
+                    $query->whereHas('clinic');
+                });
+            })
+            ->where('stored_stated', 'RECOLECTADO')
+            ->whereHas('clinic')
+            ->with('user', 'clinic')
+            ->get();
+        
+            $records->transform(function ($record) {
+                $record->date = $record->created_at->format('Y-m-d');
+                $record->dateTemp = $record->created_at->format('Ymd');
+                unset($record->created_at);
+                return $record;
             });
-        })
-        ->whereHas('clinic')
-        ->with('user', 'clinic')
-        ->get();
+        }
 
-        $records->transform(function ($record) {
-            $record->date = $record->created_at->format('Y-m-d');
-            $record->dateTemp = $record->created_at->format('Ymd');
-            unset($record->created_at);
-            return $record;
-        });
+        $data = [
+            'type' => $typeTable,
+            'status' => true,
+            'records' => $records,
+        ];
+
+        return response()->json($data);
+    }
+
+    public function registerCollector($id ,$date){
+        $update = CollectionLog::find($id);
+        $update->collection_date = $date;
+        $update->stored_stated = 'RECOLECTADO';
+        $update->save();
+
 
         $data = [
             'status' => true,
-            'records' => $records,
         ];
 
         return response()->json($data);

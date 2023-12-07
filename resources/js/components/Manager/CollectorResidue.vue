@@ -2,35 +2,88 @@
     <v-app>
         <v-main>
             <template>
-                <v-card-title>
-                    Recolectar los residuos almacenados en los consultorios
-                    <v-spacer></v-spacer>
-                    <v-text-field
-                        v-model="date"
-                        label="Fecha de la recoleccion"
-                        value=""
-                        type="date"
-                        suffix=""
-                        @input="changeDate"
-                    ></v-text-field>
-                    <v-spacer></v-spacer>
-                    <v-text-field   
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Buscar"
-                        single-line
-                        hide-details
-                    ></v-text-field>
-                </v-card-title>
-                <v-data-table
-                    :search="search"
-                    v-model="selected"
-                    :headers="headers"
-                    :items="desserts"
-                    item-key="positionId"
-                    show-select
-                    class="elevation-1">
-                </v-data-table>
+                <v-card align="end">
+                    <v-card-title>
+                        {{ tittle }}
+                        <v-spacer></v-spacer>
+                        <v-text-field   
+                            v-if="!showTable" 
+                            v-model="date"
+                            label="Fecha de la recoleccion"
+                            type="date"
+                            suffix=""
+                            single-line
+                            hide-details
+                            @input="changeDate"
+                        ></v-text-field>
+                        <v-text-field  
+                            class="mx-5" 
+                            v-model="search"
+                            append-icon="mdi-magnify"
+                            label="Buscar"
+                            single-line
+                            hide-details
+                        ></v-text-field>
+                    </v-card-title>
+                    <v-btn
+                        class="ma-2"
+                        color="red darken-2"
+                        dark
+                        @click="changeView">
+                        <v-icon
+                            dark
+                            left>
+                            mdi-arrow-left
+                        </v-icon>
+                        {{ changeTable }}
+                    </v-btn>
+                    <v-btn
+                        v-if="!showTable"
+                        class="mr-6 my-3"
+                        depressed
+                        color="primary"
+                        @click="gather"> 
+                        Recolectar
+                        <v-icon
+                            right
+                            dark>
+                            mdi-delete
+                        </v-icon>
+                    </v-btn>
+                    <!-- Tabla de almacenado -->
+                    <v-data-table
+                        v-if="!showTable"
+                        :search="search"
+                        v-model="selected"
+                        :headers="headers"
+                        :items="desserts"
+                        item-key="positionId"
+                        show-select
+                        class="elevation-1">
+                        <template v-slot:item.storeTime="{ item }">
+                            <v-chip
+                                :color="getColor(item.storeTime)"
+                                dark>
+                                {{ item.storeTime }}
+                            </v-chip>
+                        </template>
+                    </v-data-table>
+                    <!-- Tabla de recolectado -->
+                    <v-data-table
+                        v-if="showTable"
+                        :search="search"
+                        :headers="headersCollected"
+                        :items="dessertsCollected"
+                        class="elevation-1">
+                        <template v-slot:item.storeTime="{ item }">
+                            <v-chip
+                                :color="getColor(item.storeTime)"
+                                dark>
+                                {{ item.storeTime }}
+                            </v-chip>
+                        </template>
+                    </v-data-table>
+                </v-card>
             </template>
         </v-main>
     </v-app>
@@ -38,44 +91,101 @@
 
 <script>
     import moment from 'moment';
-    import { format } from 'date-fns';
+    import { parseISO, format } from 'date-fns';
     export default {
         data () {
-        return {
-            positionId: 0,
-            positionTime: 0,
-            singleSelect: false,
-            selected: [],
-            search: '',
-            date: '',
-            headers: [
-                { text: 'N consultorio', value: 'clinic.clinic_number' },
-                { text: 'Recolector', value: 'user.document' },
-                { text: 'Días almacenado', value: 'storeTime' },
-                { text: 'Fecha recoleccion', value: 'date' },
-                { text: 'Estado almacenamiento', value: 'stored_stated' },
-            ],
-            desserts: [
-                
-            ],
-        }
+            return {
+                showTable: false,
+                positionId: 0,
+                positionTime: 0,
+                selected: [],
+                search: '',
+                date: '',
+                changeTable: 'Residuos retirados',
+                tittle: 'Residuos almacenados',
+                headers: [
+                    { text: 'N consultorio', value: 'clinic.clinic_number' },
+                    { text: 'Recolector', value: 'user.document' },
+                    { text: 'Días almacenado', value: 'storeTime' },
+                    { text: 'Fecha recoleccion', value: 'date' },
+                    { text: 'Estado almacenamiento', value: 'stored_stated' },
+                ],
+                desserts: [],
+                headersCollected: [
+                    { text: 'N consultorio', value: 'clinic.clinic_number' },
+                    { text: 'Recolector', value: 'user.document' },
+                    { text: 'Días almacenado', value: 'storeTime' },
+                    { text: 'Fecha recoleccion', value: 'date' },
+                    { text: 'Fecha retiro residuo', value: 'collection_date' },
+                    { text: 'Estado almacenamiento', value: 'stored_stated' },
+                ],
+                dessertsCollected: [],
+            }
         },
-
+        
+        
         created(){
-            this.initialize();
+            this.initialize(true);
+            this.date = new Date().toISOString().split('T')[0];
         },
-
+        
         methods: {
-            initialize() {
-                axios.get('/residue/showCollectorResidue').then(res => {
+            initialize(typeTable) {
+                this.positionTime = 0;
+                axios.get(`/residue/showCollectorResidue/${typeTable}`).then(res => {
                     console.log('Respuesta del servidor');
-                    console.log(res.data.records);
-                    this.desserts = res.data.records.map(item => ({ ...item, positionId: this.generateUniqueId(), storeTime: this.setToday(res.data.records[this.positionTime].dateTemp) }));
+                    console.log(res.data);
+                    if (typeTable) {
+                        this.desserts = res.data.records.map(item => ({ ...item, positionId: this.generateUniqueId(), storeTime: this.setToday(res.data.records[this.positionTime]) }));
+                        if (res.data.records.length == 0) {
+                            this.alertFalse("No existen residuos almacenados");
+                        }
+                    }else{
+                        this.dessertsCollected = res.data.records.map(item => ({ ...item, positionId: this.generateUniqueId(), storeTime: this.setToday(res.data.records[this.positionTime]) }));
+                        if (res.data.records.length == 0) {
+                            this.alertFalse("No existen residuos retirados");
+                        }
+                    }
                 }).catch(error => {
                     console.log("Error en servidor");
                     console.log(error);
                     console.log(error.response);
                 });
+            },
+
+            gather(){
+                let validation = 0;
+                if (this.selected.length != 0) {
+                    for (let i = 0; i < this.selected.length; i++) {
+                        if (this.selected[i].date <= this.date) {
+                            axios.post(`/residue/registerCollector/${this.selected[i].id}/${this.date}`).then(res => {
+                                console.log('Respuesta del servidor ', i);
+                                console.log(res.data);
+                            }).catch(error => {
+                                console.log("Error en servidor ", i);
+                                console.log(error);
+                                console.log(error.response);
+                                validation = 1;
+                            });
+                        }else{
+                            this.alertFalse("La fecha del retiro del residuo debe ser igual o mayor a la fecha de recoleccion");
+                            validation = 2;
+                        }
+                        console.log(this.selected[i].date ," - ", this.date);
+                    }
+                    if (validation == 0) {
+                        this.alertTrue("Los residuos seleccionados se retiraron con exito");
+                        this.search = '';
+                        this.tittle = 'Residuos retirados';
+                        this.changeTable = 'Residuos almacenados';
+                        this.initialize(false);
+                        this.showTable = true;
+                    }else if(validation == 1){
+                        this.alertFalse("parece que algo salio mal");
+                    }
+                }else{
+                    this.alertFalse("Debe seleccionar un residuo para retirarlo del almacenamiento");
+                }
             },
 
             generateUniqueId: function() {
@@ -85,36 +195,78 @@
             setToday (position) {
                 this.positionTime++;
                 let focus = moment().format('YYYYMMDD');
-                console.log(position, " -- ", focus);
-                if (position > focus) {
-                    if (position.collection_date == null) {
-                        let operacion = parseInt(focus) - parseInt(position);
-                        console.log(position, " -- ", focus);
-                        return operacion;
+                const month = moment().format('YYYYMM');
+                const parsedDate = parseISO(position.date);
+                const secondDate = parseInt(format(parsedDate, 'yyyyMM'));
+                if (month == secondDate) {
+                    if (position.dateTemp < focus) {
+                        return parseInt(focus) - parseInt(position.dateTemp);
                     }else{
-                        let operacion = parseInt(focus) - parseInt(position);
-                        console.log(focus);
-                        return operacion;
+                        return 0
                     }
                 }else{
-                    return 0
+                    const firstDate = moment().toDate(); 
+                    const secondDate = moment(position.date, 'YYYY-MM-DD').toDate();
+                    return Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
                 }
             },
 
             changeDate(){
-                const focus = parseInt(format(new Date(this.date), 'yyyydd')) + 1;
-                console.log(focus);
+                const firstDate = parseInt(format(new Date(this.date), 'yyyyMMdd'))+1;
+                const month = parseInt(format(new Date(this.date), 'yyyyMM'));
                 for (let i = 0; i < this.desserts.length; i++) {
-                    if (this.desserts[i].collection_date == null) {
-                        let operacion = Date.parse(this.desserts[i].dateTemp) - Date.parse(focus);
-                        this.desserts[i].storeTime = operacion;
+                    const parsedDate = parseISO(this.desserts[i].date);
+                    const secondDate = parseInt(format(parsedDate, 'yyyyMM'));
+                    if (month == secondDate) {
+                        this.desserts[i].storeTime = parseInt(firstDate) - parseInt(this.desserts[i].dateTemp);
                     }else{
-                        let operacion = parseInt(this.desserts[i].dateTemp) - parseInt(focus);
-                        console.log(focus);
-                        this.desserts[i].storeTime = operacion;
+                        const firstDate = new Date(this.date);
+                        const secondDate = new Date(this.desserts[i].date);
+                        this.desserts[i].storeTime = Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
+                    }
+                    if (this.desserts[i].storeTime < 0) {
+                        this.desserts[i].storeTime = 0;
                     }
                 }
                 console.log(this.desserts);
+            },
+
+            getColor (storeTime) {
+                console.log(storeTime);
+                if (storeTime > 5) return 'red'
+                else if (storeTime > 2) return 'orange'
+                else return 'blue'
+            },
+
+            changeView(){
+                this.search = '';
+                if (this.changeTable == 'Residuos retirados') {
+                    this.tittle = 'Residuos retirados';
+                    this.changeTable = 'Residuos almacenados'
+                    this.showTable = true;
+                    this.initialize(false);
+                }else{
+                    this.tittle = 'Residuos almacenados';
+                    this.changeTable = 'Residuos retirados'
+                    this.showTable = false;
+                    this.initialize(true);
+                }
+            },
+
+            alertTrue(text){
+                swal({
+                    title: "Cambio Exitoso!",
+                    text: text,
+                    icon: "success",
+                });
+            },
+
+            alertFalse(text){
+                swal({
+                    title: "ERROR!",
+                    text: text,
+                    icon: "error",
+                });
             },
         },
 

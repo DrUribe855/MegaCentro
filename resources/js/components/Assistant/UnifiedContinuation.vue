@@ -77,23 +77,23 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <td class="text-center px-1 pb-1 pt-7" style="font-size: 13px;">MES</td>
-                                                <td class="text-center px-1 pb-1 pt-7" style="font-size: 13px;">KG/RESIDUO</td>
-                                                <td class="text-center px-1 pb-1 pt-5" style="font-size: 13px;">No BOLSAS ENTREGADAS</td>
-                                                <td class="text-center px-1 pb-1 pt-3" style="font-size: 13px;">PRETRATAMIENTO USADO DESACTIVACIÓN</td>
-                                                <td class="text-center px-1 pb-1 pt-5" style="font-size: 13px;">ALMACENAMIENTO (DÍAS)</td>
-                                                <td class="text-center px-1 pb-1 pt-5" style="font-size: 13px;">TIPO DE TRATAMIENTO</td>
-                                                <td class="text-center px-1 pb-1 pt-5" style="font-size: 13px;">HORA DE RECOLECCIÓN</td>
-                                                <td class="text-center px-1 pb-1 pt-3" style="font-size: 13px;">DOT. PERSONAL GENERADOR ADECUADA</td>
-                                                <td class="text-center px-1 py-1" style="font-size: 13px;">DOT PERSONAL PSEG ADECUADA</td>
-                                                <td class="text-center px-1 pb-1 pt-3" style="font-size: 13px;">COLOR DE BOLSA UTILIZADA</td>
-                                                <td class="text-center px-1 pb-1 pt-3" style="font-size: 13px;">PROCESO PRODUCTIVO</td>
-                                                <td class="text-center px-1 pb-1 pt-3" style="font-size: 13px;">RESIDUOS SIMILAR KG/DIA</td>
+                                                <td class="text-center p-0" style="font-size: 13px;">MES</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">KG/RESIDUO</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">No BOLSAS ENTREGADAS</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">PRETRATAMIENTO USADO DESACTIVACIÓN</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">ALMACENAMIENTO (DÍAS)</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">TIPO DE TRATAMIENTO</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">HORA DE RECOLECCIÓN</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">DOT. PERSONAL GENERADOR ADECUADA</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">DOT PERSONAL PSEG ADECUADA</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">COLOR DE BOLSA UTILIZADA</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">PROCESO PRODUCTIVO</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">RESIDUOS SIMILAR KG/DIA</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="(month, i) in index">
-                                                <td>{{ month }}</td>
+                                                <td class="pl-0 pr-1">{{ month }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,0) }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,1) }}</td>
                                                 <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">BENZALDINA</td>

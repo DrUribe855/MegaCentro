@@ -33,7 +33,7 @@
                             <v-text-field
                                 v-model="search"
                                 append-icon="mdi-magnify"
-                                label="Search"
+                                label="Buscar"
                                 single-line
                                 hide-details
                             ></v-text-field>
