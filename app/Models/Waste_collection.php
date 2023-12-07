@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Waste_collection extends Model
 {
     use HasFactory;
+
+    protected $table = 'waste_collections';
+
     protected $fillable = [
         'id_residue',
         'weight',

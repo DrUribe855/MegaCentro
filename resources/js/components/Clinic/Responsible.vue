@@ -42,6 +42,7 @@
                   :headers="headers"
                   :items="desserts"
                   :search="search"
+                  :items-per-page="5"
                 >
                   <template v-slot:item.actions="{ item }">
                     <v-btn

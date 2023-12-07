@@ -1,92 +1,94 @@
 <template>
-    <v-app>
-        <v-main>
-            <template>
-                <v-card align="end">
-                    <v-card-title>
-                        {{ tittle }}
-                        <v-spacer></v-spacer>
-                        <v-text-field   
-                            v-if="!showTable" 
-                            v-model="date"
-                            label="Fecha de la recoleccion"
-                            type="date"
-                            suffix=""
-                            single-line
-                            hide-details
-                            @input="changeDate"
-                        ></v-text-field>
-                        <v-text-field  
-                            class="mx-5" 
-                            v-model="search"
-                            append-icon="mdi-magnify"
-                            label="Buscar"
-                            single-line
-                            hide-details
-                        ></v-text-field>
-                    </v-card-title>
-                    <v-btn
-                        class="ma-2"
-                        color="red darken-2"
-                        dark
-                        @click="changeView">
-                        <v-icon
+    <div class="bg-white" style="height: 100vh; overflow-y: scroll">
+        <v-app>
+            <v-main>
+                <template>
+                    <v-card align="end">
+                        <v-card-title>
+                            {{ tittle }}
+                            <v-spacer></v-spacer>
+                            <v-text-field   
+                                v-if="!showTable" 
+                                v-model="date"
+                                label="Fecha de la recoleccion"
+                                type="date"
+                                suffix=""
+                                single-line
+                                hide-details
+                                @input="changeDate"
+                            ></v-text-field>
+                            <v-text-field  
+                                class="mx-5" 
+                                v-model="search"
+                                append-icon="mdi-magnify"
+                                label="Buscar"
+                                single-line
+                                hide-details
+                            ></v-text-field>
+                        </v-card-title>
+                        <v-btn
+                            class="ma-2"
+                            color="red darken-2"
                             dark
-                            left>
-                            mdi-arrow-left
-                        </v-icon>
-                        {{ changeTable }}
-                    </v-btn>
-                    <v-btn
-                        v-if="!showTable"
-                        class="mr-6 my-3"
-                        depressed
-                        color="primary"
-                        @click="gather"> 
-                        Recolectar
-                        <v-icon
-                            right
-                            dark>
-                            mdi-delete
-                        </v-icon>
-                    </v-btn>
-                    <!-- Tabla de almacenado -->
-                    <v-data-table
-                        v-if="!showTable"
-                        :search="search"
-                        v-model="selected"
-                        :headers="headers"
-                        :items="desserts"
-                        item-key="positionId"
-                        show-select
-                        class="elevation-1">
-                        <template v-slot:item.storeTime="{ item }">
-                            <v-chip
-                                :color="getColor(item.storeTime)"
+                            @click="changeView">
+                            <v-icon
+                                dark
+                                left>
+                                mdi-arrow-left
+                            </v-icon>
+                            {{ changeTable }}
+                        </v-btn>
+                        <v-btn
+                            v-if="!showTable"
+                            class="mr-6 my-3"
+                            depressed
+                            color="primary"
+                            @click="gather"> 
+                            Recolectar
+                            <v-icon
+                                right
                                 dark>
-                                {{ item.storeTime }}
-                            </v-chip>
-                        </template>
-                    </v-data-table>
-                    <!-- Tabla de recolectado -->
-                    <v-data-table
-                        v-if="showTable"
-                        :search="search"
-                        :headers="headersCollected"
-                        :items="dessertsCollected"
-                        class="elevation-1">
-                        <template v-slot:item.storeTime="{ item }">
-                            <v-chip
-                                :color="getColor(item.storeTime)"
-                                dark>
-                                {{ item.storeTime }}
-                            </v-chip>
-                        </template>
-                    </v-data-table>
-                </v-card>
-            </template>
-        </v-main>
-    </v-app>
+                                mdi-delete
+                            </v-icon>
+                        </v-btn>
+                        <!-- Tabla de almacenado -->
+                        <v-data-table
+                            v-if="!showTable"
+                            :search="search"
+                            v-model="selected"
+                            :headers="headers"
+                            :items="desserts"
+                            item-key="positionId"
+                            show-select
+                            class="elevation-1">
+                            <template v-slot:item.storeTime="{ item }">
+                                <v-chip
+                                    :color="getColor(item.storeTime)"
+                                    dark>
+                                    {{ item.storeTime }}
+                                </v-chip>
+                            </template>
+                        </v-data-table>
+                        <!-- Tabla de recolectado -->
+                        <v-data-table
+                            v-if="showTable"
+                            :search="search"
+                            :headers="headersCollected"
+                            :items="dessertsCollected"
+                            class="elevation-1">
+                            <template v-slot:item.storeTime="{ item }">
+                                <v-chip
+                                    :color="getColor(item.storeTime)"
+                                    dark>
+                                    {{ item.storeTime }}
+                                </v-chip>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </template>
+            </v-main>
+        </v-app>
+    </div>
 </template>
 
 <script>

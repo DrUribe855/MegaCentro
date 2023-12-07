@@ -9,6 +9,9 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\CollectorController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ResidueController;
+use App\Http\Controllers\ResiduePriceController;
+use App\Models\Residue_price;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -83,3 +86,7 @@ Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnifie
 Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation']);
 Route::get('/residue/showCollectorResidue/{type}', [ResidueController::class, 'showCollectorResidue']);
 Route::post('/residue/registerCollector/{id}/{date}', [ResidueController::class, 'registerCollector']);
+
+// ------------------------------- Rutas de precio residuos --------------------------------------- 
+Route::get('/manager/residue_price', [ResiduePriceController::class, 'view']);
+Route::put('/manager/registerPrice/{id}', [ResiduePriceController::class, 'register']);

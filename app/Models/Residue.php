@@ -13,6 +13,7 @@ class Residue extends Model
     protected $fillable = [
         'residue_name',
         'residue_type_id',
+        'price',
     ];
 
     public function residue_types(): BelongsTo{

@@ -358,6 +358,12 @@ return [
             'icon' => 'fas fa-fw fa-user',
             // 'can' => 'manager.clinics.generalShow'
         ],
+        [
+            'text' => 'Tarifas residuos',
+            'url'  => '/manager/residue_price',
+            'icon' => 'fas fa-fw fa-user',
+            // 'can' => 'manager.clinics.generalShow'
+        ],
     ],
 
     /*
