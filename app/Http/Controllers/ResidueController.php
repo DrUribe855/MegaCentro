@@ -47,7 +47,6 @@ class ResidueController extends Controller
         ->where('created_at', 'LIKE',  $date. '%')
         ->whereHas('collection_logs')
         ->groupBy('month', 'created_at')
-        ->with('collection_logs')
         ->get();
 
         $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
@@ -111,6 +110,84 @@ class ResidueController extends Controller
         ];
 
         return response()->json($data); 
+    }
+
+    public function showClinic(){
+        $records = Clinic::whereHas('collection_log')->get();
+
+        $data = [
+            'status' => true,
+            'clinic' => $records,
+        ];
+
+        return response()->json($data);
+    }
+
+    public function showClinicSelected($date, $id){
+        $residuesClinic = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
+        ->whereHas('collection_logs', function($query) use($id){
+            $query->where('clinic_id', $id);
+        })
+        ->where('created_at', 'LIKE',  $date. '%')
+        ->groupBy('year', 'month', 'day', 'id_residue')
+        ->get();
+
+        $totalClinic = Waste_collection::selectRaw('id_residue, SUM(weight) as weight')
+        ->whereHas('collection_logs', function($query) use($id){
+            $query->where('clinic_id', $id);
+        })
+        ->where('created_at', 'LIKE',  $date. '%')
+        ->groupBy('id_residue')
+        ->get();
+
+        $data = [
+            'status' => true,
+            'totalClinic' => $totalClinic,
+            'clinicResidue' => $residuesClinic,
+        ];
+
+        return response()->json($data);
+    }
+
+    public function showClinicConstinuation($date, $id){
+        $residuesClinic = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        ->where('created_at', 'LIKE',  $date. '%')
+        ->whereHas('collection_logs', function($query) use($id){
+            $query->where('clinic_id', $id);
+        })
+        ->groupBy('month', 'created_at')
+        ->get();
+
+        $totalClinic = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        ->whereHas('collection_logs', function($query) use($id){
+            $query->where('clinic_id', $id);
+        })
+        ->where('created_at', 'LIKE',  $date. '%')
+        ->groupBy('month')
+        ->get();
+
+        $collectionLog = CollectionLog::selectRaw('DAY (created_at) as day, collection_date, created_at')
+        ->whereHas('waste_collection')
+        ->where('clinic_id', $id)
+        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('stored_stated', 'RECOLECTADO')
+        ->groupBy('day', 'collection_date', 'created_at')
+        ->get();
+
+        $collectionLog->transform(function ($collectionLog) {
+            $collectionLog->date = $collectionLog->created_at->format('Y-m-d');
+            unset($collectionLog->created_at);
+            return $collectionLog;
+        }); 
+
+        $data = [
+            'status' => true,
+            'clinicResidue' => $residuesClinic,
+            'totalClinic' => $totalClinic,  
+            'collectionLog' => $collectionLog, 
+        ];
+
+        return response()->json($data);
     }
     // fin reportes
 

@@ -13,6 +13,7 @@ class Waste_collection extends Model
     protected $table = 'waste_collections';
 
     protected $fillable = [
+        'collection_logs_id',
         'id_residue',
         'weight',
         'garbage_bags', 
@@ -23,6 +24,6 @@ class Waste_collection extends Model
     }
 
     public function collection_logs(): BelongsTo{
-        return $this->belongsTo(CollectionLog::class);
+        return $this->belongsTo(CollectionLog::class, 'collection_logs_id');
     }
 }

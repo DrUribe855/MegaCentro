@@ -17,7 +17,7 @@ class CollectionLog extends Model
     ];
 
     public function waste_collection(): HasMany{
-        return $this->hasMany(Waste_collection::class);
+        return $this->hasMany(Waste_collection::class, 'collection_logs_id');
     }
 
     public function residues(): BelongsTo{

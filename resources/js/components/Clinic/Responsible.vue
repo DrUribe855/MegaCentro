@@ -171,7 +171,7 @@
                             <v-text-field
                               v-model="infoResponsible.document"
                               label="Numero Documento"
-                              disabled
+                              readonly
                             ></v-text-field>
                           </v-col>
                           <v-col
@@ -182,7 +182,7 @@
                             <v-text-field
                               v-model="infoResponsible.name"
                               label="Nombre"
-                              disabled
+                              readonly
                             ></v-text-field>
                           </v-col>
                           <v-col

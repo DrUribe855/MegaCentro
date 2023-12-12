@@ -4,6 +4,22 @@
             <v-main>
                 <div class="container-fluid row">
                     <div class="col-sm-12 my-6">
+                        <v-container class="col-6 v-alert-container">
+                            <v-alert 
+                                v-if="!showAlert && !alert"
+                                shaped
+                                type="info"
+                                transition="scale-transition">
+                                Ahora puede buscar el consultorio que desea consultar
+                            </v-alert>
+                            <v-alert 
+                                v-if="!showAlert && alert"
+                                shaped
+                                type="info"
+                                transition="scale-transition">
+                                Ahora esta en el formualario general
+                            </v-alert>
+                        </v-container>
                         <v-toolbar flat>
                             <div class="row">
                                 <div>
@@ -49,12 +65,45 @@
                             <v-menu bottom right>
                             </v-menu>
                         </v-toolbar>
+                        <div class="m-6" style="width: 200px !important;">
+                            <v-autocomplete v-if="!alert" 
+                                v-model="clinic" 
+                                :items="items" 
+                                label="Consultorio"
+                                @input="clinicSelected()"
+                                item-text="clinic_number"
+                                item-value='id'>
+                            </v-autocomplete>
+                            <v-btn
+                                v-if="!alert"
+                                class="ma-2"
+                                color="primary"
+                                dark
+                                @click="mounted(), alert = true, changeData(), showAlert = false">
+                                <v-icon
+                                    dark
+                                    left>
+                                    mdi-arrow-left
+                                </v-icon>
+                                volver
+                            </v-btn>
+                            <v-btn
+                                v-if="alert"
+                                color="primary"
+                                @click="mounted(), alert = !alert, showAlert = !showAlert, changeData()">
+                                <v-icon
+                                    left>
+                                    fas fa-search
+                                </v-icon>
+                                Consultorios
+                            </v-btn>
+                        </div>
                     </div>
                     <div id="element-to-pdf" class="col-12 row">
                         <div class="col-sm-12 my-6">
                             <div class="row flex justify-content-center mb-2">
                                 <div class="text-center">
-                                    <h1>FORMULARIO RH CONTINUACIÓN</h1>
+                                    <h2>FORMULARIO RH CONTINUACIÓN {{ !alert && clinic != null ? 'CONSULTORIO ' + clinic_number : '' }}</h2>
                                 </div>
                                 <img src="../img/Imagen1.png" alt="Logo Megacentro" width="110em" class="ml-6 img-fluid">
                             </div>
@@ -73,7 +122,7 @@
                                             <th class="text-center p-0" style="font-size: 15px;">No. Consultas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Bolsas Entregadas</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Pretratamineto usando de desactivacion</th>
-                                            <th class="text-center p-0" style="font-size: 15px;">Almacenaminetos (días)</th>
+                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenaminetos (días)</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Tipo de tratamiento</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Hora de recolección</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Dotacion personal General </th>
@@ -91,9 +140,9 @@
                                             <td class="text-center"></td>
                                             <td class="text-center">{{ revalidateData(i,1) }}</td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">1</td>
+                                            <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{  }}</td>
+                                            <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
@@ -107,7 +156,7 @@
                                             <td class="text-center">0</td>
                                             <td class="text-center">{{ revalidateData(0,3) }}</td>
                                             <td class="text-center">0</td>
-                                            <td class="text-center bg-red">queda pendiente</td>
+                                            <td class="text-center" v-if="!alert && clinic != ''">{{ totalDay }}</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
@@ -126,28 +175,49 @@
         </v-app>
     </div>
 </template>
-
+<style>
+  .v-alert-container {
+    position: fixed;
+    left: 50%;
+    top: 8%;
+    width: 500px !important;
+    z-index: 999;
+  }
+</style>
 <script>
 import html2pdf from "html2pdf.js";
 import accounting from 'accounting'
 export default {
     data() {
         return {
-            loader: null,
-            loading3: false,
-            loaderPdf: null,
-            loadingPdf: false,
-            validateTable: false,
-            list_residues: [],
-            data_residues: [],
-            data_garbage_bags: [],
-            index: 0,
-            type: 'month',
-            focus: new Date(),
             date: '',
             dateAxios: '',
+            clinic: '',
+            clinic_number: '',
+            type: 'month',
+            loader: null,
+            loaderPdf: null,
+            loading3: false,
+            loadingPdf: false,
+            validateTable: false,
+            alert: true,
+            showAlert: true,
+            list_residues: [],
+            data_residues: [],
+            list_residues_clinic: [],
+            list_residues_temp: [],
+            data_garbage_bags: [],
+            items: [],
+            collection_logs: [],
+            stored_days: [],
+            stored: [],
+            index: 0,
             position: 0,
             total: 0,
+            total_clinic: 0,
+            total_temp: 0,
+            totalDay: 0,
+            focus: new Date(),
         }
     },
     watch: {
@@ -171,26 +241,58 @@ export default {
     },
     created() {
         this.setToday();
+        this.clinicNumber();
     },
 
     methods: {
         pdf() {
             this.loaderPdf = 'loadingPdf'
             var element = document.getElementById('element-to-pdf');
-            var opt = {
-                margin: 2.1,
-                filename: 'Reporte RH mensual continuacion.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3 },
-                jsPDF: {
+            if (this.alert) {
+                var opt = {
+                    margin: 1,
+                    filename: `Reporte RH constinuacion ${this.date}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 3 },
+                    jsPDF: {
                     unit: 'mm',
                     format: 'a4',
                     orientation: 'landscape',
                     width: 500,
                     height: 297
-                }
-            };
+                    }
+                };
+            }else if(this.clinic != ''){
+                var opt = {
+                    margin: 1,
+                    filename: `Reporte RH continuacion consultorio ${this.clinic_number} ${this.date}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 3 },
+                    jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'landscape',
+                    width: 500,
+                    height: 297
+                    }
+                };
+            }else{
+                this.alertFalse('La descarga no se puede hacer');
+                return false;
+            }
             html2pdf().from(element).set(opt).save();
+        },
+
+        clinicNumber() {
+            axios.get('/residue/clinicNumber').then(res => {
+                console.log("Respuesta del servidor");
+                console.log("Datos de consulta ", res.data);
+                this.items = res.data.clinic;
+            }).catch(error => {
+                console.log("Error en servidor");
+                console.log(error);
+                console.log(error.response);
+            });
         },
 
         initialize(date) {
@@ -202,13 +304,43 @@ export default {
                     this.list_residues = res.data.residues;
                     this.index = res.data.date;
                     this.total = res.data.total;
-                    this.getResidueValue();
+                    this.list_residues_temp = this.list_residues;
+                    this.total_temp = this.total;
+                    this.changeData();
                 }).catch(error => {
                     console.log("Error en servidor");
                     console.log(error);
                     console.log(error.response);
                 });
             }
+        },
+
+        clinicInitialize(id) {
+            if (this.dateAxios != '' && id != '') {
+                axios.get(`/residue/clinicContinuation/${this.dateAxios}/${id}`).then(res => {
+                    console.log("Respuesta del servidor");
+                    console.log("Datos de consulta ", res.data);
+                    this.list_residues_clinic = res.data.clinicResidue;
+                    this.total_clinic = res.data.totalClinic;
+                    this.collection_logs = res.data.collectionLog;
+                    this.changeData();
+                }).catch(error => {
+                    console.log("Error en servidor");
+                    console.log(error);
+                    console.log(error.response);
+                });
+            }
+        },
+
+        changeData() {
+            if (this.alert) {
+                this.list_residues = this.list_residues_temp;
+                this.total = this.total_temp;
+            } else {
+                this.list_residues = this.list_residues_clinic;
+                this.total = this.total_clinic;
+            }
+            this.getResidueValue();
         },
 
         revalidateData(index, type) {
@@ -229,13 +361,35 @@ export default {
         getResidueValue() {
             this.data_residues = [];
             this.data_garbage_bags = [];
+            this.stored = [];
+            this.stored_days = [];
+            this.totalDay = 0;
+            let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
                 if (!this.data_residues[i]) {
                     this.$set(this.data_residues, i);
                 }
+                this.$set(this.stored, i);
+                this.stored[i] = 0;
+                this.$set(this.stored_days, i);
             }
             if (this.list_residues.length != 0) {
                 for (let i = 1; i <= this.index; i++) {
+                    if (!this.alert && this.clinic != '') {
+                        if (this.collection_logs[i-1] != undefined) {
+                            const firstDate = new Date(this.collection_logs[i-1].collection_date);
+                            const secondDate = new Date(this.collection_logs[i-1].date);
+                            daysTemp = this.collection_logs[i-1].day;
+                            for (let j = 0; j < this.index; j++) {
+                                if (j == daysTemp) {
+                                    this.stored[j] = daysTemp;
+                                    this.stored_days[j] = Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
+                                    this.totalDay += this.stored_days[j];
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     for (let l = 0; l < this.list_residues.length; l++) {
                         if (this.list_residues[l].day == i) {
                             this.data_garbage_bags[i] = this.formater(this.list_residues[l].garbage_bags);
@@ -243,7 +397,6 @@ export default {
                         }
                     }
                 }
-                // console.log("sad",this.data_garbage_bags);
             }
         },
 
@@ -267,6 +420,7 @@ export default {
             this.date = month + ' ' + year;
             this.dateAxios = year + '-' + monthNumber;
             this.initialize(this.dateAxios);
+            this.clinicInitialize(this.clinic);
         },
 
         prev() {
@@ -287,6 +441,7 @@ export default {
             this.dateAxios = year + '-' + this.position;
             console.log("FECHA ", this.dateAxios);
             this.initialize(this.dateAxios);
+            this.clinicInitialize(this.clinic);
         },
 
         next() {
@@ -307,6 +462,23 @@ export default {
             this.dateAxios = year + '-' + this.position;
             this.initialize(this.dateAxios);
             console.log(this.date);
+            this.clinicInitialize(this.clinic);
+        },
+
+        mounted() {
+            setTimeout(() => {
+                this.showAlert = true;
+            }, 5000);
+        },
+
+        clinicSelected() {
+            for (let i = 0; i < this.items.length; i++) {
+                if (this.items[i].id == this.clinic) {
+                    this.clinic_number = this.items[i].clinic_number;
+                    break;
+                }
+            }
+            this.clinicInitialize(this.clinic);
         },
     }
 }

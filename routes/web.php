@@ -86,6 +86,9 @@ Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnifie
 Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation']);
 Route::get('/residue/showCollectorResidue/{type}', [ResidueController::class, 'showCollectorResidue']);
 Route::post('/residue/registerCollector/{id}/{date}', [ResidueController::class, 'registerCollector']);
+Route::get('/residue/clinicNumber', [ResidueController::class, 'showClinic']);
+Route::get('/residue/clinicSelected/{date}/{id}', [ResidueController::class, 'showClinicSelected']);
+Route::get('/residue/clinicContinuation/{date}/{id}', [ResidueController::class, 'showClinicConstinuation']);
 
 // ------------------------------- Rutas de precio residuos --------------------------------------- 
 Route::get('/manager/residue_price', [ResiduePriceController::class, 'view']);

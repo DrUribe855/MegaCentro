@@ -259,17 +259,21 @@
             },
             
             register(){
-                for (let i = 0; i < this.data.length; i++) {
-                    if (this.data[i] != 0) {
-                        axios.put(`/manager/registerPrice/${i+1}`, {data: this.data[i]}).then(res =>{
-                            console.log("Respuesta del servidor");
-                            console.log(res.data);
-                        }).catch(error =>{
-                            console.log("Error en servidor");
-                            console.log(error);
-                            console.log(error.response);
-                        });
+                if (this.data.length != 0) {
+                    for (let i = 0; i < this.data.length; i++) {
+                        if (this.data[i] != 0) {
+                            axios.put(`/manager/registerPrice/${i+1}`, {data: this.data[i]}).then(res =>{
+                                console.log("Respuesta del servidor");
+                                console.log(res.data);
+                            }).catch(error =>{
+                                console.log("Error en servidor");
+                                console.log(error);
+                                console.log(error.response);
+                            });
+                        }
                     }
+                }else{
+                    
                 }
             },
 
