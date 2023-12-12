@@ -219,13 +219,9 @@
                 for (let i = 0; i < this.desserts.length; i++) {
                     const parsedDate = parseISO(this.desserts[i].date);
                     const secondDate = parseInt(format(parsedDate, 'yyyyMM'));
-                    if (month == secondDate) {
-                        this.desserts[i].storeTime = parseInt(firstDate) - parseInt(this.desserts[i].dateTemp);
-                    }else{
-                        const firstDate = new Date(this.date);
-                        const secondDate = new Date(this.desserts[i].date);
-                        this.desserts[i].storeTime = Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
-                    }
+                    const firstDate = new Date(this.date);
+                    const secondDates = new Date(this.desserts[i].date);
+                    this.desserts[i].storeTime = Math.floor((firstDate - secondDates) / (1000 * 60 * 60 * 24));
                     if (this.desserts[i].storeTime < 0) {
                         this.desserts[i].storeTime = 0;
                     }
