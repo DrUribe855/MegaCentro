@@ -10,11 +10,13 @@
                 <v-col
                   cols="12"
                   md="3"
+                  sm="6"
                 >
                   <v-text-field
                     v-model="general_data.month"
                     label="Ingrese el mes"
                     type="number"
+                    readonly
                     required
                   ></v-text-field>
                 </v-col>
@@ -22,12 +24,14 @@
                 <v-col
                   cols="12"
                   md="3"
+                  sm="6"
                 >
                   <v-text-field
                     v-model="general_data.year"
                     label="Ingrese el año"
                     type="number"
                     required
+                    readonly
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -44,12 +48,43 @@
                 <v-col
                   cols="12"
                   sm="6"
-                  md="2"
+                  md="3"
+
                 >
                   <v-btn
                     color="primary"
                     @click="save()"
                   >Registrar recolección</v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="12"
+                  sm="12"
+                  lg="12"
+                >
+                  <p>Filtro de búsqueda</p>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-text-field
+                    v-model="clinicNumber"
+                    label="Ingrese el consultorio"
+                    type="number"
+                    @keyup="filterClinics()"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-text-field
+                    v-model="towerNumber"
+                    label="Ingrese la torre"
+                    type="number"
+                    @keyup="filterClinics()"
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -58,8 +93,8 @@
         <div>
           <div v-for="(clinic, index) in clinics" class="mt-3">
             <v-expansion-panels>
-              <v-expansion-panel>
-                <v-expansion-panel-header>Consultorio: {{clinic.clinic.clinic_number  }}  / Torre: {{clinic.clinic.tower_id}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="datos[index].show">
+                <v-expansion-panel-header >Consultorio: {{clinic.clinic.clinic_number  }}  / Torre: {{clinic.clinic.tower_id}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -74,6 +109,7 @@
                               <v-text-field
                                 :label="residue.residue_name"
                                 v-model="datos[index].data[i].weight"
+                                
                               >adasda</v-text-field>
                             </v-col>
                           </v-row>
@@ -115,6 +151,9 @@
     data: () => ({
       items: ['Diurno', 'Nocturno', 'Extra'],
       clinics: [], 
+      searchTimer: '',
+      clinicNumber: '',
+      towerNumber: '',
       residues: [],
       datos: [],
       general_data: {
@@ -125,20 +164,37 @@
     }),
 
     computed: {
+
     },
     created () {
       this.getClinics();
+      this.filterClinics();
+      // let localData = localStorage.getItem("collectionData");
+      // if(localData != undefined){
+      //   this.datos = localData;
+      // }
     },
 
     methods: {
       getClinics(){
-        axios.get('/collector/clinics').then(res => {
+        axios.get('/collector/clinics', {
+          params: {
+            clinicNumber: this.clinicNumber,
+            towerNumber: this.towerNumber,
+          }
+        }).then(res => {
             this.clinics = res.data.clinics;
             this.residues = res.data.residues;
+            this.general_data.month = res.data.month;
+            this.general_data.year = res.data.year;
+            console.log(this.clinics);
             res.data.clinics.forEach(clinic => {
             let aux = {
                 clinic_id: clinic.clinic_id,
-                data: []
+                data: [],
+                show: true,
+                towerNumber: clinic.clinic.tower_id,
+                clinicNumber: clinic.clinic.clinic_number,
               };
               res.data.residues.forEach(residue => {
                 aux.data.push({
@@ -148,6 +204,7 @@
                 });
               }); 
               this.datos.push(aux);
+              
             });
         }).catch(error => {
             console.log('Error en axios: ');
@@ -160,15 +217,15 @@
           datos: this.datos,
           data_general: this.general_data,
         }
-        console.log("request: ",request);
+        console.log("request asdas: ",request);
         axios.post('/collector/saveCollection', request).then(resp => {
           console.log("request: ", resp);
-          if(resp.data.message == 'Año incorrecto' && resp.data.status == false){
-            this.showAlert('Error', 'Ingrese un año válido', 'error');
-          }else if(resp.data.message == 'Mes invalido' && resp.data.status == false){
-            this.showAlert('Error', 'Ingrese un mes válido', 'error');
-          }else if(resp.data.message == 'Horario no ingresado' && resp.data.status == false){
-            this.showAlert('Error', 'Ingrese un horario', 'error');
+          if(resp.data.message == "Recolección registrada"){
+            this.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
+          }else if(resp.data.message == "Datos incompletos"){
+            this.showAlert('Error', 'Los datos de recolección se encuentran incompletos', 'error');
+          }else if(resp.data.message == 'Datos incorrectos en la fecha'){
+            this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
           }
         }).catch(error => {
           console.log(error.response);
@@ -182,6 +239,72 @@
           icon: icon,
         });
       },
+      changeValue(){
+        localStorage.removeItem("collectionData");
+        const localData = localStorage.getItem("collectionData");
+        console.log("Impresion ", localData);
+        console.log(localData[0]);
+      },
+      filterClinics() {
+
+        if(this.clinicNumber != '' && this.towerNumber == ''){
+         for (let i = 0; i < this.datos.length; i++) {
+            if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        if(this.towerNumber != '' &&  this.clinicNumber == ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if(this.datos[i].towerNumber == this.towerNumber){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        if(this.towerNumber != '' && this.clinicNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        if(this.towerNumber == '' && this.clinicNumber == ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            this.datos[i].show = true;
+          }
+        }
+      },
+      collectionValidation(clinicNumber, residueId){
+        let clinicNumberValidation;
+        let residueNameValidation;
+        for (let i = 0; i < this.residues.length; i++) {
+          if(this.residues[i].id == residueId){
+            residueNameValidation = this.residues[i].residue_name;
+            console.log("El residuo que se encuentra sin llenar es el: ", residueNameValidation);
+            break;
+          } 
+        }
+
+        for(let j = 0; j < this.clinics.length; j++){
+          if(this.clinics[j].clinic_id == clinicNumber){
+            clinicNumberValidation = this.clinics[j].clinic.clinic_number;
+            console.log("En el consultorio numero: ", clinicNumberValidation);
+            break;
+          }
+        }
+
+        this.showAlert("Aviso",  `Falta diligenciar información del residuo ${residueNameValidation} en el consultorio ${clinicNumberValidation}`, "warning");
+        
+      }
     },
   }
 </script>
