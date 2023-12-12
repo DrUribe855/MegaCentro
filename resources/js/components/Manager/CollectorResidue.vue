@@ -196,16 +196,10 @@
 
             setToday (position) {
                 this.positionTime++;
-                let focus = moment().format('YYYYMMDD');
-                const month = moment().format('YYYYMM');
-                const parsedDate = parseISO(position.date);
-                const secondDate = parseInt(format(parsedDate, 'yyyyMM'));
-                if (month == secondDate) {
-                    if (position.dateTemp < focus) {
-                        return parseInt(focus) - parseInt(position.dateTemp);
-                    }else{
-                        return 0
-                    }
+                if (position.collection_date != null) {
+                    const firstDate = new Date(position.collection_date);
+                    const secondDate = new Date(position.date);
+                    return Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
                 }else{
                     const firstDate = moment().toDate(); 
                     const secondDate = moment(position.date, 'YYYY-MM-DD').toDate();
@@ -214,23 +208,17 @@
             },
 
             changeDate(){
-                const firstDate = parseInt(format(new Date(this.date), 'yyyyMMdd'))+1;
-                const month = parseInt(format(new Date(this.date), 'yyyyMM'));
                 for (let i = 0; i < this.desserts.length; i++) {
-                    const parsedDate = parseISO(this.desserts[i].date);
-                    const secondDate = parseInt(format(parsedDate, 'yyyyMM'));
                     const firstDate = new Date(this.date);
-                    const secondDates = new Date(this.desserts[i].date);
-                    this.desserts[i].storeTime = Math.floor((firstDate - secondDates) / (1000 * 60 * 60 * 24));
+                    const secondDate = new Date(this.desserts[i].date);
+                    this.desserts[i].storeTime = Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
                     if (this.desserts[i].storeTime < 0) {
                         this.desserts[i].storeTime = 0;
                     }
                 }
-                console.log(this.desserts);
             },
 
             getColor (storeTime) {
-                console.log(storeTime);
                 if (storeTime > 5) return 'red'
                 else if (storeTime > 2) return 'orange'
                 else return 'blue'

@@ -207,7 +207,7 @@ class ResidueController extends Controller
     
             $records->transform(function ($record) {
                 $record->date = $record->created_at->format('Y-m-d');
-                $record->dateTemp = $record->created_at->format('Ymd');
+                $record->dateTemp = $record->created_at->format('Y-m-d');
                 unset($record->created_at);
                 return $record;
             });            
