@@ -1,1 +1,18 @@
 @import "~vuetify/dist/vuetify.min.css";
+
+.back{
+	background-color: black;
+}
+
+.container-scroll {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.input-item {
+    display: inline;
+    background-color: pink;
+    width: 100px; /* Ajusta el ancho según tus preferencias */
+    margin-right: 10px; /* Ajusta el margen derecho según tus preferencias */
+}

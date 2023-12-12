@@ -353,7 +353,7 @@ return [
             'can' => 'manager.clinics.generalShow'
         ],
         [
-            'text' => 'Recolectar residuos',
+            'text' => 'Residuos almacenados',
             'url'  => '/manager/collector_residue',
             'icon' => 'fas fa-fw fa-user',
             // 'can' => 'manager.clinics.generalShow'
