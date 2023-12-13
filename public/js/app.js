@@ -4997,23 +4997,61 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      items: ['Diurno', 'Nocturno', 'Extra'],
       clinics: [],
-      month: "",
-      year: ""
+      searchTimer: '',
+      clinicNumber: '',
+      towerNumber: '',
+      residues: [],
+      datos: [],
+      general_data: {
+        month: '',
+        year: '',
+        schedule: ''
+      }
     };
   },
   computed: {},
   created: function created() {
     this.getClinics();
+    this.filterClinics();
+    // let localData = localStorage.getItem("collectionData");
+    // if(localData != undefined){
+    //   this.datos = localData;
+    // }
   },
+
   methods: {
     getClinics: function getClinics() {
       var _this = this;
-      axios.get('/collector/clinics').then(function (res) {
-        console.log('Respuesta del servidor');
-        console.log(res.data);
+      axios.get('/collector/clinics', {
+        params: {
+          clinicNumber: this.clinicNumber,
+          towerNumber: this.towerNumber
+        }
+      }).then(function (res) {
         _this.clinics = res.data.clinics;
+        _this.residues = res.data.residues;
+        _this.general_data.month = res.data.month;
+        _this.general_data.year = res.data.year;
         console.log(_this.clinics);
+        res.data.clinics.forEach(function (clinic) {
+          var aux = {
+            clinic_id: clinic.clinic_id,
+            data: [],
+            show: true,
+            towerNumber: clinic.clinic.tower_id,
+            clinicNumber: clinic.clinic.clinic_number
+          };
+          res.data.residues.forEach(function (residue) {
+            aux.data.push({
+              residue_id: residue.id,
+              weight: 0,
+              bags: 0
+            });
+          });
+          _this.datos.push(aux);
+        });
       })["catch"](function (error) {
         console.log('Error en axios: ');
         console.log(error);
@@ -5022,15 +5060,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     save: function save() {
       var _this2 = this;
-      axios.post('/collector/saveCollection', this.editedItem.clinic).then(function (resp) {
-        console.log('Recolección registrada exitosamente: ', resp.data);
-        if (resp.data == 'Todos los datos deben ser validados') {
-          _this2.showAlert('Error', 'Todos los datos deben ser validados', 'error');
-        } else {
-          _this2.showAlert('Registrado', 'La recolección se ha registrado con éxito', 'success');
-          _this2.close();
+      var request = {
+        datos: this.datos,
+        data_general: this.general_data
+      };
+      console.log("request asdas: ", request);
+      axios.post('/collector/saveCollection', request).then(function (resp) {
+        console.log("request: ", resp);
+        if (resp.data.message == "Recolección registrada") {
+          _this2.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
+        } else if (resp.data.message == "Datos incompletos") {
+          _this2.showAlert('Error', 'Los datos de recolección se encuentran incompletos', 'error');
+        } else if (resp.data.message == 'Datos incorrectos en la fecha') {
+          _this2.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
         }
-        _this2.getClinics();
       })["catch"](function (error) {
         console.log(error.response);
       });
@@ -5041,6 +5084,65 @@ __webpack_require__.r(__webpack_exports__);
         text: text,
         icon: icon
       });
+    },
+    changeValue: function changeValue() {
+      localStorage.removeItem("collectionData");
+      var localData = localStorage.getItem("collectionData");
+      console.log("Impresion ", localData);
+      console.log(localData[0]);
+    },
+    filterClinics: function filterClinics() {
+      if (this.clinicNumber != '' && this.towerNumber == '') {
+        for (var i = 0; i < this.datos.length; i++) {
+          if (this.datos[i].clinicNumber.includes(this.clinicNumber)) {
+            this.datos[i].show = true;
+          } else {
+            this.datos[i].show = false;
+          }
+        }
+      }
+      if (this.towerNumber != '' && this.clinicNumber == '') {
+        for (var _i = 0; _i < this.datos.length; _i++) {
+          if (this.datos[_i].towerNumber == this.towerNumber) {
+            this.datos[_i].show = true;
+          } else {
+            this.datos[_i].show = false;
+          }
+        }
+      }
+      if (this.towerNumber != '' && this.clinicNumber != '') {
+        for (var _i2 = 0; _i2 < this.datos.length; _i2++) {
+          if (this.datos[_i2].towerNumber == this.towerNumber && this.datos[_i2].clinicNumber.includes(this.clinicNumber)) {
+            this.datos[_i2].show = true;
+          } else {
+            this.datos[_i2].show = false;
+          }
+        }
+      }
+      if (this.towerNumber == '' && this.clinicNumber == '') {
+        for (var _i3 = 0; _i3 < this.datos.length; _i3++) {
+          this.datos[_i3].show = true;
+        }
+      }
+    },
+    collectionValidation: function collectionValidation(clinicNumber, residueId) {
+      var clinicNumberValidation;
+      var residueNameValidation;
+      for (var i = 0; i < this.residues.length; i++) {
+        if (this.residues[i].id == residueId) {
+          residueNameValidation = this.residues[i].residue_name;
+          console.log("El residuo que se encuentra sin llenar es el: ", residueNameValidation);
+          break;
+        }
+      }
+      for (var j = 0; j < this.clinics.length; j++) {
+        if (this.clinics[j].clinic_id == clinicNumber) {
+          clinicNumberValidation = this.clinics[j].clinic.clinic_number;
+          console.log("En el consultorio numero: ", clinicNumberValidation);
+          break;
+        }
+      }
+      this.showAlert("Aviso", "Falta diligenciar informaci\xF3n del residuo ".concat(residueNameValidation, " en el consultorio ").concat(clinicNumberValidation), "warning");
     }
   }
 });
@@ -8839,8 +8941,7 @@ var render = function render() {
   return _c("v-app", [_c("v-main", [_c("div", {
     staticStyle: {
       height: "100vh",
-      "overflow-y": "scroll",
-      "overflow-x": "scroll"
+      "overflow-y": "scroll"
     }
   }, [_c("div", {
     staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded"
@@ -8851,19 +8952,104 @@ var render = function render() {
   }, [_c("v-container", [_c("v-row", [_c("v-col", {
     attrs: {
       cols: "12",
-      md: "4"
+      md: "3",
+      sm: "6"
     }
   }, [_c("v-text-field", {
     attrs: {
       label: "Ingrese el mes",
+      type: "number",
+      readonly: "",
       required: ""
     },
     model: {
-      value: _vm.month,
+      value: _vm.general_data.month,
       callback: function callback($$v) {
-        _vm.month = $$v;
+        _vm.$set(_vm.general_data, "month", $$v);
       },
-      expression: "month"
+      expression: "general_data.month"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      md: "3",
+      sm: "6"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Ingrese el año",
+      type: "number",
+      required: "",
+      readonly: ""
+    },
+    model: {
+      value: _vm.general_data.year,
+      callback: function callback($$v) {
+        _vm.$set(_vm.general_data, "year", $$v);
+      },
+      expression: "general_data.year"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "3"
+    }
+  }, [_c("v-select", {
+    attrs: {
+      label: "Horario de recolección",
+      items: _vm.items
+    },
+    model: {
+      value: _vm.general_data.schedule,
+      callback: function callback($$v) {
+        _vm.$set(_vm.general_data, "schedule", $$v);
+      },
+      expression: "general_data.schedule"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6",
+      md: "3"
+    }
+  }, [_c("v-btn", {
+    attrs: {
+      color: "primary"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.save();
+      }
+    }
+  }, [_vm._v("Registrar recolección")])], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      md: "12",
+      sm: "12",
+      lg: "12"
+    }
+  }, [_c("p", [_vm._v("Filtro de búsqueda")])]), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      md: "4"
+    }
+  }, [_c("v-text-field", {
+    attrs: {
+      label: "Ingrese el consultorio",
+      type: "number"
+    },
+    on: {
+      keyup: function keyup($event) {
+        return _vm.filterClinics();
+      }
+    },
+    model: {
+      value: _vm.clinicNumber,
+      callback: function callback($$v) {
+        _vm.clinicNumber = $$v;
+      },
+      expression: "clinicNumber"
     }
   })], 1), _vm._v(" "), _c("v-col", {
     attrs: {
@@ -8872,86 +9058,65 @@ var render = function render() {
     }
   }, [_c("v-text-field", {
     attrs: {
-      label: "Ingrese el año",
-      required: ""
+      label: "Ingrese la torre",
+      type: "number"
+    },
+    on: {
+      keyup: function keyup($event) {
+        return _vm.filterClinics();
+      }
     },
     model: {
-      value: _vm.year,
+      value: _vm.towerNumber,
       callback: function callback($$v) {
-        _vm.year = $$v;
+        _vm.towerNumber = $$v;
       },
-      expression: "year"
+      expression: "towerNumber"
     }
-  })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", _vm._l(_vm.clinics, function (clinic) {
+  })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", _vm._l(_vm.clinics, function (clinic, index) {
     return _c("div", {
-      staticClass: "shadow-sm p-3 mb-5 bg-body-tertiary rounded border border-black fs-4"
-    }, [_c("p", [_vm._v("Numero de consultorio: " + _vm._s(clinic.clinic.clinic_number))]), _vm._v(" "), _c("p", [_vm._v("Numero de torre: " + _vm._s(clinic.clinic.tower_id))]), _vm._v(" "), _c("div", [_c("v-form", {
-      staticClass: "ml-3"
-    }, [_c("v-container", {
-      staticStyle: {
-        "overflow-x": "scroll"
-      }
-    }, [_c("v-row", [_c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos biodegradables",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos reciclables",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos inertes",
-        required: ""
-      }
-    })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", [_c("v-form", {
-      staticClass: "ml-3"
-    }, [_c("v-container", {
-      staticStyle: {
-        "overflow-x": "scroll"
-      }
-    }, [_c("v-row", [_c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Cantidad de bolsas",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos reciclables",
-        required: ""
-      }
-    })], 1), _vm._v(" "), _c("v-col", {
-      attrs: {
-        md: "3"
-      }
-    }, [_c("v-text-field", {
-      attrs: {
-        label: "Kilos de residuos inertes",
-        required: ""
-      }
-    })], 1)], 1)], 1)], 1)], 1)]);
+      staticClass: "mt-3"
+    }, [_c("v-expansion-panels", [_vm.datos[index].show ? _c("v-expansion-panel", [_c("v-expansion-panel-header", [_vm._v("Consultorio: " + _vm._s(clinic.clinic.clinic_number) + "  / Torre: " + _vm._s(clinic.clinic.tower_id))]), _vm._v(" "), _c("v-expansion-panel-content", [_c("v-form", [_c("v-container", [_c("div", [_c("h5", [_vm._v(" Kilogramos ")]), _vm._v(" "), _c("v-row", _vm._l(_vm.residues, function (residue, i) {
+      return _c("v-col", {
+        key: residue.id,
+        attrs: {
+          cols: "12",
+          md: "3"
+        }
+      }, [_c("v-text-field", {
+        attrs: {
+          label: residue.residue_name
+        },
+        model: {
+          value: _vm.datos[index].data[i].weight,
+          callback: function callback($$v) {
+            _vm.$set(_vm.datos[index].data[i], "weight", $$v);
+          },
+          expression: "datos[index].data[i].weight"
+        }
+      }, [_vm._v("adasda")])], 1);
+    }), 1)], 1), _vm._v(" "), _c("div", [_c("h5", {
+      staticClass: "mt-3"
+    }, [_vm._v("Bolsas")]), _vm._v(" "), _c("v-row", _vm._l(_vm.residues, function (residue, i) {
+      return _c("v-col", {
+        key: residue.id,
+        attrs: {
+          cols: "12",
+          md: "3"
+        }
+      }, [_c("v-text-field", {
+        attrs: {
+          label: residue.residue_name
+        },
+        model: {
+          value: _vm.datos[index].data[i].bags,
+          callback: function callback($$v) {
+            _vm.$set(_vm.datos[index].data[i], "bags", $$v);
+          },
+          expression: "datos[index].data[i].bags"
+        }
+      })], 1);
+    }), 1)], 1)])], 1)], 1)], 1) : _vm._e()], 1)], 1);
   }), 0)])])], 1);
 };
 var staticRenderFns = [];

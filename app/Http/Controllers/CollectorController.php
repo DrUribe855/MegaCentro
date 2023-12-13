@@ -8,72 +8,134 @@ use App\Models\Clinic_user;
 use App\Models\CollectionLog;
 use App\Models\Residue;
 use App\Models\Clinic;
+use App\Models\Waste_collection;
 
 class CollectorController extends Controller
 {
     
-    public function index()
-    {
+    public function index(){
         return view('Collector/index');
     }
 
-    public function create()
-    {
-        //
+    public function create(){
+    
     }
 
     public function store(Request $request)
     {
+        $clinics = $request->datos;
+        $general_data = $request->data_general;
+        $anioActual = getdate();
+        $validationStatus = true;
 
-        $clinicNumber = $request->input('clinic_number');
-        $residueName = $request->input('residue_id');
-        $weight = $request->input('weight');
+        if($this->dateValidations($general_data, $anioActual)){
+            if($this->collectionValidate($clinics)){
+                foreach ($clinics as $key => $clinic) {
+                    if($this->clinicValidate($clinic)){
+                        $collection = new CollectionLog();
+                        $collection->user_id = auth()->user()->id;
+                        $collection->clinic_id = $clinic["clinic_id"];
+                        $collection->year = $general_data["year"];
+                        $collection->month = $general_data["month"];
+                        $collection->schedule = $general_data["schedule"];
+                        $collection->save();
 
-        if($residueName &&  $weight){
-            $clinicId = Clinic::select('id')
-                    ->where('clinic_number', $clinicNumber)
-                    ->first();
+                        foreach ($clinic["data"] as $key => $residue) {
+                            if($residue["weight"] != 0 && $residue["weight"] != 0){
+                                $residues = new Waste_collection();
+                                $residues->id_collection_log = $collection->id;
+                                $residues->id_residue = $residue["residue_id"];
+                                $residues->weight = $residue["weight"];
+                                $residues->garbage_bags = $residue["bags"];
+                                $residues->save();
+                            }
+                        }
 
-            $residueId = Residue::select('id')
-                        ->where('residue_name', $residueName)
-                        ->first();
+                        $data = [
+                            'message' => 'Recolección registrada',
+                            'status' => true,
+                        ];
 
-            $collectionLog = new CollectionLog();
-            $collectionLog->clinic_id = $clinicId->id;
-            $collectionLog->residue_id = $residueId->id;
-            $collectionLog->weight = $request->input('weight');
-            $collectionLog->save();
+                        return response()->json($data);
+                    }
+                }
+            }else{
+                $data = [
+                    'message' => "Datos incompletos",
+                    'status' => false,
+                ];
 
-            Clinic::where('id', $clinicId->id)->update(['collection_status' => 'RECOLECTADO']);
-
+                return response()->json($data);
+            }
+        }else{
             $data = [
-                'status' => true,
-                'clinics' => $collectionLog,
+                'message' => "Datos incorrectos en la fecha",
+                'status' => false,
             ];
 
             return response()->json($data);
-        }else{
-            return response()->json('Todos los datos deben ser validados');
         }
+                
         
-
-
-
-
+            
     }
 
-    public function show($id)
-    {
+    public function dateValidations($general_data, $anioActual){
+
+
+        if($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == ''){     
+            return false;
+        } 
+
+        if($general_data['month'] > 12 || $general_data['month'] < 1){
+            return false;
+        }
+
+        if($general_data['schedule'] == ''){
+            return false;
+        }
+
+        return true;
+        
+    }
+
+    public function collectionValidate($clinics){
+        foreach ($clinics as $key => $clinic) { 
+            foreach ($clinic["data"] as $key => $residue) {
+                if($residue["weight"] > 0){
+                    if($residue["bags"] < 1){
+                        return false;
+
+                    }
+                }else if($residue["bags"] >= 1){
+                    if($residue["weight"] <= 0){
+                        return false;                      
+                        
+                    }
+                }
+            }   
+        }
+        return true;
+    }
+
+    public function clinicValidate($clinic){
+        foreach ($clinic["data"] as $key => $residue) {
+            if($residue["weight"] != 0 && $residue["bags"] != 0){
+                return true;
+            }
+        }  
+
+        return false; 
+    }
+
+    public function show($id){
+    }
+
+    public function edit($id){
         //
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         //
     }
 
@@ -81,18 +143,35 @@ class CollectorController extends Controller
         //
     }
 
-    public function getClinics(){
+    public function getClinics(Request $request){
+
+        $clinicNumber = $request->clinicNumber;
+        $towerNumber = $request->towerNumber;
+
         $id = auth()->user()->id;
         $clinics = Clinic_user::whereHas('user', function ($query) use ($id) {
-        $query->where('clinic_users.user_id', '=', $id);
+            $query->where('clinic_users.user_id', '=', $id);
         })
         ->with('clinic')
+        ->whereHas('clinic', function ($query) use ($clinicNumber) {
+            $query->where('clinic_number', "LIKE", "%$clinicNumber%"); 
+        })
+        ->whereHas('clinic', function ($query) use ($towerNumber) {
+            $query->where('tower_id', "LIKE", "%$towerNumber%"); 
+        })
         ->get();
-        // return $clinics;
+
+        $residues = Residue::get();
+        $currentDate = date('Y-m');
+        $currentYear = date('Y');
+        $currentMonth = date('m');
 
         $data = [
             'status' => true,
-            'clinics' => $clinics
+            'clinics' => $clinics,
+            'residues' => $residues,
+            'year' => $currentYear,
+            'month' => $currentMonth,
         ];
 
         return response()->json($data);
