@@ -90,6 +90,7 @@ Route::get('/residue/clinicNumber', [ResidueController::class, 'showClinic']);
 Route::get('/residue/clinicSelected/{date}/{id}', [ResidueController::class, 'showClinicSelected']);
 Route::get('/residue/clinicContinuation/{date}/{id}', [ResidueController::class, 'showClinicConstinuation']);
 
+
 // ------------------------------- Rutas de precio residuos --------------------------------------- 
-Route::get('/manager/residue_price', [ResiduePriceController::class, 'view']);
+Route::get('/manager/residue_price', [ResiduePriceController::class, 'view'])->middleware('admin.employees.generalShow');;
 Route::put('/manager/registerPrice/{id}', [ResiduePriceController::class, 'register']);

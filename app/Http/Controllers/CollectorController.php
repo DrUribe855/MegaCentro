@@ -28,48 +28,60 @@ class CollectorController extends Controller
         $anioActual = getdate();
         $validationStatus = true;
 
-        if($this->dateValidations($general_data, $anioActual)){
-            if($this->collectionValidate($clinics)){
-                foreach ($clinics as $key => $clinic) {
-                    if($this->clinicValidate($clinic)){
-                        $collection = new CollectionLog();
-                        $collection->user_id = auth()->user()->id;
-                        $collection->clinic_id = $clinic["clinic_id"];
-                        $collection->year = $general_data["year"];
-                        $collection->month = $general_data["month"];
-                        $collection->schedule = $general_data["schedule"];
-                        $collection->save();
+        if(!$this->collectionExists($general_data)){
+            if($this->dateValidations($general_data, $anioActual)){
+                $result = $this->collectionValidate($clinics);
+                if($result === true){
+                    foreach ($clinics as $key => $clinic) {
+                        if($this->clinicValidate($clinic)){
+                            $collection = new CollectionLog();
+                            $collection->user_id = auth()->user()->id;
+                            $collection->clinic_id = $clinic["clinic_id"];
+                            $collection->year = $general_data["year"];
+                            $collection->month = $general_data["month"];
+                            $collection->schedule = $general_data["schedule"];
+                            $collection->save();
 
-                        foreach ($clinic["data"] as $key => $residue) {
-                            if($residue["weight"] != 0 && $residue["weight"] != 0){
-                                $residues = new Waste_collection();
-                                $residues->id_collection_log = $collection->id;
-                                $residues->id_residue = $residue["residue_id"];
-                                $residues->weight = $residue["weight"];
-                                $residues->garbage_bags = $residue["bags"];
-                                $residues->save();
+                            foreach ($clinic["data"] as $key => $residue) {
+                                if($residue["weight"] != 0 && $residue["weight"] != 0){
+                                    $residues = new Waste_collection();
+                                    $residues->collection_logs_id = $collection->id;
+                                    $residues->id_residue = $residue["residue_id"];
+                                    $residues->weight = $residue["weight"];
+                                    $residues->garbage_bags = $residue["bags"];
+                                    $residues->save();
+                                }
                             }
+
+                            $data = [
+                                'message' => 'Recolección registrada',
+                                'status' => true,
+                            ];
+
+                            return response()->json($data);
                         }
-
-                        $data = [
-                            'message' => 'Recolección registrada',
-                            'status' => true,
-                        ];
-
-                        return response()->json($data);
                     }
+                }else{
+
+                    $data = [
+                        'message' => 'Datos incompletos',
+                        'collectionData' => $result, 
+                    ];
+
+                    return response()->json($data);
                 }
             }else{
                 $data = [
-                    'message' => "Datos incompletos",
+                    'message' => "Datos incorrectos en la fecha",
                     'status' => false,
                 ];
 
                 return response()->json($data);
             }
+
         }else{
             $data = [
-                'message' => "Datos incorrectos en la fecha",
+                'message' => 'Ya existe una recolección',
                 'status' => false,
             ];
 
@@ -104,12 +116,20 @@ class CollectorController extends Controller
             foreach ($clinic["data"] as $key => $residue) {
                 if($residue["weight"] > 0){
                     if($residue["bags"] < 1){
-                        return false;
+                        $data = [
+                            'clinicNumber' => $clinic["clinic_id"],
+                            'residue_id' => $residue["residue_id"],
+                        ];
+                        return $data;
 
                     }
                 }else if($residue["bags"] >= 1){
                     if($residue["weight"] <= 0){
-                        return false;                      
+                        $data = [
+                            'clinicNumber' => $clinic["clinic_id"],
+                            'residue_id' => $residue["residue_id"],
+                        ];
+                        return $data;                     
                         
                     }
                 }
@@ -126,6 +146,16 @@ class CollectorController extends Controller
         }  
 
         return false; 
+    }
+
+    public function collectionExists($date){
+
+        $exists =  CollectionLog::where('year', $date["year"])
+        ->where('month', $date["month"])
+        ->where('schedule', $date["schedule"])
+        ->exists();
+
+        return $exists;
     }
 
     public function show($id){

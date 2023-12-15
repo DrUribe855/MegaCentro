@@ -5015,12 +5015,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.getClinics();
     this.filterClinics();
-    // let localData = localStorage.getItem("collectionData");
-    // if(localData != undefined){
-    //   this.datos = localData;
-    // }
   },
-
   methods: {
     getClinics: function getClinics() {
       var _this = this;
@@ -5052,6 +5047,13 @@ __webpack_require__.r(__webpack_exports__);
           });
           _this.datos.push(aux);
         });
+        if (localStorage.getItem("collectionData")) {
+          var localData = JSON.parse(localStorage.getItem("collectionData"));
+          console.log(localData);
+          _this.datos = localData;
+        } else {
+          localStorage.setItem("collectionData", JSON.stringify(_this.datos));
+        }
       })["catch"](function (error) {
         console.log('Error en axios: ');
         console.log(error);
@@ -5068,11 +5070,14 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/collector/saveCollection', request).then(function (resp) {
         console.log("request: ", resp);
         if (resp.data.message == "Recolección registrada") {
+          _this2.cleanInputs();
           _this2.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
         } else if (resp.data.message == "Datos incompletos") {
-          _this2.showAlert('Error', 'Los datos de recolección se encuentran incompletos', 'error');
+          _this2.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
         } else if (resp.data.message == 'Datos incorrectos en la fecha') {
           _this2.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
+        } else if (resp.data.message == 'Ya existe una recolección') {
+          _this2.showAlert('Error', 'Ya hay una recolección registrada con esta fecha y horario', 'error');
         }
       })["catch"](function (error) {
         console.log(error.response);
@@ -5086,8 +5091,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     changeValue: function changeValue() {
-      localStorage.removeItem("collectionData");
-      var localData = localStorage.getItem("collectionData");
+      // localStorage.removeItem("collectionData");
+      localStorage.setItem("collectionData", JSON.stringify(this.datos));
+      var localData = JSON.parse(localStorage.getItem("collectionData"));
       console.log("Impresion ", localData);
       console.log(localData[0]);
     },
@@ -5143,6 +5149,17 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
       this.showAlert("Aviso", "Falta diligenciar informaci\xF3n del residuo ".concat(residueNameValidation, " en el consultorio ").concat(clinicNumberValidation), "warning");
+    },
+    cleanInputs: function cleanInputs() {
+      this.general_data.schedule = '';
+      console.log(this.general_data);
+      for (var i = 0; i < this.datos.length; i++) {
+        for (var j = 0; j < this.residues.length; j++) {
+          this.datos[i].data[j].bags = 0;
+          this.datos[i].data[j].weight = 0;
+          localStorage.setItem("collectionData", JSON.stringify(this.datos));
+        }
+      }
     }
   }
 });
@@ -9087,6 +9104,11 @@ var render = function render() {
         attrs: {
           label: residue.residue_name
         },
+        on: {
+          change: function change($event) {
+            return _vm.changeValue();
+          }
+        },
         model: {
           value: _vm.datos[index].data[i].weight,
           callback: function callback($$v) {
@@ -9107,6 +9129,11 @@ var render = function render() {
       }, [_c("v-text-field", {
         attrs: {
           label: residue.residue_name
+        },
+        on: {
+          change: function change($event) {
+            return _vm.changeValue();
+          }
         },
         model: {
           value: _vm.datos[index].data[i].bags,

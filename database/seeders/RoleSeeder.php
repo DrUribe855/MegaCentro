@@ -38,10 +38,10 @@ class RoleSeeder extends Seeder
 
         // ------------------------ Rol recolector ---------------------------- \\
 
-        Permission::create(['name' => 'collector.collections.generalShow'])->assignRole($collectorRole, $administratorRole);
-        Permission::create(['name' => 'collector.collections.create'])->assignRole($collectorRole, $administratorRole);
-        Permission::create(['name' => 'collector.collections.edit'])->assignRole($collectorRole, $administratorRole);
-
+        Permission::create(['name' => 'collector.collections.generalShow'])->assignRole($collectorRole);
+        Permission::create(['name' => 'collector.collections.create'])->assignRole($collectorRole);
+        Permission::create(['name' => 'collector.collections.edit'])->assignRole($collectorRole);
+        Permission::create(['name' => 'collector.storedWaste.view'])->assignRole($collectorRole);
         // ------------------------ Rol encargado y dueño -------------------------------- \\
 
         Permission::create(['name' => 'manager.clinics.generalShow'])->assignRole($managerRole, $ownerRole);
