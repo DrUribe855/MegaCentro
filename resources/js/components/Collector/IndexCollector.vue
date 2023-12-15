@@ -109,7 +109,7 @@
                               <v-text-field
                                 :label="residue.residue_name"
                                 v-model="datos[index].data[i].weight"
-                                
+                                @change="changeValue()"
                               >adasda</v-text-field>
                             </v-col>
                           </v-row>
@@ -125,6 +125,7 @@
                             <v-text-field
                               :label="residue.residue_name"
                               v-model="datos[index].data[i].bags"
+                              @change="changeValue()"
                             ></v-text-field>
                           </v-col>
                         </v-row>
@@ -169,10 +170,8 @@
     created () {
       this.getClinics();
       this.filterClinics();
-      // let localData = localStorage.getItem("collectionData");
-      // if(localData != undefined){
-      //   this.datos = localData;
-      // }
+
+
     },
 
     methods: {
@@ -204,8 +203,16 @@
                 });
               }); 
               this.datos.push(aux);
-              
             });
+
+            if(localStorage.getItem("collectionData")){
+              let localData = JSON.parse(localStorage.getItem("collectionData"));
+              console.log(localData);
+              this.datos = localData;
+            }else{
+              localStorage.setItem("collectionData", JSON.stringify(this.datos));
+             
+            }
         }).catch(error => {
             console.log('Error en axios: ');
             console.log(error);
@@ -221,11 +228,14 @@
         axios.post('/collector/saveCollection', request).then(resp => {
           console.log("request: ", resp);
           if(resp.data.message == "Recolección registrada"){
+            this.cleanInputs();
             this.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
           }else if(resp.data.message == "Datos incompletos"){
-            this.showAlert('Error', 'Los datos de recolección se encuentran incompletos', 'error');
+            this.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
           }else if(resp.data.message == 'Datos incorrectos en la fecha'){
             this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
+          }else if(resp.data.message == 'Ya existe una recolección'){
+            this.showAlert('Error', 'Ya hay una recolección registrada con esta fecha y horario', 'error');
           }
         }).catch(error => {
           console.log(error.response);
@@ -240,8 +250,10 @@
         });
       },
       changeValue(){
-        localStorage.removeItem("collectionData");
-        const localData = localStorage.getItem("collectionData");
+        // localStorage.removeItem("collectionData");
+        localStorage.setItem("collectionData", JSON.stringify(this.datos));
+        const localData = JSON.parse(localStorage.getItem("collectionData"));
+
         console.log("Impresion ", localData);
         console.log(localData[0]);
       },
@@ -303,7 +315,17 @@
         }
 
         this.showAlert("Aviso",  `Falta diligenciar información del residuo ${residueNameValidation} en el consultorio ${clinicNumberValidation}`, "warning");
-        
+      },
+      cleanInputs(){
+        this.general_data.schedule = '';
+        console.log(this.general_data);
+        for (let i = 0; i < this.datos.length; i++) {
+          for (let j = 0; j < this.residues.length; j++) {
+            this.datos[i].data[j].bags = 0;
+            this.datos[i].data[j].weight = 0;
+            localStorage.setItem("collectionData", JSON.stringify(this.datos));
+          }
+        }
       }
     },
   }
