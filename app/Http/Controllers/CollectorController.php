@@ -45,7 +45,7 @@ class CollectorController extends Controller
                             foreach ($clinic["data"] as $key => $residue) {
                                 if($residue["weight"] != 0 && $residue["weight"] != 0){
                                     $residues = new Waste_collection();
-                                    $residues->id_collection_log = $collection->id;
+                                    $residues->collection_logs_id = $collection->id;
                                     $residues->id_residue = $residue["residue_id"];
                                     $residues->weight = $residue["weight"];
                                     $residues->garbage_bags = $residue["bags"];
