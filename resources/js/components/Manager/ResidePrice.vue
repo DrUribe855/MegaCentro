@@ -15,7 +15,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="biodegradableFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -25,7 +25,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="reciclablesFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -35,7 +35,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="inertesFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -45,7 +45,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="oridinariosFormater"
                                     ></v-text-field>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="biosanitariosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -73,7 +73,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="anatomopatologicosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -83,7 +83,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="cortopunzantesFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-2 col-sm-3 text-center">
@@ -93,7 +93,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="aniamalesFormater"
                                     ></v-text-field>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="farmacosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -121,7 +121,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="citotóxicosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -131,7 +131,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="metalesFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -141,7 +141,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="reactivosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -151,7 +151,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="contenedoresFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -161,7 +161,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="aceitesFormater"
                                     ></v-text-field>
                                 </div>
                             </div>
@@ -179,7 +179,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="fuentesAFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-4 col-sm-6 text-center">
@@ -189,7 +189,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="formater"
+                                        @input="fuentesCFormater"
                                     ></v-text-field>
                                 </div>
                             </div>
@@ -236,7 +236,38 @@
             fuentesC: "0",
         }),
 
+        created(){
+            this.initialize();
+        },
+
         methods: {
+            initialize(){
+                axios.get('/manager/residuePrice').then(res => {
+                    console.log("Respuesta del servidor");
+                    console.log(res.data);
+                    this.biodegradable = res.data.residues[0].price;
+                    this.reciclables = res.data.residues[1].price;
+                    this.inertes = res.data.residues[2].price;
+                    this.oridinarios = res.data.residues[3].price;
+                    this.biosanitarios = res.data.residues[4].price;
+                    this.anatomopatologicos = res.data.residues[5].price;
+                    this.cortopunzantes = res.data.residues[6].price;
+                    this.aniamales = res.data.residues[7].price;
+                    this.farmacos = res.data.residues[8].price;
+                    this.citotóxicos = res.data.residues[9].price;
+                    this.metales = res.data.residues[10].price;
+                    this.reactivos = res.data.residues[11].price;
+                    this.contenedores = res.data.residues[12].price;
+                    this.aceites = res.data.residues[13].price;
+                    this.fuentesA = res.data.residues[14].price;
+                    this.fuentesC = res.data.residues[15].price;
+                }).catch(error => {
+                    console.log("Error en servidor");
+                    console.log(error);
+                    console.log(error.response);
+                });
+            },
+
             dataArray(){
                 this.data[0] = this.biodegradable;                        
                 this.data[1] = this.reciclables;                    
@@ -253,8 +284,7 @@
                 this.data[12] = this.contenedores;                    
                 this.data[13] = this.aceites;                    
                 this.data[14] = this.fuentesA;                    
-                this.data[15] = this.fuentesC; 
-                console.log(this.data);     
+                this.data[15] = this.fuentesC;   
                 this.register();              
             },
             
@@ -265,10 +295,12 @@
                             axios.put(`/manager/registerPrice/${i+1}`, {data: this.data[i]}).then(res =>{
                                 console.log("Respuesta del servidor");
                                 console.log(res.data);
+                                this.alertTrue("Los precios se cambiaron con exito");
                             }).catch(error =>{
                                 console.log("Error en servidor");
                                 console.log(error);
                                 console.log(error.response);
+                                this.alertFalse("Parece que algo salio mal");
                             });
                         }
                     }
@@ -277,117 +309,163 @@
                 }
             },
 
-            formater(){
+            biodegradableFormater(){
                 this.biodegradable = accounting.formatMoney(this.biodegradable, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
                 });
-                
+            },
+
+            reciclablesFormater(){
                 this.reciclables = accounting.formatMoney(this.reciclables, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                    
+            },
+
+            inertesFormater(){
                 this.inertes = accounting.formatMoney(this.inertes, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                             
+            },
+
+            oridinariosFormater(){
                 this.oridinarios = accounting.formatMoney(this.oridinarios, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                             
+            },
+
+            biosanitariosFormater(){
                 this.biosanitarios = accounting.formatMoney(this.biosanitarios, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                               
+            },
+
+            anatomopatologicosFormater(){
                 this.anatomopatologicos = accounting.formatMoney(this.anatomopatologicos, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                              
+            },
+
+            cortopunzantesFormater(){
                 this.cortopunzantes = accounting.formatMoney(this.cortopunzantes, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                              
+            },
+
+            aniamalesFormater(){
                 this.aniamales = accounting.formatMoney(this.aniamales, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                               
+            },
+
+            farmacosFormater(){
                 this.farmacos = accounting.formatMoney(this.farmacos, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                            
+            },
+
+            citotóxicosFormater(){
                 this.citotóxicos = accounting.formatMoney(this.citotóxicos, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                             
+            },
+
+            metalesFormater(){
                 this.metales = accounting.formatMoney(this.metales, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                             
+            },
+
+            reactivosFormater(){
                 this.reactivos = accounting.formatMoney(this.reactivos, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                               
+            },
+
+            contenedoresFormater(){
                 this.contenedores = accounting.formatMoney(this.contenedores, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                            
+            },
+
+            aceitesFormater(){
                 this.aceites = accounting.formatMoney(this.aceites, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                             
+            },
+
+            fuentesAFormater(){
                 this.fuentesA = accounting.formatMoney(this.fuentesA, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
-                });
-                
+                });                            
+            },
+
+            fuentesCFormater(){
                 this.fuentesC = accounting.formatMoney(this.fuentesC, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
                     decimal: '.'
+                });
+            },
+
+            alertTrue(text){
+                swal({
+                    title: "Cambio Exitoso!",
+                    text: text,
+                    icon: "success",
+                });
+            },
+
+            alertFalse(text){
+                swal({
+                    title: "ERROR!",
+                    text: text,
+                    icon: "error",
                 });
             },
         }

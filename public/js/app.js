@@ -3691,15 +3691,15 @@ __webpack_require__.r(__webpack_exports__);
       if (this.data_residues[index] !== undefined && type == 0) {
         return this.data_residues[index];
       } else if (this.data_garbage_bags[index] != undefined && type == 1) {
-        return this.data_garbage_bags[index];
+        return this.formater(this.data_garbage_bags[index]);
       } else if (this.total[index] != undefined) {
         if (type == 2) {
           return this.formater(this.total[index].total_weight);
-        } else {
+        } else if (type == 3) {
           return this.formater(this.total[index].garbage_bags);
         }
       }
-      return '0';
+      return 0;
     },
     formater: function formater(total) {
       total = accounting__WEBPACK_IMPORTED_MODULE_1___default().formatMoney(total, {
@@ -4166,7 +4166,6 @@ __webpack_require__.r(__webpack_exports__);
         this.showFilterClinic = false;
         this.selectedFilter = '';
       }
-      console.log("01", this.selectedFilter);
     },
     showTower: function showTower(textFilter) {
       if (textFilter == 'TORRES') {
@@ -4277,7 +4276,9 @@ __webpack_require__.r(__webpack_exports__);
           return item.clinic_user.length > 0;
         });
         _this3.alertTrue("El consultorio se agrego correctamente al responsable ".concat(_this3.infoResponsible.document));
+        _this3.selectedFilter = 'Ver por';
         _this3.initialize();
+        console.log("112 ", _this3.selectedFilter);
         _this3.showBtn = false;
       })["catch"](function (error) {
         console.log("Error en servidor");
@@ -5474,7 +5475,37 @@ __webpack_require__.r(__webpack_exports__);
       fuentesC: "0"
     };
   },
+  created: function created() {
+    this.initialize();
+  },
   methods: {
+    initialize: function initialize() {
+      var _this = this;
+      axios.get('/manager/residuePrice').then(function (res) {
+        console.log("Respuesta del servidor");
+        console.log(res.data);
+        _this.biodegradable = res.data.residues[0].price;
+        _this.reciclables = res.data.residues[1].price;
+        _this.inertes = res.data.residues[2].price;
+        _this.oridinarios = res.data.residues[3].price;
+        _this.biosanitarios = res.data.residues[4].price;
+        _this.anatomopatologicos = res.data.residues[5].price;
+        _this.cortopunzantes = res.data.residues[6].price;
+        _this.aniamales = res.data.residues[7].price;
+        _this.farmacos = res.data.residues[8].price;
+        _this.citotóxicos = res.data.residues[9].price;
+        _this.metales = res.data.residues[10].price;
+        _this.reactivos = res.data.residues[11].price;
+        _this.contenedores = res.data.residues[12].price;
+        _this.aceites = res.data.residues[13].price;
+        _this.fuentesA = res.data.residues[14].price;
+        _this.fuentesC = res.data.residues[15].price;
+      })["catch"](function (error) {
+        console.log("Error en servidor");
+        console.log(error);
+        console.log(error.response);
+      });
+    },
     dataArray: function dataArray() {
       this.data[0] = this.biodegradable;
       this.data[1] = this.reciclables;
@@ -5492,10 +5523,10 @@ __webpack_require__.r(__webpack_exports__);
       this.data[13] = this.aceites;
       this.data[14] = this.fuentesA;
       this.data[15] = this.fuentesC;
-      console.log(this.data);
       this.register();
     },
     register: function register() {
+      var _this2 = this;
       if (this.data.length != 0) {
         for (var i = 0; i < this.data.length; i++) {
           if (this.data[i] != 0) {
@@ -5504,111 +5535,157 @@ __webpack_require__.r(__webpack_exports__);
             }).then(function (res) {
               console.log("Respuesta del servidor");
               console.log(res.data);
+              _this2.alertTrue("Los precios se cambiaron con exito");
             })["catch"](function (error) {
               console.log("Error en servidor");
               console.log(error);
               console.log(error.response);
+              _this2.alertFalse("Parece que algo salio mal");
             });
           }
         }
       } else {}
     },
-    formater: function formater() {
+    biodegradableFormater: function biodegradableFormater() {
       this.biodegradable = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.biodegradable, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    reciclablesFormater: function reciclablesFormater() {
       this.reciclables = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.reciclables, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    inertesFormater: function inertesFormater() {
       this.inertes = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.inertes, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    oridinariosFormater: function oridinariosFormater() {
       this.oridinarios = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.oridinarios, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    biosanitariosFormater: function biosanitariosFormater() {
       this.biosanitarios = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.biosanitarios, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    anatomopatologicosFormater: function anatomopatologicosFormater() {
       this.anatomopatologicos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.anatomopatologicos, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    cortopunzantesFormater: function cortopunzantesFormater() {
       this.cortopunzantes = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.cortopunzantes, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    aniamalesFormater: function aniamalesFormater() {
       this.aniamales = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.aniamales, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    farmacosFormater: function farmacosFormater() {
       this.farmacos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.farmacos, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    citotóxicosFormater: function citotóxicosFormater() {
       this.citotóxicos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.citotóxicos, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    metalesFormater: function metalesFormater() {
       this.metales = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.metales, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    reactivosFormater: function reactivosFormater() {
       this.reactivos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.reactivos, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    contenedoresFormater: function contenedoresFormater() {
       this.contenedores = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.contenedores, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    aceitesFormater: function aceitesFormater() {
       this.aceites = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.aceites, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    fuentesAFormater: function fuentesAFormater() {
       this.fuentesA = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.fuentesA, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
       });
+    },
+    fuentesCFormater: function fuentesCFormater() {
       this.fuentesC = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.fuentesC, {
         symbol: '',
         precision: '',
         thousand: ',',
         decimal: '.'
+      });
+    },
+    alertTrue: function alertTrue(text) {
+      swal({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
+    },
+    alertFalse: function alertFalse(text) {
+      swal({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
       });
     }
   }
@@ -9451,7 +9528,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.biodegradableFormater
     },
     model: {
       value: _vm.biodegradable,
@@ -9469,7 +9546,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.reciclablesFormater
     },
     model: {
       value: _vm.reciclables,
@@ -9487,7 +9564,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.inertesFormater
     },
     model: {
       value: _vm.inertes,
@@ -9505,7 +9582,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.oridinariosFormater
     },
     model: {
       value: _vm.oridinarios,
@@ -9527,7 +9604,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.biosanitariosFormater
     },
     model: {
       value: _vm.biosanitarios,
@@ -9545,7 +9622,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.anatomopatologicosFormater
     },
     model: {
       value: _vm.anatomopatologicos,
@@ -9563,7 +9640,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.cortopunzantesFormater
     },
     model: {
       value: _vm.cortopunzantes,
@@ -9581,7 +9658,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.aniamalesFormater
     },
     model: {
       value: _vm.aniamales,
@@ -9603,7 +9680,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.farmacosFormater
     },
     model: {
       value: _vm.farmacos,
@@ -9621,7 +9698,9 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: function input($event) {
+        _vm.citotóxicosFormater;
+      }
     },
     model: {
       value: _vm.citotóxicos,
@@ -9639,7 +9718,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.metalesFormater
     },
     model: {
       value: _vm.metales,
@@ -9657,7 +9736,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.reactivosFormater
     },
     model: {
       value: _vm.reactivos,
@@ -9675,7 +9754,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.contenedoresFormater
     },
     model: {
       value: _vm.contenedores,
@@ -9693,7 +9772,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.aceitesFormater
     },
     model: {
       value: _vm.aceites,
@@ -9715,7 +9794,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.fuentesAFormater
     },
     model: {
       value: _vm.fuentesA,
@@ -9733,7 +9812,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: _vm.formater
+      input: _vm.fuentesCFormater
     },
     model: {
       value: _vm.fuentesC,
