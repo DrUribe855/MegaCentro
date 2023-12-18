@@ -328,7 +328,6 @@
           this.showFilterClinic = false
           this.selectedFilter = ''
         }
-        console.log("01",this.selectedFilter);
       },
 
       showTower(textFilter){
@@ -433,7 +432,9 @@
           console.log("Datos de agregar consultorio ",res.data);
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
           this.alertTrue(`El consultorio se agrego correctamente al responsable ${this.infoResponsible.document}`);
+          this.selectedFilter = 'Ver por'
           this.initialize()
+          console.log("112 ",this.selectedFilter);
           this.showBtn = false
         }).catch(error => {
           console.log("Error en servidor");

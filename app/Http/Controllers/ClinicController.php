@@ -22,9 +22,9 @@ class ClinicController extends Controller
         $responsibles = User::role('Responsable')->with('clinic_user.clinic')->get();
 
         $data = [
-                    'status' => true,
-                    'responsible' => $responsibles,
-                ];
+            'status' => true,
+            'responsible' => $responsibles,
+        ];
 
         return response()->json($data);
     }
