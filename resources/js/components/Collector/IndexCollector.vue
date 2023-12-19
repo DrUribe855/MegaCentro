@@ -182,11 +182,12 @@
             towerNumber: this.towerNumber,
           }
         }).then(res => {
+          let iterar = 0;
             this.clinics = res.data.clinics;
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            console.log(this.clinics);
+            console.log("Esta es la impresión de consultorios: ",this.clinics);
             res.data.clinics.forEach(clinic => {
             let aux = {
                 clinic_id: clinic.clinic_id,
@@ -194,6 +195,7 @@
                 show: true,
                 towerNumber: clinic.clinic.tower_id,
                 clinicNumber: clinic.clinic.clinic_number,
+                
               };
               res.data.residues.forEach(residue => {
                 aux.data.push({
@@ -207,11 +209,32 @@
 
             if(localStorage.getItem("collectionData")){
               let localData = JSON.parse(localStorage.getItem("collectionData"));
-              console.log(localData);
-              this.datos = localData;
+              if(localData.length < this.datos.length){
+                for (let i = 0; i < this.datos.length; i++) {
+                  if(localData[i] == undefined){
+                    localData.push(this.datos[i]);
+                  }
+                }
+                this.datos = localData;
+                localStorage.setItem("collectionData", JSON.stringify(localData)); 
+              }else if(localData.length > this.datos.length){
+
+                //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
+                const objetosFaltantes = localData.filter((localDato) => !this.datos.some((dato) => dato.clinicNumber === localDato.clinicNumber));
+
+                
+                objetosFaltantes.forEach((objetoFaltante) => {
+                  localData.splice(this.datos.indexOf(objetoFaltante), 1);
+                });
+
+                this.datos = localData;
+                localStorage.setItem("collectionData", JSON.stringify(localData));
+              }else{
+                this.datos = localData;
+              }
+              
             }else{
-              localStorage.setItem("collectionData", JSON.stringify(this.datos));
-             
+              localStorage.setItem("collectionData", JSON.stringify(this.datos));    
             }
         }).catch(error => {
             console.log('Error en axios: ');
@@ -250,12 +273,8 @@
         });
       },
       changeValue(){
-        // localStorage.removeItem("collectionData");
         localStorage.setItem("collectionData", JSON.stringify(this.datos));
         const localData = JSON.parse(localStorage.getItem("collectionData"));
-
-        console.log("Impresion ", localData);
-        console.log(localData[0]);
       },
       filterClinics() {
 

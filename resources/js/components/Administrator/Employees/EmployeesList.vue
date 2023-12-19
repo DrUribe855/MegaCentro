@@ -10,6 +10,7 @@
                         :items="desserts"
                         :options="paginationOptions"
                         class="elevation-12"
+                        :search="search"
                     >
                         <template v-slot:top>
                           <v-toolbar
@@ -17,7 +18,19 @@
                           >
                             <v-toolbar-title>Lista de empleados</v-toolbar-title>
                             <v-spacer></v-spacer>
-                            
+                            <v-col
+                              cols="12"
+                              md="4"
+                              class="mt-2"
+                            >
+                              <v-text-field
+                                v-model="search"
+                                placeholder="Filtro de búsqueda"
+                                type="text"
+                                append-icon="mdi-magnify"
+                              ></v-text-field>
+                            </v-col>
+                            <v-spacer></v-spacer>
                             <v-dialog
                               v-model="dialog"
                               max-width="500px"
@@ -155,17 +168,7 @@
                                 </v-card-actions>
                               </v-card>
                             </v-dialog>
-                            <v-dialog v-model="dialogDelete" max-width="500px">
-                              <v-card>
-                                <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                                  <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-                                  <v-spacer></v-spacer>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
+                            
                           </v-toolbar>
                         </template>
                         <template v-slot:item.actions="{ item }">
@@ -205,6 +208,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 
   export default {
     data: () => ({
+      search: '',
       rules: [
         value => !!value || 'Obligatorio',
       ],
@@ -244,6 +248,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         status: '',
         password : '',
       },
+      documentFilter: '',
       
     }),
 
@@ -270,7 +275,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         getEmployees(){
             axios.get('administrator/generalShow').then(res => {
                 console.log('Respuesta del servidor');
-                // console.log(res);
+                console.log(res);
                 this.desserts = res.data.employees;
             }).catch(error => {
                 console.log('Error en axios: ');

@@ -307,12 +307,6 @@ return [
             'icon' => 'fas fa-fw fa-users',
             'can' => 'admin.managers.generalShow'
         ],
-        // [
-        //     'text' => 'Información residuos',
-        //     'url'  => '/assistant/index',
-        //     'icon' => 'fas fa-fw fa-list',
-        //     'can' => 'assistant.statistics.generalShow'
-        // ],
         [
             'text'    => 'Información residuos',
             'icon'    => 'fas fa-fw fa-list',
@@ -349,20 +343,20 @@ return [
         [
             'text' => 'Lista de consultorios',
             'url'  => '/manager/index',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-users',
             'can' => 'manager.clinics.generalShow'
         ],
         [
             'text' => 'Residuos almacenados',
             'url'  => '/manager/collector_residue',
-            'icon' => 'fas fa-fw fa-user',
-            'can' => 'manager.clinics.generalShow'
+            'icon' => 'fas fa-fw fa-warehouse',
+            'can' => 'admin.managers.generalShow'
         ],
         [
             'text' => 'Tarifas residuos',
             'url'  => '/manager/residue_price',
-            'icon' => 'fas fa-fw fa-user',
-            'can' => 'manager.clinics.generalShow'
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'can' => 'admin.employees.generalShow'
         ],
     ],
 
