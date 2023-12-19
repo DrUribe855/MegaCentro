@@ -4063,6 +4063,70 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['responsible'],
+  data: function data() {
+    return {
+      search: '',
+      infoUser: '',
+      singleSelect: false,
+      selected: [],
+      headers: [{
+        text: 'N Consultorio',
+        value: ''
+      }, {
+        text: 'Peso recolectado',
+        value: ''
+      }, {
+        text: 'Total a pagar',
+        value: ''
+      }, {
+        text: 'Estado factura',
+        value: ''
+      }],
+      desserts: []
+    };
+  },
+  created: function created() {
+    this.infoUser = this.responsible, this.initialize();
+  },
+  methods: {
+    initialize: function initialize() {
+      console.log(this.infoUser);
+    },
+    generateUniqueId: function generateUniqueId() {
+      return Math.random().toString(36).substr(2, 20);
+    },
+    alertTrue: function alertTrue(text) {
+      swal({
+        title: "Cambio Exitoso!",
+        text: text,
+        icon: "success"
+      });
+    },
+    alertFalse: function alertFalse(text) {
+      swal({
+        title: "ERROR!",
+        text: text,
+        icon: "error"
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Responsible.vue?vue&type=script&lang=js&":
 /*!*************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Responsible.vue?vue&type=script&lang=js& ***!
@@ -4077,16 +4141,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Clinic_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Clinic.vue */ "./resources/js/components/Clinic/Clinic.vue");
 /* harmony import */ var _ViewClinic_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ViewClinic.vue */ "./resources/js/components/Clinic/ViewClinic.vue");
 /* harmony import */ var _Tower_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tower.vue */ "./resources/js/components/Clinic/Tower.vue");
+/* harmony import */ var _Invoice_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Invoice.vue */ "./resources/js/components/Clinic/Invoice.vue");
+/* harmony import */ var accounting__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! accounting */ "./node_modules/accounting/accounting.js");
+/* harmony import */ var accounting__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(accounting__WEBPACK_IMPORTED_MODULE_4__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 
 
 
-// import Swal from 'sweetalert2';
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     'clinic-edit': _Clinic_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     'clinic-show': _ViewClinic_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    'clinic-tower': _Tower_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    'clinic-tower': _Tower_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    'clinic-invoice': _Invoice_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
@@ -4100,6 +4174,16 @@ __webpack_require__.r(__webpack_exports__);
       showEdit: false,
       dialog: false,
       dialogRegister: false,
+      showBtn: false,
+      showInvoice: false,
+      selectedClinic: null,
+      clinics: [],
+      dataInfo: [],
+      dataInvoice: [],
+      user: [],
+      dataBill: [],
+      totalBill: [],
+      desserts: [],
       headers: [{
         text: 'Numero de documento',
         value: 'document'
@@ -4109,16 +4193,14 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         text: 'Cantidad Consultorios',
         value: 'clinic_user.length'
-      }, {
+      },
+      // { text: 'Total a pagar', value: 'invoice' },
+      {
         text: 'Opciones',
         value: 'actions',
         sortable: false
       }],
-      desserts: [],
       items: ['OCUPADO', 'DESOCUPADO'],
-      clinics: [],
-      dataInfo: [],
-      user: [],
       infoResponsible: {
         document: '',
         name: ''
@@ -4128,9 +4210,7 @@ __webpack_require__.r(__webpack_exports__);
         floor: '',
         tower_id: '',
         status: ''
-      },
-      selectedClinic: null,
-      showBtn: false
+      }
     };
   },
   computed: {
@@ -4192,15 +4272,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     addClinic: function addClinic(item) {
       var _this = this;
-      console.log("id", item);
       axios.get('/clinic/generalShowClinic').then(function (res) {
-        console.log("Respuesta del servidor");
-        console.log("Datos de consulta ", res.data.clinics);
         _this.clinics = res.data.clinics;
       })["catch"](function (error) {
-        console.log("Error en servidor");
         console.log(error);
-        console.log(error.response);
       });
       this.infoResponsible = item;
       this.dialog = true;
@@ -4208,12 +4283,18 @@ __webpack_require__.r(__webpack_exports__);
     initialize: function initialize(optionFilter) {
       var _this2 = this;
       axios.get('/clinic/generalShow').then(function (res) {
-        console.log("Respuesta del servidor");
-        console.log(res.data);
         if (optionFilter == 0) {
-          _this2.desserts = res.data.responsible.filter(function (item) {
+          _this2.dataBill = res.data.responsible.filter(function (item) {
             return item.clinic_user.length > 0;
           });
+          _this2.desserts = res.data.responsible.map(function (item) {
+            return _objectSpread(_objectSpread({}, item), {}, {
+              invoice: 0
+            });
+          }).filter(function (item) {
+            return item.clinic_user.length > 0;
+          });
+          console.log(_this2.desserts);
           if (_this2.desserts.length == 0) {
             _this2.title = 'Responsables sin consultorio';
             _this2.desserts = res.data.responsible.filter(function (item) {
@@ -4229,6 +4310,7 @@ __webpack_require__.r(__webpack_exports__);
             _this2.showBtn = false;
             _this2.showFilterClinic = false;
           }
+          _this2.invoices();
         } else if (optionFilter == 2) {
           _this2.title = 'Responsables sin consultorio';
           _this2.desserts = res.data.responsible.filter(function (item) {
@@ -4246,16 +4328,37 @@ __webpack_require__.r(__webpack_exports__);
         }
         _this2.selectedClinic = '';
       })["catch"](function (error) {
-        console.log("Error en servidor");
         console.log(error);
         console.log(error.response);
       });
+    },
+    invoices: function invoices() {
+      // Factura
+      var total = 0;
+      for (var i = 0; i < this.dataBill.length; i++) {
+        for (var j = 0; j < this.dataBill[i].clinic_user.length; j++) {
+          for (var l = 0; l < this.dataBill[i].clinic_user[j].clinic.collection_log.length; l++) {
+            for (var p = 0; p < this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection.length; p++) {
+              // console.log(this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight, " -- ",this.dataBill[i].clinic_user[j].clinic.clinic_number, " -- ", this.dataBill[i].document);
+              total = total + this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight;
+            }
+          }
+        }
+        total = accounting__WEBPACK_IMPORTED_MODULE_4___default().formatMoney(total, {
+          symbol: '$',
+          precision: '',
+          thousand: ',',
+          decimal: '.'
+        });
+        this.desserts[i].invoice = total;
+        total = 0;
+      }
+      console.log(this.desserts);
     },
     editItem: function editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
-      console.log(this.editedItem);
     },
     close: function close() {
       this.dialogRegister = false;
@@ -4264,26 +4367,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     save: function save() {
       var _this3 = this;
-      console.log("Clinica seleccionada ", this.selectedClinic);
       var data = {
         'clinic_id': this.selectedClinic,
         'user_id': this.infoResponsible.id
       };
       axios.post('/clinic/addClinic', data).then(function (res) {
-        console.log("Respuesta del servidor");
-        console.log("Datos de agregar consultorio ", res.data);
         _this3.desserts = res.data.responsible.filter(function (item) {
           return item.clinic_user.length > 0;
         });
         _this3.alertTrue("El consultorio se agrego correctamente al responsable ".concat(_this3.infoResponsible.document));
         _this3.selectedFilter = 'Ver por';
         _this3.initialize();
-        console.log("112 ", _this3.selectedFilter);
         _this3.showBtn = false;
       })["catch"](function (error) {
-        console.log("Error en servidor");
         console.log(error);
-        console.log(error.response);
         if (error.response.status == 422) {
           _this3.alertFalse('Parece que el campo agregar cosultorio esta vaío');
         } else {
@@ -4297,9 +4394,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveRegister: function saveRegister() {
       var _this4 = this;
-      console.log("Registro", this.registerClinic);
       var validate = true;
-      console.log("registrar consultorio ", this.registerClinic);
       if (this.registerClinic.clinic_number == "") {
         this.alertFalse('Parece que el campo numero consultorio esta vacío');
         validate = false;
@@ -4312,15 +4407,11 @@ __webpack_require__.r(__webpack_exports__);
       }
       if (validate == true) {
         axios.post('/clinic/register', this.registerClinic).then(function (res) {
-          console.log("Respuesta del servidor");
-          console.log("Datos de registrar consultorio ", res.data.clinic);
           _this4.alertTrue("Se registro el consultorio ".concat(res.data.clinic.clinic_number, " correctamente!"));
           _this4.dialogRegister = false;
           _this4.showFilterClinic = true;
         })["catch"](function (error) {
-          console.log("Error en servidor");
           console.log(error);
-          console.log(error.response);
           if (error.response.status == 422) {
             _this4.alertFalse('Parece que algunos campos estan vaíos');
           } else {
@@ -4342,6 +4433,10 @@ __webpack_require__.r(__webpack_exports__);
         text: text,
         icon: "error"
       });
+    },
+    showViewInvoice: function showViewInvoice(item) {
+      this.showInvoice = true;
+      this.dataInvoice = item;
     }
   }
 });
@@ -5248,7 +5343,6 @@ function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key i
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5483,7 +5577,7 @@ __webpack_require__.r(__webpack_exports__);
       cortopunzantes: "0",
       aniamales: "0",
       farmacos: "0",
-      citotóxicos: "0",
+      citotoxicos: "0",
       metales: "0",
       reactivos: "0",
       contenedores: "0",
@@ -5510,7 +5604,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.cortopunzantes = res.data.residues[6].price;
         _this.aniamales = res.data.residues[7].price;
         _this.farmacos = res.data.residues[8].price;
-        _this.citotóxicos = res.data.residues[9].price;
+        _this.citotoxicos = res.data.residues[9].price;
         _this.metales = res.data.residues[10].price;
         _this.reactivos = res.data.residues[11].price;
         _this.contenedores = res.data.residues[12].price;
@@ -5533,7 +5627,7 @@ __webpack_require__.r(__webpack_exports__);
       this.data[6] = this.cortopunzantes;
       this.data[7] = this.aniamales;
       this.data[8] = this.farmacos;
-      this.data[9] = this.citotóxicos;
+      this.data[9] = this.citotoxicos;
       this.data[10] = this.metales;
       this.data[11] = this.reactivos;
       this.data[12] = this.contenedores;
@@ -5544,6 +5638,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     register: function register() {
       var _this2 = this;
+      var alert = true;
       if (this.data.length != 0) {
         for (var i = 0; i < this.data.length; i++) {
           if (this.data[i] != 0) {
@@ -5552,7 +5647,10 @@ __webpack_require__.r(__webpack_exports__);
             }).then(function (res) {
               console.log("Respuesta del servidor");
               console.log(res.data);
-              _this2.alertTrue("Los precios se cambiaron con exito");
+              if (alert) {
+                _this2.alertTrue("Los precios se cambiaron con exito");
+              }
+              alert = false;
             })["catch"](function (error) {
               console.log("Error en servidor");
               console.log(error);
@@ -5561,7 +5659,7 @@ __webpack_require__.r(__webpack_exports__);
             });
           }
         }
-      } else {}
+      }
     },
     biodegradableFormater: function biodegradableFormater() {
       this.biodegradable = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.biodegradable, {
@@ -5635,8 +5733,8 @@ __webpack_require__.r(__webpack_exports__);
         decimal: '.'
       });
     },
-    citotóxicosFormater: function citotóxicosFormater() {
-      this.citotóxicos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.citotóxicos, {
+    citotoxicosFormater: function citotoxicosFormater() {
+      this.citotoxicos = accounting__WEBPACK_IMPORTED_MODULE_0___default().formatMoney(this.citotoxicos, {
         symbol: '',
         precision: '',
         thousand: ',',
@@ -5704,6 +5802,57 @@ __webpack_require__.r(__webpack_exports__);
         text: text,
         icon: "error"
       });
+    },
+    biodegradableClick: function biodegradableClick() {
+      this.biodegradable = 0;
+    },
+    reciclablesClick: function reciclablesClick() {
+      this.reciclables = 0;
+    },
+    inertesClick: function inertesClick() {
+      this.inertes = 0;
+    },
+    oridinariosClick: function oridinariosClick() {
+      this.oridinarios = 0;
+    },
+    biosanitariosClick: function biosanitariosClick() {
+      this.biosanitarios = 0;
+    },
+    anatomopatologicosClick: function anatomopatologicosClick() {
+      this.anatomopatologicos = 0;
+    },
+    cortopunzantesClick: function cortopunzantesClick() {
+      this.cortopunzantes = 0;
+    },
+    aniamalesClick: function aniamalesClick() {
+      this.aniamales = 0;
+    },
+    farmacosClick: function farmacosClick() {
+      this.farmacos = 0;
+    },
+    citotoxicosClick: function citotoxicosClick() {
+      this.citotoxicos = 0;
+    },
+    metalesClick: function metalesClick() {
+      this.metales = 0;
+    },
+    reactivosClick: function reactivosClick() {
+      this.reactivos = 0;
+    },
+    contenedoresClick: function contenedoresClick() {
+      this.contenedores = 0;
+    },
+    aceitesClick: function aceitesClick() {
+      this.aceites = 0;
+    },
+    fuentesAClick: function fuentesAClick() {
+      this.fuentesA = 0;
+    },
+    fuentescClick: function fuentescClick() {
+      this.fuentesC = 0;
+    },
+    cancel: function cancel() {
+      this.initialize();
     }
   }
 });
@@ -7717,6 +7866,59 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* binding */ render),
+/* harmony export */   staticRenderFns: () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("v-app", [_c("v-main", [_c("v-card-title", [_vm._v("\n                " + _vm._s(_vm.infoUser.document) + "\n                "), _c("v-spacer"), _vm._v(" "), _c("v-text-field", {
+    attrs: {
+      "append-icon": "mdi-magnify",
+      label: "Buscar",
+      "single-line": "",
+      "hide-details": ""
+    },
+    model: {
+      value: _vm.search,
+      callback: function callback($$v) {
+        _vm.search = $$v;
+      },
+      expression: "search"
+    }
+  })], 1), _vm._v(" "), [_c("v-data-table", {
+    staticClass: "elevation-1",
+    attrs: {
+      search: _vm.search,
+      headers: _vm.headers,
+      items: _vm.desserts,
+      "item-key": "",
+      "show-select": ""
+    },
+    model: {
+      value: _vm.selected,
+      callback: function callback($$v) {
+        _vm.selected = $$v;
+      },
+      expression: "selected"
+    }
+  })]], 2)], 1)], 1);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Responsible.vue?vue&type=template&id=b8d9034c&":
 /*!************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Responsible.vue?vue&type=template&id=b8d9034c& ***!
@@ -7738,7 +7940,7 @@ var render = function render() {
       height: "100vh",
       "overflow-y": "scroll"
     }
-  }, [!_vm.showFilterTower ? _c("div", [!_vm.showFilterClinic ? _c("div", [!_vm.showEdit ? _c("v-app", [_c("v-main", [[_c("v-card", {
+  }, [!_vm.showFilterTower ? _c("div", [!_vm.showFilterClinic ? _c("div", [!_vm.showInvoice ? _c("div", [!_vm.showEdit ? _c("v-app", [_c("v-main", [[_c("v-card", {
     attrs: {
       align: "end"
     }
@@ -7753,7 +7955,7 @@ var render = function render() {
         return _vm.showRegister();
       }
     }
-  }, [_vm._v("\n                Nuevo Consultorio\n              ")]), _vm._v(" "), _c("v-card-title", [_vm._v("\n                " + _vm._s(_vm.title) + "\n                "), _vm._v(" "), _c("v-card-actions", {
+  }, [_vm._v("\n                  Nuevo Consultorio\n                ")]), _vm._v(" "), _c("v-card-title", [_vm._v("\n                  " + _vm._s(_vm.title) + "\n                  "), _vm._v(" "), _c("v-card-actions", {
     staticClass: "ml-5"
   }, [_c("v-select", {
     attrs: {
@@ -7814,7 +8016,7 @@ var render = function render() {
           attrs: {
             dark: ""
           }
-        }, [_vm._v("\n                      mdi-plus\n                    ")])], 1), _vm._v(" "), !_vm.showBtn ? _c("v-btn", {
+        }, [_vm._v("\n                        mdi-plus\n                      ")])], 1), _vm._v(" "), !_vm.showBtn ? _c("v-btn", {
           staticClass: "mx-1",
           attrs: {
             "x-small": "",
@@ -7831,9 +8033,9 @@ var render = function render() {
           attrs: {
             dark: ""
           }
-        }, [_vm._v("\n                      mdi-format-list-bulleted-square\n                    ")])], 1) : _vm._e()];
+        }, [_vm._v("\n                        mdi-format-list-bulleted-square\n                      ")])], 1) : _vm._e(), _vm._v(" "),  false ? 0 : _vm._e()];
       }
-    }], null, false, 1513459952)
+    }], null, false, 1774345958)
   }), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "600px"
@@ -7931,7 +8133,7 @@ var render = function render() {
         return _vm.close();
       }
     }
-  }, [_vm._v("\n                      Cancelar\n                    ")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                        Cancelar\n                      ")]), _vm._v(" "), _c("v-btn", {
     attrs: {
       color: "blue darken-1",
       text: ""
@@ -7941,7 +8143,7 @@ var render = function render() {
         return _vm.saveRegister();
       }
     }
-  }, [_vm._v("\n                      Guardar\n                    ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+  }, [_vm._v("\n                        Guardar\n                      ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "630px"
     },
@@ -8024,7 +8226,7 @@ var render = function render() {
         return _vm.close();
       }
     }
-  }, [_vm._v("\n                      Cancelar\n                    ")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                        Cancelar\n                      ")]), _vm._v(" "), _c("v-btn", {
     attrs: {
       color: "blue darken-1",
       text: ""
@@ -8034,11 +8236,15 @@ var render = function render() {
         return _vm.save();
       }
     }
-  }, [_vm._v("\n                      Agregar\n                    ")])], 1)], 1)], 1)], 1)]], 2)], 1) : _vm._e()], 1) : _vm._e()]) : _vm._e(), _vm._v(" "), _c("div", [_vm.showEdit ? _c("clinic-edit", {
+  }, [_vm._v("\n                        Agregar\n                      ")])], 1)], 1)], 1)], 1)]], 2)], 1) : _vm._e()], 1) : _vm._e()]) : _vm._e()]) : _vm._e(), _vm._v(" "), _c("div", [_vm.showEdit ? _c("clinic-edit", {
     attrs: {
       clinic: _vm.dataInfo
     }
-  }) : _vm._e(), _vm._v(" "), _vm.showFilterClinic ? _c("clinic-show") : _vm._e(), _vm._v(" "), _vm.showFilterTower ? _c("clinic-tower") : _vm._e()], 1)]);
+  }) : _vm._e(), _vm._v(" "), _vm.showFilterClinic ? _c("clinic-show") : _vm._e(), _vm._v(" "), _vm.showFilterTower ? _c("clinic-tower") : _vm._e(), _vm._v(" "), _vm.showInvoice ? _c("clinic-invoice", {
+    attrs: {
+      responsible: _vm.dataInvoice
+    }
+  }) : _vm._e()], 1)]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -9555,6 +9761,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.biodegradableClick,
       input: _vm.biodegradableFormater
     },
     model: {
@@ -9573,6 +9780,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.reciclablesClick,
       input: _vm.reciclablesFormater
     },
     model: {
@@ -9591,6 +9799,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.inertesClick,
       input: _vm.inertesFormater
     },
     model: {
@@ -9609,6 +9818,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.oridinariosClick,
       input: _vm.oridinariosFormater
     },
     model: {
@@ -9631,6 +9841,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.biosanitariosClick,
       input: _vm.biosanitariosFormater
     },
     model: {
@@ -9649,6 +9860,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.anatomopatologicosClick,
       input: _vm.anatomopatologicosFormater
     },
     model: {
@@ -9667,6 +9879,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.cortopunzantesClick,
       input: _vm.cortopunzantesFormater
     },
     model: {
@@ -9685,6 +9898,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.aniamalesClick,
       input: _vm.aniamalesFormater
     },
     model: {
@@ -9707,6 +9921,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.farmacosClick,
       input: _vm.farmacosFormater
     },
     model: {
@@ -9725,16 +9940,15 @@ var render = function render() {
       prefix: "$"
     },
     on: {
-      input: function input($event) {
-        _vm.citotóxicosFormater;
-      }
+      click: _vm.citotoxicosClick,
+      input: _vm.citotoxicosFormater
     },
     model: {
-      value: _vm.citotóxicos,
+      value: _vm.citotoxicos,
       callback: function callback($$v) {
-        _vm.citotóxicos = $$v;
+        _vm.citotoxicos = $$v;
       },
-      expression: "citotóxicos"
+      expression: "citotoxicos"
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-m-3 col-sm-4 text-center"
@@ -9745,6 +9959,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.metalesClick,
       input: _vm.metalesFormater
     },
     model: {
@@ -9763,6 +9978,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.reactivosClick,
       input: _vm.reactivosFormater
     },
     model: {
@@ -9781,6 +9997,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.contenedoresClick,
       input: _vm.contenedoresFormater
     },
     model: {
@@ -9799,6 +10016,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.aceitesClick,
       input: _vm.aceitesFormater
     },
     model: {
@@ -9821,6 +10039,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.fuentesAClick,
       input: _vm.fuentesAFormater
     },
     model: {
@@ -9839,6 +10058,7 @@ var render = function render() {
       prefix: "$"
     },
     on: {
+      click: _vm.fuentescClick,
       input: _vm.fuentesCFormater
     },
     model: {
@@ -9851,7 +10071,6 @@ var render = function render() {
   })], 1)])]), _vm._v(" "), _c("v-btn", {
     staticClass: "mr-6",
     attrs: {
-      block: "",
       depressed: "",
       color: "primary"
     },
@@ -9862,7 +10081,16 @@ var render = function render() {
     attrs: {
       dark: ""
     }
-  }, [_vm._v("\n                            mdi-plus\n                        ")])], 1)], 1)]], 2)], 1)], 1);
+  }, [_vm._v("\n                            mdi-plus\n                        ")])], 1), _vm._v(" "), _c("v-btn", {
+    staticClass: "mr-6",
+    attrs: {
+      depressed: "",
+      color: "red"
+    },
+    on: {
+      click: _vm.cancel
+    }
+  }, [_vm._v("\n                        Cancelar\n                    ")])], 1)]], 2)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -9893,7 +10121,7 @@ vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-list', (__webpack_
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-edit', (__webpack_require__(/*! ./components/Clinic/Clinic.vue */ "./resources/js/components/Clinic/Clinic.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-show', (__webpack_require__(/*! ./components/Clinic/ViewClinic.vue */ "./resources/js/components/Clinic/ViewClinic.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-tower', (__webpack_require__(/*! ./components/Clinic/Tower.vue */ "./resources/js/components/Clinic/Tower.vue")["default"]));
-vue__WEBPACK_IMPORTED_MODULE_0__["default"].use((vuetify__WEBPACK_IMPORTED_MODULE_1___default()));
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clinic-invoice', (__webpack_require__(/*! ./components/Clinic/Invoice.vue */ "./resources/js/components/Clinic/Invoice.vue")["default"]));
 //Administrator
 
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('employees-list', (__webpack_require__(/*! ./components/Administrator/Employees/EmployeesList.vue */ "./resources/js/components/Administrator/Employees/EmployeesList.vue")["default"]));
@@ -9910,7 +10138,7 @@ vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('index-collector', (__webp
 //Manager
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('index-manager', (__webpack_require__(/*! ./components/Manager/IndexManager.vue */ "./resources/js/components/Manager/IndexManager.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('collector-residue', (__webpack_require__(/*! ./components/Manager/CollectorResidue.vue */ "./resources/js/components/Manager/CollectorResidue.vue")["default"]));
-vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('residue_price', (__webpack_require__(/*! ./components/Manager/ResidePrice.vue */ "./resources/js/components/Manager/ResidePrice.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('residue-price', (__webpack_require__(/*! ./components/Manager/ResidePrice.vue */ "./resources/js/components/Manager/ResidePrice.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('login', (__webpack_require__(/*! ./components/Login.vue */ "./resources/js/components/Login.vue")["default"]));
 var app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
   el: '#app',
@@ -42649,6 +42877,45 @@ component.options.__file = "resources/js/components/Clinic/Clinic.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/Clinic/Invoice.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/Clinic/Invoice.vue ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Invoice.vue?vue&type=template&id=63cd65de& */ "./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de&");
+/* harmony import */ var _Invoice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Invoice.vue?vue&type=script&lang=js& */ "./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Invoice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__.render,
+  _Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Clinic/Invoice.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/Clinic/Responsible.vue":
 /*!********************************************************!*\
   !*** ./resources/js/components/Clinic/Responsible.vue ***!
@@ -43131,6 +43398,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Invoice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Invoice.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Invoice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/Clinic/Responsible.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************!*\
   !*** ./resources/js/components/Clinic/Responsible.vue?vue&type=script&lang=js& ***!
@@ -43357,6 +43640,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Clinic_vue_vue_type_template_id_3a751798___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Clinic.vue?vue&type=template&id=3a751798& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Clinic.vue?vue&type=template&id=3a751798&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de& ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   staticRenderFns: () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Invoice_vue_vue_type_template_id_63cd65de___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Invoice.vue?vue&type=template&id=63cd65de& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Clinic/Invoice.vue?vue&type=template&id=63cd65de&");
 
 
 /***/ }),

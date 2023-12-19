@@ -20,7 +20,7 @@ class Waste_collection extends Model
     ];
 
     public function residues(): BelongsTo{
-        return $this->belongsTo(Residue::class);
+        return $this->belongsTo(Residue::class, 'id_residue');
     }
 
     public function collection_logs(): BelongsTo{
