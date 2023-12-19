@@ -80,10 +80,10 @@ Auth::routes();
 
 // ------------------------------- Rutas de residuos --------------------------------------- 
 
-Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalShow']);
-Route::get('/residue/showContinuation/{date}', [ResidueController::class, 'showContinuation']);
-Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnified']);
-Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation']);
+Route::get('/residue/generalShow/{date}', [ResidueController::class, 'generalShow'])->middleware('can: admin.managers.generalShow');
+Route::get('/residue/showContinuation/{date}', [ResidueController::class, 'showContinuation'])->middleware('can: admin.managers.generalShow');
+Route::get('/residue/showUnified/{date}', [ResidueController::class, 'showUnified'])->middleware('can: admin.managers.generalShow');
+Route::get('/residue/showUnifiedContinuation/{date}', [ResidueController::class, 'showUnifiedContinuation'])->middleware('admin.managers.generalShow');
 Route::get('/residue/showCollectorResidue/{type}', [ResidueController::class, 'showCollectorResidue']);
 Route::post('/residue/registerCollector/{id}/{date}', [ResidueController::class, 'registerCollector']);
 Route::get('/residue/clinicNumber', [ResidueController::class, 'showClinic']);
@@ -93,6 +93,6 @@ Route::get('/residue/clinicContinuation/{date}/{id}', [ResidueController::class,
 
 // ------------------------------- Rutas de precio residuos --------------------------------------- 
 Route::get('/manager/residue_price', [ResiduePriceController::class, 'view'])->middleware('can:admin.employees.generalShow');
-// Route::get('/manager/residue_price', [ResiduePriceController::class, 'view']);
 Route::get('/manager/residuePrice', [ResiduePriceController::class, 'residuePrice']);
 Route::put('/manager/registerPrice/{id}', [ResiduePriceController::class, 'register']);
+

@@ -2570,10 +2570,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert */ "./node_modules/sweetalert/dist/sweetalert.min.js");
 /* harmony import */ var sweetalert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
-    return {
+    var _ref;
+    return _ref = {
+      search: '',
       rules: [function (value) {
         return !!value || 'Obligatorio';
       }],
@@ -2612,22 +2618,18 @@ __webpack_require__.r(__webpack_exports__);
         text: 'Editar',
         value: 'actions',
         sortable: false
-      }],
-      search: '',
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        id: '',
-        document: '',
-        name: '',
-        last_name: '',
-        phone: '',
-        email: '',
-        role_name: '',
-        status: '',
-        password: ''
-      }
-    };
+      }]
+    }, _defineProperty(_ref, "search", ''), _defineProperty(_ref, "desserts", []), _defineProperty(_ref, "editedIndex", -1), _defineProperty(_ref, "editedItem", {
+      id: '',
+      document: '',
+      name: '',
+      last_name: '',
+      phone: '',
+      email: '',
+      role_name: '',
+      status: '',
+      password: ''
+    }), _defineProperty(_ref, "documentFilter", ''), _ref;
   },
   computed: {
     formTitle: function formTitle() {
@@ -2650,7 +2652,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
       axios.get('administrator/generalShow').then(function (res) {
         console.log('Respuesta del servidor');
-        // console.log(res);
+        console.log(res);
         _this.desserts = res.data.employees;
       })["catch"](function (error) {
         console.log('Error en axios: ');
@@ -5121,11 +5123,12 @@ __webpack_require__.r(__webpack_exports__);
           towerNumber: this.towerNumber
         }
       }).then(function (res) {
+        var iterar = 0;
         _this.clinics = res.data.clinics;
         _this.residues = res.data.residues;
         _this.general_data.month = res.data.month;
         _this.general_data.year = res.data.year;
-        console.log(_this.clinics);
+        console.log("Esta es la impresión de consultorios: ", _this.clinics);
         res.data.clinics.forEach(function (clinic) {
           var aux = {
             clinic_id: clinic.clinic_id,
@@ -5145,8 +5148,29 @@ __webpack_require__.r(__webpack_exports__);
         });
         if (localStorage.getItem("collectionData")) {
           var localData = JSON.parse(localStorage.getItem("collectionData"));
-          console.log(localData);
-          _this.datos = localData;
+          if (localData.length < _this.datos.length) {
+            for (var i = 0; i < _this.datos.length; i++) {
+              if (localData[i] == undefined) {
+                localData.push(_this.datos[i]);
+              }
+            }
+            _this.datos = localData;
+            localStorage.setItem("collectionData", JSON.stringify(localData));
+          } else if (localData.length > _this.datos.length) {
+            //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
+            var objetosFaltantes = localData.filter(function (localDato) {
+              return !_this.datos.some(function (dato) {
+                return dato.clinicNumber === localDato.clinicNumber;
+              });
+            });
+            objetosFaltantes.forEach(function (objetoFaltante) {
+              localData.splice(_this.datos.indexOf(objetoFaltante), 1);
+            });
+            _this.datos = localData;
+            localStorage.setItem("collectionData", JSON.stringify(localData));
+          } else {
+            _this.datos = localData;
+          }
         } else {
           localStorage.setItem("collectionData", JSON.stringify(_this.datos));
         }
@@ -5187,11 +5211,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     changeValue: function changeValue() {
-      // localStorage.removeItem("collectionData");
       localStorage.setItem("collectionData", JSON.stringify(this.datos));
       var localData = JSON.parse(localStorage.getItem("collectionData"));
-      console.log("Impresion ", localData);
-      console.log(localData[0]);
     },
     filterClinics: function filterClinics() {
       if (this.clinicNumber != '' && this.towerNumber == '') {
@@ -5884,7 +5905,8 @@ var render = function render() {
     attrs: {
       headers: _vm.headers,
       items: _vm.desserts,
-      options: _vm.paginationOptions
+      options: _vm.paginationOptions,
+      search: _vm.search
     },
     scopedSlots: _vm._u([{
       key: "top",
@@ -5893,7 +5915,26 @@ var render = function render() {
           attrs: {
             flat: ""
           }
-        }, [_c("v-toolbar-title", [_vm._v("Lista de empleados")]), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-dialog", {
+        }, [_c("v-toolbar-title", [_vm._v("Lista de empleados")]), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-col", {
+          staticClass: "mt-2",
+          attrs: {
+            cols: "12",
+            md: "4"
+          }
+        }, [_c("v-text-field", {
+          attrs: {
+            placeholder: "Filtro de búsqueda",
+            type: "text",
+            "append-icon": "mdi-magnify"
+          },
+          model: {
+            value: _vm.search,
+            callback: function callback($$v) {
+              _vm.search = $$v;
+            },
+            expression: "search"
+          }
+        })], 1), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-dialog", {
           attrs: {
             "max-width": "500px"
           },
@@ -6078,36 +6119,7 @@ var render = function render() {
           on: {
             click: _vm.save
           }
-        }, [_vm._v("\n                                  Registrar\n                                ")])], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
-          attrs: {
-            "max-width": "500px"
-          },
-          model: {
-            value: _vm.dialogDelete,
-            callback: function callback($$v) {
-              _vm.dialogDelete = $$v;
-            },
-            expression: "dialogDelete"
-          }
-        }, [_c("v-card", [_c("v-card-title", {
-          staticClass: "text-h5"
-        }, [_vm._v("Are you sure you want to delete this item?")]), _vm._v(" "), _c("v-card-actions", [_c("v-spacer"), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.closeDelete
-          }
-        }, [_vm._v("Cancel")]), _vm._v(" "), _c("v-btn", {
-          attrs: {
-            color: "blue darken-1",
-            text: ""
-          },
-          on: {
-            click: _vm.deleteItemConfirm
-          }
-        }, [_vm._v("OK")]), _vm._v(" "), _c("v-spacer")], 1)], 1)], 1)], 1)];
+        }, [_vm._v("\n                                  Registrar\n                                ")])], 1)], 1)], 1)], 1)];
       },
       proxy: true
     }, {
