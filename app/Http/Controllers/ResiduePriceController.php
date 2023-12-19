@@ -24,4 +24,13 @@ class ResiduePriceController extends Controller
 
         return response()->json($data);
     }
+
+    public function residuePrice(){
+        $data = [
+            'status' => true,
+            'residues' => Residue::get(),
+        ];
+
+        return response()->json($data);
+    }
 }

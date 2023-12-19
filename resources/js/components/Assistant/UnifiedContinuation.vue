@@ -210,15 +210,15 @@ export default {
             if (this.data_residues[index] !== undefined && type == 0) {
                 return this.data_residues[index];
             }else if (this.data_garbage_bags[index] != undefined && type == 1){
-                return this.data_garbage_bags[index];
+                return this.formater(this.data_garbage_bags[index]);
             }else if (this.total[index] != undefined) {
                 if (type == 2) {
                     return this.formater(this.total[index].total_weight)
-                }else{
+                }else if(type == 3){
                     return this.formater(this.total[index].garbage_bags)
                 }
             }
-            return '0';
+            return 0;
         },
 
         formater(total) {

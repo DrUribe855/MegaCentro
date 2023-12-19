@@ -72,12 +72,12 @@ class ResidueController extends Controller
     public function showUnified($date){
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, id_residue, SUM(weight) as total_weight')
         ->whereHas('collection_logs')
-        ->whereRaw('YEAR(created_at) LIKE ?', [$date . '%'])
+        ->where('created_at', 'LIKE',  $date. '%')
         ->groupBy('year', 'month', 'id_residue')
         ->get();
 
         $total = Waste_collection::selectRaw('id_residue, SUM(weight) as weight')
-        ->whereRaw('YEAR(created_at) LIKE ?', [$date . '%'])
+        ->where('created_at', 'LIKE',  $date. '%')
         ->groupBy('id_residue')
         ->get();
 
@@ -94,12 +94,12 @@ class ResidueController extends Controller
 
     public function showUnifiedContinuation($date){
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->whereRaw('YEAR(created_at) LIKE ?', [$date . '%'])
+        ->where('created_at', 'LIKE',  $date. '%')
         ->groupBy('year', 'month')
         ->get();
 
         $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->whereRaw('YEAR(created_at) LIKE ?', [$date . '%'])
+        ->where('created_at', 'LIKE',  $date. '%')
         ->groupBy('year')
         ->get();
 
@@ -207,7 +207,7 @@ class ResidueController extends Controller
     
             $records->transform(function ($record) {
                 $record->date = $record->created_at->format('Y-m-d');
-                $record->dateTemp = $record->created_at->format('Ymd');
+                $record->dateTemp = $record->created_at->format('Y-m-d');
                 unset($record->created_at);
                 return $record;
             });            
