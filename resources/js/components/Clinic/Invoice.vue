@@ -55,7 +55,9 @@
 
         methods: {
             initialize(){
-                console.log(this.infoUser);
+                for (let i = 0; i < this.infoUser.clinic_user.length; i++) {
+                    console.log(this.infoUser.clinic_user.length);
+                }
             },
 
             generateUniqueId: function() {

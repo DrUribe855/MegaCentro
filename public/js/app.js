@@ -4105,7 +4105,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     initialize: function initialize() {
-      console.log(this.infoUser);
+      for (var i = 0; i < this.infoUser.clinic_user.length; i++) {
+        console.log(this.infoUser.clinic_user.length);
+      }
     },
     generateUniqueId: function generateUniqueId() {
       return Math.random().toString(36).substr(2, 20);
