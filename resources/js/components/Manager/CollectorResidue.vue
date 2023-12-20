@@ -93,7 +93,6 @@
 
 <script>
     import moment from 'moment';
-    import { parseISO, format } from 'date-fns';
     export default {
         data () {
             return {

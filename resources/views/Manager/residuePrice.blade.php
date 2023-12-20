@@ -9,7 +9,7 @@
 
 @section('content')
 	<div id="app">
-		<residue_price></residue_price>
+		<residue-price></residue-price>
 	</div>
 @stop
 @section('css')

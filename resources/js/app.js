@@ -15,7 +15,7 @@ Vue.component('clinic-list', require('./components/Clinic/Responsible.vue').defa
 Vue.component('clinic-edit', require('./components/Clinic/Clinic.vue').default);
 Vue.component('clinic-show', require('./components/Clinic/ViewClinic.vue').default);
 Vue.component('clinic-tower', require('./components/Clinic/Tower.vue').default);
-Vue.use(Vuetify);
+Vue.component('clinic-invoice', require('./components/Clinic/Invoice.vue').default);
 //Administrator
 
 Vue.component('employees-list', require('./components/Administrator/Employees/EmployeesList.vue').default);
@@ -32,7 +32,7 @@ Vue.component('index-collector', require('./components/Collector/IndexCollector.
 //Manager
 Vue.component('index-manager', require('./components/Manager/IndexManager.vue').default);
 Vue.component('collector-residue', require('./components/Manager/CollectorResidue.vue').default);
-Vue.component('residue_price', require('./components/Manager/ResidePrice.vue').default);
+Vue.component('residue-price', require('./components/Manager/ResidePrice.vue').default);
 
 Vue.component('login', require('./components/Login.vue').default);
 

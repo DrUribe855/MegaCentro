@@ -15,6 +15,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="biodegradableClick"
                                         @input="biodegradableFormater"
                                     ></v-text-field>
                                 </div>
@@ -25,6 +26,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="reciclablesClick"
                                         @input="reciclablesFormater"
                                     ></v-text-field>
                                 </div>
@@ -35,6 +37,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="inertesClick"
                                         @input="inertesFormater"
                                     ></v-text-field>
                                 </div>
@@ -45,6 +48,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="oridinariosClick"
                                         @input="oridinariosFormater"
                                     ></v-text-field>
                                 </div>
@@ -63,6 +67,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="biosanitariosClick"
                                         @input="biosanitariosFormater"
                                     ></v-text-field>
                                 </div>
@@ -73,6 +78,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="anatomopatologicosClick"
                                         @input="anatomopatologicosFormater"
                                     ></v-text-field>
                                 </div>
@@ -83,6 +89,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="cortopunzantesClick"
                                         @input="cortopunzantesFormater"
                                     ></v-text-field>
                                 </div>
@@ -93,6 +100,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="aniamalesClick"
                                         @input="aniamalesFormater"
                                     ></v-text-field>
                                 </div>
@@ -111,17 +119,19 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="farmacosClick"
                                         @input="farmacosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
                                     <h6>Citotóxicos</h6>
                                     <v-text-field
-                                        v-model="citotóxicos"
+                                        v-model="citotoxicos"
                                         type="text"
                                         value=""
                                         prefix="$"
-                                        @input="citotóxicosFormater"
+                                        @click="citotoxicosClick"
+                                        @input="citotoxicosFormater"
                                     ></v-text-field>
                                 </div>
                                 <div class="col-m-3 col-sm-4 text-center">
@@ -131,6 +141,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="metalesClick"
                                         @input="metalesFormater"
                                     ></v-text-field>
                                 </div>
@@ -141,6 +152,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="reactivosClick"
                                         @input="reactivosFormater"
                                     ></v-text-field>
                                 </div>
@@ -151,6 +163,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="contenedoresClick"
                                         @input="contenedoresFormater"
                                     ></v-text-field>
                                 </div>
@@ -161,6 +174,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="aceitesClick"
                                         @input="aceitesFormater"
                                     ></v-text-field>
                                 </div>
@@ -179,6 +193,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="fuentesAClick"
                                         @input="fuentesAFormater"
                                     ></v-text-field>
                                 </div>
@@ -189,6 +204,7 @@
                                         type="text"
                                         value=""
                                         prefix="$"
+                                        @click="fuentescClick"
                                         @input="fuentesCFormater"
                                     ></v-text-field>
                                 </div>
@@ -196,7 +212,6 @@
                         </v-card-text>
                         <v-btn
                             class="mr-6"
-                            block
                             depressed
                             color="primary"
                             @click="dataArray">
@@ -204,6 +219,13 @@
                             <v-icon dark>
                                 mdi-plus
                             </v-icon>
+                        </v-btn>
+                        <v-btn
+                            class="mr-6"
+                            depressed
+                            color="red"
+                            @click="cancel">
+                            Cancelar
                         </v-btn>
                     </div>
                 </template>
@@ -227,7 +249,7 @@
             cortopunzantes: "0",
             aniamales: "0",
             farmacos: "0",
-            citotóxicos: "0",
+            citotoxicos: "0",
             metales: "0",
             reactivos: "0",
             contenedores: "0",
@@ -254,7 +276,7 @@
                     this.cortopunzantes = res.data.residues[6].price;
                     this.aniamales = res.data.residues[7].price;
                     this.farmacos = res.data.residues[8].price;
-                    this.citotóxicos = res.data.residues[9].price;
+                    this.citotoxicos = res.data.residues[9].price;
                     this.metales = res.data.residues[10].price;
                     this.reactivos = res.data.residues[11].price;
                     this.contenedores = res.data.residues[12].price;
@@ -278,7 +300,7 @@
                 this.data[6] = this.cortopunzantes;                    
                 this.data[7] = this.aniamales;                    
                 this.data[8] = this.farmacos;                    
-                this.data[9] = this.citotóxicos;                    
+                this.data[9] = this.citotoxicos;                    
                 this.data[10] = this.metales;                    
                 this.data[11] = this.reactivos;                    
                 this.data[12] = this.contenedores;                    
@@ -289,13 +311,17 @@
             },
             
             register(){
+                let alert = true;
                 if (this.data.length != 0) {
                     for (let i = 0; i < this.data.length; i++) {
                         if (this.data[i] != 0) {
                             axios.put(`/manager/registerPrice/${i+1}`, {data: this.data[i]}).then(res =>{
                                 console.log("Respuesta del servidor");
                                 console.log(res.data);
-                                this.alertTrue("Los precios se cambiaron con exito");
+                                if (alert) {
+                                    this.alertTrue("Los precios se cambiaron con exito");
+                                }
+                                alert = false;
                             }).catch(error =>{
                                 console.log("Error en servidor");
                                 console.log(error);
@@ -304,8 +330,6 @@
                             });
                         }
                     }
-                }else{
-                    
                 }
             },
 
@@ -390,8 +414,8 @@
                 });                            
             },
 
-            citotóxicosFormater(){
-                this.citotóxicos = accounting.formatMoney(this.citotóxicos, {
+            citotoxicosFormater(){
+                this.citotoxicos = accounting.formatMoney(this.citotoxicos, {
                     symbol: '',
                     precision: '',
                     thousand: ',',
@@ -467,6 +491,74 @@
                     text: text,
                     icon: "error",
                 });
+            },
+
+            biodegradableClick(){
+                this.biodegradable = 0;
+            },
+
+            reciclablesClick(){
+                this.reciclables = 0;
+            },
+
+            inertesClick(){
+                this.inertes = 0;
+            },
+
+            oridinariosClick(){
+                this.oridinarios = 0;
+            },
+
+            biosanitariosClick(){
+                this.biosanitarios = 0;
+            },
+
+            anatomopatologicosClick(){
+                this.anatomopatologicos = 0;
+            },
+
+            cortopunzantesClick(){
+                this.cortopunzantes = 0;
+            },
+
+            aniamalesClick(){
+                this.aniamales = 0;
+            },
+
+            farmacosClick(){
+                this.farmacos = 0;
+            },
+
+            citotoxicosClick(){
+                this.citotoxicos = 0;
+            },
+
+            metalesClick(){
+                this.metales = 0;
+            },
+
+            reactivosClick(){
+                this.reactivos = 0;
+            },
+
+            contenedoresClick(){
+                this.contenedores = 0;
+            },
+
+            aceitesClick(){
+                this.aceites = 0;
+            },
+
+            fuentesAClick(){
+                this.fuentesA = 0;
+            },
+
+            fuentescClick(){
+                this.fuentesC = 0;
+            },
+
+            cancel(){
+                this.initialize();
             },
         }
     }

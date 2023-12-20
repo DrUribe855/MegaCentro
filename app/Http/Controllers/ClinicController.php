@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Clinic;
 use App\Models\Clinic_user;
+use App\Models\CollectionLog;
 use App\Models\User;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Auth\Events\Validated;
@@ -18,8 +19,13 @@ class ClinicController extends Controller
         return view('Clinic/clinic');
     }
 
-    public function generalShow(){
-        $responsibles = User::role('Responsable')->with('clinic_user.clinic')->get();
+    public function generalShow(){        
+        $responsibles = User::role('Responsable')
+        // ->whereHas('clinic_user.clinic.collection_log', function($query){
+        //     $query->where('invoice_status', 'DEBE');
+        // })
+        ->with('clinic_user.clinic.collection_log.waste_collection.residues')
+        ->get();
 
         $data = [
             'status' => true,
@@ -68,7 +74,7 @@ class ClinicController extends Controller
     }
 
     public function showTower($tower){
-        $consultation = Clinic::where('Clinics.tower_id', $tower)->get();
+        $consultation = Clinic::where('tower_id', $tower)->get();
         
         $data = [
                     'status' => true,
