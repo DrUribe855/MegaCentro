@@ -72,7 +72,7 @@
                         </v-icon>
                       </v-btn>
                       <v-btn 
-                        v-if="false"
+                        v-if="!showInvoice"
                         class="mx-1"
                         x-small
                         fab
@@ -257,7 +257,7 @@
   import ClinicShow from "./ViewClinic.vue";
   import ClinicTower from "./Tower.vue";
   import ClinicInvoice from "./Invoice.vue";
-  import accounting from 'accounting'
+  import accounting from 'accounting';
 
   export default {
 
@@ -293,7 +293,7 @@
         { text: 'Numero de documento', value: 'document' },
         { text: 'Nombre', value: 'name' },
         { text: 'Cantidad Consultorios', value: 'clinic_user.length' },
-        // { text: 'Total a pagar', value: 'invoice' },
+        { text: 'Total a pagar', value: 'invoice' },
         { text: 'Opciones', value: 'actions', sortable: false },
       ],
       items: ['OCUPADO', 'DESOCUPADO'],
@@ -362,11 +362,11 @@
       },
 
       goToBack(){
-        this.showEdit = false
-        this.showFilterClinic = false
-        this.showFilterTower = false
-        this.dataInfo = []
-        this.selectedFilter = ''
+        this.showEdit = false;
+        this.showFilterClinic = false;
+        this.showFilterTower = false;
+        this.dataInfo = [];
+        this.selectedFilter = '';
       },
 
       showInfo(item){
@@ -388,8 +388,7 @@
         axios.get('/clinic/generalShow').then(res => {
           if (optionFilter == 0) {
             this.dataBill = res.data.responsible.filter(item => item.clinic_user.length > 0);
-            this.desserts = res.data.responsible.map(item => ({ ...item, invoice: 0 })).filter(item => item.clinic_user.length > 0);              
-            console.log(this.desserts);
+            this.desserts = res.data.responsible.map(item => ({ ...item, invoice: 0, position: -1 })).filter(item => item.clinic_user.length > 0);              
             if (this.desserts.length == 0) {
               this.title = 'Responsables sin consultorio';
               this.desserts = res.data.responsible.filter(item => item.clinic_user.length == 0);
@@ -425,22 +424,27 @@
         for (let i = 0; i < this.dataBill.length; i++) {
           for (let j = 0; j < this.dataBill[i].clinic_user.length; j++) {
             for (let l = 0; l < this.dataBill[i].clinic_user[j].clinic.collection_log.length; l++) {
-              for (let p = 0; p < this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection.length; p++) {
-                // console.log(this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight, " -- ",this.dataBill[i].clinic_user[j].clinic.clinic_number, " -- ", this.dataBill[i].document);
-                total = total + (this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight);
+              if (this.dataBill[i].clinic_user[j].clinic.collection_log[l].invoice_status == 'Debe') {
+                for (let p = 0; p < this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection.length; p++) {
+                  total = total + (this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight);
+                }
               }
             }
-          }
-          total = accounting.formatMoney(total, {
-            symbol: '$',
-            precision: '',
-            thousand: ',',
-            decimal: '.'
-          }); 
-          this.desserts[i].invoice = total;
+          } 
+          this.desserts[i].invoice = this.format(total);
+          this.desserts[i].position = i;
           total = 0; 
         }
-        console.log(this.desserts);
+      },
+
+      format(number){
+        number = accounting.formatMoney(number, {
+          symbol: '$',
+          precision: '',
+          thousand: ',',
+          decimal: '.'
+        });
+        return number;
       },
 
       editItem (item) {
@@ -529,6 +533,11 @@
         this.showInvoice = true;
         this.dataInvoice = item;
       },
+
+      goToBackInvoice(price, position){
+        this.desserts[position].invoice = this.format(price);
+        this.showInvoice = false;
+      }
     },
   }
 </script>

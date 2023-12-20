@@ -21,14 +21,36 @@ class ClinicController extends Controller
 
     public function generalShow(){        
         $responsibles = User::role('Responsable')
-        // ->whereHas('clinic_user.clinic.collection_log', function($query){
-        //     $query->where('invoice_status', 'DEBE');
-        // })
-        ->with('clinic_user.clinic.collection_log.waste_collection.residues')
+        ->with(['clinic_user.clinic.collection_log' => function($query){
+            $query->where('invoice_status', 'Debe')
+            ->with('waste_collection.residues');
+        }])
         ->get();
 
         $data = [
             'status' => true,
+            'responsible' => $responsibles,
+        ];
+
+        return response()->json($data);
+    }
+
+    public function showInvoince($id, $status){
+        $responsibles = User::role('Responsable')
+        ->where('id', $id)
+        ->with(['clinic_user' => function($query) use ($status) {
+            $query->whereHas('clinic.collection_log', function($query) use($status){
+                $query->where('invoice_status', $status);
+            })
+            ->with(['clinic.collection_log' => function($query) use($status){
+                $query->where('invoice_status', $status)
+                ->with('waste_collection.residues');
+            }]);
+        }])
+        ->get();
+
+        $data = [
+            'status' => $status,
             'responsible' => $responsibles,
         ];
 
@@ -271,6 +293,17 @@ class ClinicController extends Controller
                     'users' => $records,
                 ];
 
+        return response()->json($data);
+    }
+
+    public function payBill($id){
+        $pay = CollectionLog::find($id);
+        $pay->invoice_status = 'Pago';
+        $pay->save();
+
+        $data = [
+                    'status' => true,
+                ];
         return response()->json($data);
     }
 }

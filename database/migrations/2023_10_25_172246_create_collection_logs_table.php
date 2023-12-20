@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('collection_date')->nullable();
             $table->enum('stored_stated', ['ALMACENADO', 'RECOLECTADO']); // Estado del almacenado
             $table->enum('schedule', ['Diurno', 'Nocturno', 'Extra']);
-            $table->enum('invoice_status', ['DEBE', 'PAGO']);
+            $table->enum('invoice_status', ['Debe', 'Pago']);
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users');

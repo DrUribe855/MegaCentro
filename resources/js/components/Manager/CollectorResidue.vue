@@ -39,7 +39,6 @@
                             {{ changeTable }}
                         </v-btn>
                         <v-btn
-                            v-if="!showTable"
                             class="mr-6 my-3"
                             depressed
                             color="primary"

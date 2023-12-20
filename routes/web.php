@@ -52,17 +52,19 @@ Route::get('/assistant/unifiedContinuation', [ AssistantController::class, 'show
 
 Route::get('/clinic/view', [ ClinicController::class, 'index' ])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/generalShow', [ ClinicController::class, 'generalShow' ])->middleware('can:admin.managers.generalShow');
-Route::post('/clinic/register', [ ClinicController::class, 'register' ])->middleware('can:admin.managers.create');
-Route::put('/clinic/update/{id}', [ ClinicController::class, 'update' ])->middleware('can:admin.managers.edit');
 Route::get('/clinic/generalShowClinic', [ ClinicController::class, 'generalShowClinic' ])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/showClinicResponsible', [ ClinicController::class, 'showClinicResponsible' ])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/showTower/{tower}', [ ClinicController::class, 'showTower' ])->middleware('can:admin.managers.generalShow');
-Route::post('/clinic/infoClinic/{id}', [ ClinicController::class, 'infoClinic' ])->middleware('can:admin.managers.generalShow');
+Route::get('/residue/showInvoince/{id}/{status}', [ClinicController::class, 'showInvoince']);
 Route::get('/clinic/consultation/{id}/{status}', [ClinicController::class, 'consultation'])->middleware('can:admin.managers.generalShow');
 Route::get('/clinic/consultationUser', [ClinicController::class, 'consultationUser'])->middleware('can:admin.managers.generalShow');
+Route::put('/clinic/update/{id}', [ ClinicController::class, 'update' ])->middleware('can:admin.managers.edit');
+Route::post('/clinic/register', [ ClinicController::class, 'register' ])->middleware('can:admin.managers.create');
+Route::post('/clinic/infoClinic/{id}', [ ClinicController::class, 'infoClinic' ])->middleware('can:admin.managers.generalShow');
 Route::post('/clinic/deleteUser/{role}', [ClinicController::class, 'deleteUser'])->middleware('can:admin.managers.edit');
 Route::post('/clinic/addClinic', [ClinicController::class, 'addClinic'])->middleware('can:admin.managers.create');
 Route::post('/clinic/addUser', [ClinicController::class, 'addUser'])->middleware('can:admin.managers.create');
+Route::post('/residue/payBill/{id}', [ClinicController::class, 'payBill']);
 
 // ----------------------------- Rutas de recolector --------------------------------- \\
 
