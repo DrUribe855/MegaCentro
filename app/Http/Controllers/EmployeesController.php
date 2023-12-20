@@ -153,6 +153,7 @@ class EmployeesController extends Controller
 
         if($edit){
             if($password == ''){
+                $employees->document = $document;
                 $employees->name = $request->input('name');
                 $employees->last_name = $request->input('last_name');
                 $employees->phone = $request->input('phone');
@@ -167,6 +168,7 @@ class EmployeesController extends Controller
                         ];
                 return response()->json($data);
             }else{
+                $employees->document = $document;
                 $employees->name = $request->input('name');
                 $employees->last_name = $request->input('last_name');
                 $employees->phone = $request->input('phone');
