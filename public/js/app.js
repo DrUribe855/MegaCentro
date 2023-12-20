@@ -2732,7 +2732,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           } else if (res.data.message == "Email registrado" && res.data.status == false) {
             _this4.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error');
           } else {
-            _this4.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+            _this4.showAlert('Correcto', 'El usuario se ha modificado con éxito', 'success');
             _this4.getEmployees();
             _this4.close();
           }

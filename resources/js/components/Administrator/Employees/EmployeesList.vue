@@ -328,7 +328,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
               }else if(resp.data.message == 'Registro guardado correctamente'){
                 this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
                 this.getEmployees();
-                this.close()
+                this.close();
               }
           }).catch(error => {
               console.log(error.response);
@@ -357,7 +357,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
               }else if(res.data.message == "Email registrado" && res.data.status == false){
                 this.showAlert('Error', 'Ya hay un usuario registrado con ese email', 'error'); 
               }else{
-                this.showAlert('Correcto', 'El usuario se ha registrado con éxito', 'success');
+                this.showAlert('Correcto', 'El usuario se ha modificado con éxito', 'success');
                 this.getEmployees();
                 this.close()
               }

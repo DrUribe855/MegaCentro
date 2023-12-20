@@ -22,25 +22,27 @@ class AuthController extends Controller
             ]);
         }
 
-        if (Auth::attempt($credentials)) {
-
-            if($user->status === 'Activo'){
+        if ($user->status === 'Activo') {
+            if(Auth::attempt($credentials)){
                 return response()->json([
                     'status' => true,
                     'message' => 'Los datos ingresados son correctos',
                 ]);  
             }else{
+
+                $data = [
+                    'status' => false,
+                    'message' => 'Datos incorrectos',
+                ];
+                return response()->json($data);
+            }
+        }else{
                 return response()->json([
                     'status' => false,
                     'message' => 'Cuenta desactivada',
                 ]);
-            }
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Datos incorrectos',  
-            ]);
             return back()->withInput();
         }
+
     }
 }

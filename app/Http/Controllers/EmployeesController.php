@@ -163,6 +163,7 @@ class EmployeesController extends Controller
                 $data = [
                             'status' => true,
                             'employees' => $employees,
+                            'message' => 'Usuario modificado',
                         ];
                 return response()->json($data);
             }else{
@@ -177,6 +178,7 @@ class EmployeesController extends Controller
                 $data = [
                             'status' => true,
                             'employees' => $employees,
+                            'message' => 'Usuario modificado',
                         ];
                 return response()->json($data);
             }
