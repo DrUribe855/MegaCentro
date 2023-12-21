@@ -6,15 +6,6 @@
                 <v-card-title>
                     {{ infoUser.document }}
                     <v-spacer></v-spacer>
-                    <v-select
-                        v-model="selectedFilter"
-                        class="mb-2 mr-5 complet"
-                        auto-select-first
-                        label="Ver por"
-                        prepend-icon="mdi-filter"
-                        :items="items"
-                        :onchange="changeFilter()">   
-                    </v-select>
                     <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
@@ -22,6 +13,18 @@
                         single-line
                         hide-details    
                     ></v-text-field>
+                    <v-btn
+                        class="mt-3 ml-4"
+                        color="red darken-2"
+                        dark
+                        @click="changeView">
+                        <v-icon
+                            dark
+                            left>
+                            mdi-arrow-left
+                        </v-icon>
+                        {{ changeTable }}
+                    </v-btn>
                 </v-card-title>
                 <template>
                     <!-- Tabla de las facturas no pagadas -->
@@ -111,11 +114,11 @@
                 search: '',
                 infoUser: '',
                 infoUserTemp: '',
-                selectedFilter: '',
-                singleSelect: false,
-                showBtn: true,
+                changeTable: 'Facturas pagas',
                 price: '',
                 position: '',
+                singleSelect: false,
+                showBtn: true,
                 selected: [],
                 headers: [
                     { text: 'N Consultorio', value: 'clinic_number' },
@@ -124,7 +127,6 @@
                     { text: 'Estado factura', value: 'invoice_status' },
                     { text: 'Fecha recoleccion', value: 'created_at' },
                 ],
-                items: ['Facturas pagadas', 'Facturas por recolecciones'],
                 desserts: [],
                 cleanData: -1,
             } 
@@ -142,9 +144,8 @@
             initialize(){
                 this.desserts = [];
                 console.log(this.infoUser);
+                let prueba = 0;
                 for (let i = 0; i < this.infoUser.clinic_user.length; i++) {
-                    if (this.infoUser.clinic_user[i].clinic.collection_log.length == 0) {
-                    }
                     for (let j = 0; j < this.infoUser.clinic_user[i].clinic.collection_log.length; j++) {
                         let totalWeight = 0;
                         let totalInvoice = 0;
@@ -160,14 +161,22 @@
                         const day = String(originalDate.getDate()).padStart(2, '0');
                         dessertsTemp.created_at = `${year}/${month}/${day}`;
                         for (let l = 0; l < this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection.length; l++) {
-                            totalWeight = totalWeight + this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].weight; 
-                            totalInvoice = totalInvoice + (this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].residues.price * this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].weight)
+                            totalWeight += this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].weight; 
+                            totalInvoice += this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].residues.price * this.infoUser.clinic_user[i].clinic.collection_log[j].waste_collection[l].weight;
+                            prueba += totalInvoice;
                         }
+                        totalWeight = accounting.formatMoney(totalWeight, {
+                            symbol: '',
+                            precision: '',
+                            thousand: '.',
+                            decimal: '.'
+                        });
                         dessertsTemp.totalInvoice = this.foramat(totalInvoice);
-                        dessertsTemp.totalWeight = totalWeight;
+                        dessertsTemp.totalWeight = totalWeight+(' (Kg)');
                         this.desserts.push(dessertsTemp);
                     }
                 }
+                console.log(prueba);
             },
 
             payBill(){// Pagar factura
@@ -178,17 +187,15 @@
                     for (let i = 0; i < this.selected.length; i++) {
                         axios.post(`/residue/payBill/${this.selected[i].id}`).then(res => {
                             this.price = this.foramat(this.price.replace(/\D/g, '') - this.selected[i].totalInvoice.replace(/\D/g, ''));
-                            if (this.price <= '$1') {
-                                console.log(this.price ," -- ", this.selected[i].totalInvoice);
-                                this.price = 0;
-                            }
+                            console.log(this.price ," -- ",this.selected[i].totalInvoice);
+                            this.cleanData--;
                             if (alert) {
                                 this.title = 'Facturas pagadas';
+                                this.changeTable = 'Facturas recolecion'
                                 this.showBtn = false;
                                 this.alertTrue("La factura fue pagada correctamente");
                                 this.billsPaid('Pago');
                             }
-                            this.cleanData--;
                             alert = false;
                         }).catch(error => {
                             console.log(error);
@@ -218,12 +225,21 @@
             },
 
             foramat(number){
-                number = accounting.formatMoney(number, {
-                    symbol: '$',
-                    precision: '',
-                    thousand: ',',
-                    decimal: '.'
-                });
+                if (number < 1000) {
+                    number = accounting.formatMoney(number, {
+                        symbol: '$',
+                        precision: '3',
+                        thousand: '.',
+                        decimal: '.'
+                    });
+                }else{
+                    number = accounting.formatMoney(number, {
+                        symbol: '$',
+                        precision: '',
+                        thousand: '.',
+                        decimal: '.'
+                    });
+                }
                 return number;
             },
 
@@ -246,21 +262,22 @@
                     icon: "error",
                 });
             },
-
-            changeFilter(){
-                if (this.selectedFilter == 'Facturas pagadas' ) {
-                    this.selectedFilter = 'Ver por'
-                    this.title = 'Facturas pagadas'
+                
+            changeView(){
+                console.log(this.changeTable);
+                if (this.changeTable == 'Facturas pagas' ) {
+                    this.title = 'Facturas pagadas';
                     this.showBtn = false;
+                    this.changeTable = 'Facturas recolecion';
                     this.billsPaid('Pago');
-                }else if (this.selectedFilter == 'Facturas por recolecciones'){
+                }else if (this.changeTable == 'Facturas recolecion'){
                     this.infoUser = this.infoUserTemp;
                     this.title = 'Facturas por recolecciones';
+                    this.changeTable = 'Facturas pagas';
                     this.showBtn = true;
                     this.billsPaid('Debe');
-                    this.selectedFilter = 'Ver por'
                 }
-            }
+            },
         }
     }
 </script>

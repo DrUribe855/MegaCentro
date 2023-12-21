@@ -221,7 +221,7 @@
                             </v-icon>
                         </v-btn>
                         <v-btn
-                            class="mr-6"
+                            class="mr-6 white--text"
                             depressed
                             color="red"
                             @click="cancel">
@@ -267,22 +267,85 @@
                 axios.get('/manager/residuePrice').then(res => {
                     console.log("Respuesta del servidor");
                     console.log(res.data);
-                    this.biodegradable = res.data.residues[0].price;
-                    this.reciclables = res.data.residues[1].price;
-                    this.inertes = res.data.residues[2].price;
-                    this.oridinarios = res.data.residues[3].price;
-                    this.biosanitarios = res.data.residues[4].price;
-                    this.anatomopatologicos = res.data.residues[5].price;
-                    this.cortopunzantes = res.data.residues[6].price;
-                    this.aniamales = res.data.residues[7].price;
-                    this.farmacos = res.data.residues[8].price;
-                    this.citotoxicos = res.data.residues[9].price;
-                    this.metales = res.data.residues[10].price;
-                    this.reactivos = res.data.residues[11].price;
-                    this.contenedores = res.data.residues[12].price;
-                    this.aceites = res.data.residues[13].price;
-                    this.fuentesA = res.data.residues[14].price;
-                    this.fuentesC = res.data.residues[15].price;
+                    this.biodegradable =  res.data.residues[0].price;
+                    this.reciclables =  res.data.residues[1].price;
+                    this.inertes =  res.data.residues[2].price;
+                    this.oridinarios =  res.data.residues[3].price;
+                    this.biosanitarios =  res.data.residues[4].price;
+                    this.anatomopatologicos =  res.data.residues[5].price;
+                    this.cortopunzantes =  res.data.residues[6].price;
+                    this.aniamales =  res.data.residues[7].price;
+                    this.farmacos =  res.data.residues[8].price;
+                    this.citotoxicos =  res.data.residues[9].price;
+                    this.metales =  res.data.residues[10].price;
+                    this.reactivos =  res.data.residues[11].price;
+                    this.contenedores =  res.data.residues[12].price;
+                    this.aceites =  res.data.residues[13].price;
+                    this.fuentesA =  res.data.residues[14].price;
+                    this.fuentesC =  res.data.residues[15].price;
+                    if (this.biodegradable >= 1000) {
+                        this.biodegradableFormater(this.biodegradable);    
+                    }
+
+                    if (this.reciclables >= 1000) {
+                        this.reciclablesFormater(this.reciclables);    
+                    }
+
+                    if (this.inertes >= 1000) {
+                        this.inertesFormater(this.inertes);    
+                    }
+
+                    if (this.oridinarios >= 1000) {
+                        this.oridinariosFormater(this.oridinarios);    
+                    }
+
+                    if (this.biosanitarios >= 1000) {
+                        this.biosanitariosFormater(this.biosanitarios);    
+                    }
+
+                    if (this.anatomopatologicos >= 1000) {
+                        this.anatomopatologicosFormater(this.anatomopatologicos);    
+                    }
+
+                    if (this.cortopunzantes >= 1000) {
+                        this.cortopunzantesFormater(this.cortopunzantes);    
+                    }
+
+                    if (this.aniamales >= 1000) {
+                        this.aniamalesFormater(this.aniamales);    
+                    }
+
+                    if (this.farmacos >= 1000) {
+                        this.farmacosFormater(this.farmacos);    
+                    }
+
+                    if (this.citotoxicos >= 1000) {
+                        this.citotoxicosFormater(this.citotoxicos);    
+                    }
+
+                    if (this.metales >= 1000) {
+                        this.metalesFormater(this.metales);    
+                    }
+
+                    if (this.reactivos >= 1000) {
+                        this.reactivosFormater(this.reactivos);    
+                    }
+
+                    if (this.contenedores >= 1000) {
+                        this.contenedoresFormater(this.contenedores);    
+                    }
+
+                    if (this.aceites >= 1000) {
+                        this.aceitesFormater(this.aceites);    
+                    }
+
+                    if (this.fuentesA >= 1000) {
+                        this.fuentesAFormater(this.fuentesA);    
+                    }
+
+                    if (this.fuentesC >= 1000) {
+                        this.fuentesCFormater(this.fuentesC);    
+                    }
                 }).catch(error => {
                     console.log("Error en servidor");
                     console.log(error);
@@ -306,8 +369,8 @@
                 this.data[12] = this.contenedores;                    
                 this.data[13] = this.aceites;                    
                 this.data[14] = this.fuentesA;                    
-                this.data[15] = this.fuentesC;   
-                this.register();              
+                this.data[15] = this.fuentesC;
+                this.register();
             },
             
             register(){
@@ -315,9 +378,10 @@
                 if (this.data.length != 0) {
                     for (let i = 0; i < this.data.length; i++) {
                         if (this.data[i] != 0) {
+                            if (parseFloat(this.data[i].length) > 3) {
+                                this.data[i] = this.data[i].replace(',', '');
+                            }
                             axios.put(`/manager/registerPrice/${i+1}`, {data: this.data[i]}).then(res =>{
-                                console.log("Respuesta del servidor");
-                                console.log(res.data);
                                 if (alert) {
                                     this.alertTrue("Los precios se cambiaron con exito");
                                 }

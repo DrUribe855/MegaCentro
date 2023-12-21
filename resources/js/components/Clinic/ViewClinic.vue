@@ -17,15 +17,15 @@
                         <!-- <v-spacer></v-spacer> -->
                         <v-card-actions class="ml-5">
                             <v-select
-                            v-model="selectedFilter"
-                            :items="filters"
-                            menu-props="auto"
-                            label="Ver por"
-                            hide-details
-                            prepend-icon="mdi-filter"
-                            single-line
-                            :onchange="changeFilter()"
-                            x-small
+                                v-model="selectedFilter"
+                                :items="filters"
+                                menu-props="auto"
+                                label="Ver por"
+                                hide-details
+                                prepend-icon="mdi-filter"
+                                single-line
+                                :onchange="changeFilter()"
+                                x-small
                             ></v-select>
                         </v-card-actions>
                         <v-text-field
@@ -124,14 +124,14 @@
                                         sm="6"
                                         md="4"
                                     >
-                                    <v-select
+                                    <v-autocomplete
                                         v-model="selectedUser"
                                         :items="user"
                                         :menu-props="{ top: false, offsetY: true }"
                                         :label="textLable"
                                         item-text="document"
                                         item-value="id"
-                                    ></v-select>
+                                    ></v-autocomplete>
                                     </v-col>
                                     </v-row>
                                 </v-container>
