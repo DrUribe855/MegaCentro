@@ -257,8 +257,6 @@
             this.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
           }else if(resp.data.message == 'Datos incorrectos en la fecha'){
             this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
-          }else if(resp.data.message == 'Ya existe una recolección'){
-            this.showAlert('Error', 'Ya hay una recolección registrada con esta fecha y horario', 'error');
           }
         }).catch(error => {
           console.log(error.response);

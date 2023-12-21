@@ -28,11 +28,12 @@ class CollectorController extends Controller
         $anioActual = getdate();
         $validationStatus = true;
 
-        if(!$this->collectionExists($general_data)){
-            if($this->dateValidations($general_data, $anioActual)){
-                $result = $this->collectionValidate($clinics);
-                if($result === true){
-                    foreach ($clinics as $key => $clinic) {
+        
+        if($this->dateValidations($general_data, $anioActual)){
+            $result = $this->collectionValidate($clinics);
+            if($result === true){
+                foreach ($clinics as $key => $clinic) {
+                    if(!$this->collectionExists($general_data, $clinic)){
                         if($this->clinicValidate($clinic)){
                             $collection = new CollectionLog();
                             $collection->user_id = auth()->user()->id;
@@ -41,7 +42,6 @@ class CollectorController extends Controller
                             $collection->month = $general_data["month"];
                             $collection->schedule = $general_data["schedule"];
                             $collection->save();
-
                             foreach ($clinic["data"] as $key => $residue) {
                                 if($residue["weight"] != 0 && $residue["weight"] != 0){
                                     $residues = new Waste_collection();
@@ -52,41 +52,30 @@ class CollectorController extends Controller
                                     $residues->save();
                                 }
                             }
-
                             $data = [
                                 'message' => 'Recolección registrada',
                                 'status' => true,
                             ];
-
                             return response()->json($data);
                         }
                     }
-                }else{
-
-                    $data = [
-                        'message' => 'Datos incompletos',
-                        'collectionData' => $result, 
-                    ];
-
-                    return response()->json($data);
                 }
             }else{
                 $data = [
-                    'message' => "Datos incorrectos en la fecha",
-                    'status' => false,
+                    'message' => 'Datos incompletos',
+                    'collectionData' => $result, 
                 ];
-
                 return response()->json($data);
             }
-
         }else{
             $data = [
-                'message' => 'Ya existe una recolección',
+                'message' => "Datos incorrectos en la fecha",
                 'status' => false,
             ];
-
             return response()->json($data);
         }
+
+        
                 
         
             
@@ -148,11 +137,14 @@ class CollectorController extends Controller
         return false; 
     }
 
-    public function collectionExists($date){
+    public function collectionExists($date, $clinic){
+
 
         $exists =  CollectionLog::where('year', $date["year"])
         ->where('month', $date["month"])
         ->where('schedule', $date["schedule"])
+        ->whereDay('created_at', date('d'))
+        ->where('clinic_id', $clinic["clinic_id"])
         ->exists();
 
         return $exists;

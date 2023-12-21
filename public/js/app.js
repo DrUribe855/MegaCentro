@@ -5198,8 +5198,6 @@ __webpack_require__.r(__webpack_exports__);
           _this2.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
         } else if (resp.data.message == 'Datos incorrectos en la fecha') {
           _this2.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
-        } else if (resp.data.message == 'Ya existe una recolección') {
-          _this2.showAlert('Error', 'Ya hay una recolección registrada con esta fecha y horario', 'error');
         }
       })["catch"](function (error) {
         console.log(error.response);
