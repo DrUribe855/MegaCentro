@@ -21,6 +21,7 @@ class ClinicController extends Controller
 
     public function generalShow(){        
         $responsibles = User::role('Responsable')
+        ->where('status', 'Activo')
         ->with(['clinic_user.clinic.collection_log' => function($query){
             $query->where('invoice_status', 'Debe')
             ->with('waste_collection.residues');

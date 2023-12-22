@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('residue_name');
             $table->unsignedBigInteger('residue_type_id');
-            $table->decimal('price', 8,3)->default(0.00);
+            $table->integer('price')->default(0);
             $table->timestamps();
 
             $table->foreign('residue_type_id')->references('id')->on('residue_types')->onDelete('cascade');

@@ -43,7 +43,6 @@
                     :headers="headers"
                     :items="desserts"
                     :search="search"
-                    :items-per-page="5"
                   >
                     <template v-slot:item.actions="{ item }">
                       <v-btn
@@ -59,7 +58,7 @@
                         </v-icon>
                       </v-btn>
                       <v-btn
-                      v-if="!showBtn"
+                        v-if="!showBtn"
                         x-small
                         class="mx-1"
                         fab
@@ -72,7 +71,7 @@
                         </v-icon>
                       </v-btn>
                       <v-btn 
-                        v-if="!showInvoice"
+                        v-if="!showBtn"
                         class="mx-1"
                         x-small
                         fab
@@ -204,14 +203,14 @@
                               sm="6"
                               md="4"
                             >
-                            <v-select
+                            <v-autocomplete
                               v-model="selectedClinic"
                               :items="clinics"
                               :menu-props="{ top: false, offsetY: true }"
                               label="Agregar Consultorio"
                               item-text="clinic_number"
                               item-value="id"
-                            ></v-select>
+                            ></v-autocomplete>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -257,7 +256,7 @@
   import ClinicShow from "./ViewClinic.vue";
   import ClinicTower from "./Tower.vue";
   import ClinicInvoice from "./Invoice.vue";
-  import accounting from 'accounting';
+  import accounting, { parse } from 'accounting';
 
   export default {
 
@@ -287,8 +286,10 @@
       dataInvoice: [],
       user: [],
       dataBill: [],
+      dataBillTemp: [],
       totalBill: [],
       desserts: [],
+      dessertsTemp: [],
       headers: [
         { text: 'Numero de documento', value: 'document' },
         { text: 'Nombre', value: 'name' },
@@ -335,7 +336,7 @@
         }else if(this.selectedFilter == 'TORRES'){
           this.showFilterTower = true
         }else if(this.selectedFilter == 'RESPONSABLES CON CONSULTORIOS'){
-          this.initialize(1);
+          this.initialize(0);
           this.showBtn = false;
           this.showFilterClinic = false 
           this.selectedFilter = ''
@@ -395,7 +396,6 @@
               this.showBtn = true
               this.showFilterClinic = false
             }else{
-              this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
               this.title = 'Responsables con consultorio';
               this.showBtn = false;
               this.showFilterClinic = false 
@@ -407,7 +407,8 @@
             this.showBtn = true
             this.showFilterClinic = false
           }else{
-            this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
+            this.dataBill = res.data.responsible.filter(item => item.clinic_user.length > 0);
+            this.desserts = res.data.responsible.map(item => ({ ...item, invoice: 0, position: -1 })).filter(item => item.clinic_user.length > 0);
             this.title = 'Responsables con consultorio';
             this.showBtn = false;
             this.showFilterClinic = false 
@@ -420,30 +421,38 @@
       },
 
       invoices(){// Factura
-        let total = 0;
         for (let i = 0; i < this.dataBill.length; i++) {
+          let total = 0;
           for (let j = 0; j < this.dataBill[i].clinic_user.length; j++) {
             for (let l = 0; l < this.dataBill[i].clinic_user[j].clinic.collection_log.length; l++) {
               if (this.dataBill[i].clinic_user[j].clinic.collection_log[l].invoice_status == 'Debe') {
                 for (let p = 0; p < this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection.length; p++) {
-                  total = total + (this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight);
+                  total+= (this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].residues.price * this.dataBill[i].clinic_user[j].clinic.collection_log[l].waste_collection[p].weight);
                 }
               }
             }
-          } 
+          }
           this.desserts[i].invoice = this.format(total);
           this.desserts[i].position = i;
-          total = 0; 
         }
       },
 
       format(number){
-        number = accounting.formatMoney(number, {
-          symbol: '$',
-          precision: '',
-          thousand: ',',
-          decimal: '.'
-        });
+        if (number < 1000) {
+          number = accounting.formatMoney(number, {
+            symbol: '$',
+            precision: '3',
+            thousand: '.',
+            decimal: '.'
+          });
+        }else{
+          number = accounting.formatMoney(number, {
+            symbol: '$',
+            precision: '',
+            thousand: '.',
+            decimal: ','
+          });
+        }
         return number;
       },
 
@@ -467,9 +476,13 @@
         axios.post('/clinic/addClinic', data).then(res => {
           this.desserts = res.data.responsible.filter(item => item.clinic_user.length > 0);
           this.alertTrue(`El consultorio se agrego correctamente al responsable ${this.infoResponsible.document}`);
-          this.selectedFilter = 'Ver por'
-          this.initialize()
-          this.showBtn = false
+          this.selectedFilter = 'Ver por';
+          this.showBtn = false;
+          if (!this.showBtn) {
+            this.initialize(0);
+          }else if(this.showBtn){
+            this.initialize(2);
+          }
         }).catch(error => {
           console.log(error);
           if (error.response.status == 422) {
@@ -478,7 +491,7 @@
             this.alertFalse('Parece que algo salio mal'); 
           }
         });
-        this.dialog = false
+        this.dialog = false;
       },
 
       showRegister(){
@@ -535,7 +548,7 @@
       },
 
       goToBackInvoice(price, position){
-        this.desserts[position].invoice = this.format(price);
+        this.desserts[position].invoice = price;
         this.showInvoice = false;
       }
     },
