@@ -8,31 +8,34 @@ use App\Models\CollectionLog;
 use Illuminate\Http\Request;
 use App\Models\Waste_collection;
 use App\Models\ResidueType;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use Psy\Command\WhereamiCommand;
 
 class ResidueController extends Controller
 {
-    // Reportes 
+    // Reportes
     public function generalShow($date){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month', 'day', 'id_residue')
         ->get();
 
         $total = Waste_collection::selectRaw('id_residue, SUM(weight) as weight')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('id_residue')
         ->get();
 
-        $dateParts = explode("-", $date);
+        $dateParts = explode("-", $formattedDate);
         $year = $dateParts[0];
         $month = $dateParts[1];
         $numberDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         $data = [
             'status' => true,
-            'total' => $total, 
+            'total' => $total,
             'residues' => $residues,
             'user' => auth()->user(),
             'role' => auth()->user()->roles->first()->name,
@@ -43,18 +46,20 @@ class ResidueController extends Controller
     }
 
     public function showContinuation($date){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->whereHas('collection_logs')
         ->groupBy('month', 'created_at')
         ->get();
 
         $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('month')
         ->get();
 
-        $dateParts = explode("-", $date);
+        $dateParts = explode("-", $formattedDate);
         $year = $dateParts[0];
         $month = $dateParts[1];
         $numberDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
@@ -63,27 +68,29 @@ class ResidueController extends Controller
             'status' => true,
             'residues' => $residues,
             'date' => $numberDay,
-            'total' => $total,   
+            'total' => $total,
         ];
 
         return response()->json($data);
     }
 
     public function showUnified($date){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, id_residue, SUM(weight) as total_weight')
         ->whereHas('collection_logs')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month', 'id_residue')
         ->get();
 
         $total = Waste_collection::selectRaw('id_residue, SUM(weight) as weight')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('id_residue')
         ->get();
 
         $data = [
             'status' => true,
-            'total' => $total, 
+            'total' => $total,
             'residues' => $residues,
             'user' => auth()->user(),
             'role' => auth()->user()->roles->first()->name,
@@ -93,23 +100,25 @@ class ResidueController extends Controller
     }
 
     public function showUnifiedContinuation($date){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month')
         ->get();
 
         $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year')
         ->get();
 
         $data = [
             'status' => true,
             'residues' => $residues,
-            'total' => $total,   
+            'total' => $total,
         ];
 
-        return response()->json($data); 
+        return response()->json($data);
     }
 
     public function showClinic(){
@@ -124,11 +133,13 @@ class ResidueController extends Controller
     }
 
     public function showClinicSelected($date, $id){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residuesClinic = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
         ->whereHas('collection_logs', function($query) use($id){
             $query->where('clinic_id', $id);
         })
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month', 'day', 'id_residue')
         ->get();
 
@@ -136,7 +147,7 @@ class ResidueController extends Controller
         ->whereHas('collection_logs', function($query) use($id){
             $query->where('clinic_id', $id);
         })
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('id_residue')
         ->get();
 
@@ -150,8 +161,10 @@ class ResidueController extends Controller
     }
 
     public function showClinicConstinuation($date, $id){
+        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $formattedDate = $dateTime->format('Y-m');
         $residuesClinic = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->whereHas('collection_logs', function($query) use($id){
             $query->where('clinic_id', $id);
         })
@@ -162,14 +175,14 @@ class ResidueController extends Controller
         ->whereHas('collection_logs', function($query) use($id){
             $query->where('clinic_id', $id);
         })
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('month')
         ->get();
 
         $collectionLog = CollectionLog::selectRaw('DAY (created_at) as day, collection_date, created_at')
         ->whereHas('waste_collection')
         ->where('clinic_id', $id)
-        ->where('created_at', 'LIKE',  $date. '%')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->where('stored_stated', 'RECOLECTADO')
         ->groupBy('day', 'collection_date', 'created_at')
         ->get();
@@ -178,13 +191,13 @@ class ResidueController extends Controller
             $collectionLog->date = $collectionLog->created_at->format('Y-m-d');
             unset($collectionLog->created_at);
             return $collectionLog;
-        }); 
+        });
 
         $data = [
             'status' => true,
             'clinicResidue' => $residuesClinic,
-            'totalClinic' => $totalClinic,  
-            'collectionLog' => $collectionLog, 
+            'totalClinic' => $totalClinic,
+            'collectionLog' => $collectionLog,
         ];
 
         return response()->json($data);
@@ -204,13 +217,13 @@ class ResidueController extends Controller
             ->whereHas('clinic')
             ->with('user', 'clinic')
             ->get();
-    
+
             $records->transform(function ($record) {
                 $record->date = $record->created_at->format('Y-m-d');
                 $record->dateTemp = $record->created_at->format('Y-m-d');
                 unset($record->created_at);
                 return $record;
-            });            
+            });
         }else{
             $records = CollectionLog::whereHas('user', function($query){
                 $query->role('Recolector');
@@ -222,7 +235,7 @@ class ResidueController extends Controller
             ->whereHas('clinic')
             ->with('user', 'clinic')
             ->get();
-        
+
             $records->transform(function ($record) {
                 $record->date = $record->created_at->format('Y-m-d');
                 $record->dateTemp = $record->created_at->format('Ymd');
