@@ -121,8 +121,8 @@
                                             <th class="text-center p-0" style="font-size: 15px;">Camas ocupadas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Consultas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Bolsas Entregadas</th>
-                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamineto usando de desactivacion</th>
-                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenaminetos (días)</th>
+                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamiento usado de desactivacion</th>
+                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenamientos (días)</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Tipo de tratamiento</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Hora de recolección</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Dotacion personal General </th>
@@ -145,7 +145,7 @@
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center"></td>
+                                            <td class="text-center">ROJO</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                         </tr>
@@ -161,7 +161,7 @@
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
+                                            <td class="text-center">ROJO</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
                                         </tr>

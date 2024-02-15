@@ -75,7 +75,7 @@ class ResidueController extends Controller
     }
 
     public function showUnified($date){
-        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $dateTime = DateTime::createFromFormat('Y', $date);
         $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, id_residue, SUM(weight) as total_weight')
         ->whereHas('collection_logs')
@@ -88,10 +88,15 @@ class ResidueController extends Controller
         ->groupBy('id_residue')
         ->get();
 
+        $bigTotal = Waste_collection::selectRaw('SUM(weight) as weight')
+        ->where('created_at', 'LIKE',  $formattedDate. '%')
+        ->get(); 
+
         $data = [
             'status' => true,
             'total' => $total,
             'residues' => $residues,
+            'bigTotal' => $bigTotal,
             'user' => auth()->user(),
             'role' => auth()->user()->roles->first()->name,
         ];
@@ -100,7 +105,7 @@ class ResidueController extends Controller
     }
 
     public function showUnifiedContinuation($date){
-        $dateTime = DateTime::createFromFormat('Y-n', $date);
+        $dateTime = DateTime::createFromFormat('Y', $date);
         $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
