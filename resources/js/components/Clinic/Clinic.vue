@@ -152,9 +152,8 @@
                                             sm="6"
                                             md="4">
                                             <v-text-field
-                                                type="number"
                                                 v-model="editedItem.clinic_number"
-                                                label="Numero Clinica"
+                                                label="Numero clinica o local"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col

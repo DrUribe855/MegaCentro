@@ -121,8 +121,8 @@
                                             <th class="text-center p-0" style="font-size: 15px;">Camas ocupadas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Consultas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Bolsas Entregadas</th>
-                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamineto usando de desactivacion</th>
-                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenaminetos (días)</th>
+                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamiento usado de desactivacion</th>
+                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenamientos (días)</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Tipo de tratamiento</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Hora de recolección</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Dotacion personal General </th>
@@ -143,13 +143,15 @@
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <input type="text" class="border border-black form-control" style="width: 5em; height: 2.8em;">
+                                            <input type="text" class="border border-black form-control" style="width: 100%; height: 2.8em;">
                                             <td class="text-center p-0"> 
-                                            <select class="border border-black form-control" style="width: 5em; height: 2.8em;">
-                                                <option selected></option>
-                                                <option>Si</option>
-                                                <option>No</option>
-                                            </select></td>
+                                                <select class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                    <option selected></option>
+                                                    <option>Si</option>
+                                                    <option>No</option>
+                                                </select>
+                                            </td>
+                                            <td class="text-center">ROJO</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                         </tr>
@@ -165,7 +167,7 @@
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
+                                            <td class="text-center">ROJO</td>
                                             <td class="text-center">0</td>
                                             <td class="text-center">0</td>
                                         </tr>

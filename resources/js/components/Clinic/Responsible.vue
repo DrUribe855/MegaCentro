@@ -103,9 +103,8 @@
                               sm="6"
                               md="4">
                               <v-text-field
-                                type="number"
                                 v-model="registerClinic.clinic_number"
-                                label="Numero Consultorio"
+                                label="Número consultorio o local"
                               ></v-text-field>
                             </v-col>
                             <v-col

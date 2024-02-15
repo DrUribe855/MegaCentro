@@ -165,6 +165,10 @@
                           {{ revalidateTotal(residueId) }}
                         </td>
                       </tr>
+                      <tr>
+                        <td class="px-0">GRAN TOTAL</td>
+                        <td colspan="23">{{ bigTotal }}</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -196,6 +200,7 @@ export default {
       focus: new Date(),
       date: '',
       position: 0,
+      bigTotal: 0,
       total_weight: [],
       data_total: [],
     }
@@ -252,6 +257,7 @@ export default {
           this.list_residues = res.data.residues;
           this.user = res.data.user;
           this.role = res.data.role;
+          this.bigTotal = res.data.bigTotal[0].weight;
           this.getResidueValue();
         }).catch(error => {
           console.log("Error en servidor");
