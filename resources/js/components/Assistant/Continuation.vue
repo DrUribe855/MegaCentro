@@ -143,9 +143,13 @@
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
+                                            <input type="text" class="border border-black form-control" style="width: 5em; height: 2.8em;">
+                                            <td class="text-center p-0"> 
+                                            <select class="border border-black form-control" style="width: 5em; height: 2.8em;">
+                                                <option selected></option>
+                                                <option>Si</option>
+                                                <option>No</option>
+                                            </select></td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                         </tr>

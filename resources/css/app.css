@@ -13,6 +13,11 @@
 .input-item {
     display: inline;
     background-color: pink;
-    width: 100px; /* Ajusta el ancho según tus preferencias */
-    margin-right: 10px; /* Ajusta el margen derecho según tus preferencias */
+    width: 100px; 
+    margin-right: 10px; 
+}
+
+.inputs-table{
+    width: 5em; 
+    height: 3em;
 }

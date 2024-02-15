@@ -44,7 +44,7 @@ Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'u
 // Auth::routes();
 
 Route::get('/assistant/index', [ AssistantController::class, 'index'])->middleware('can:admin.managers.generalShow');
-Route::get('/assistant/continuation', [ AssistantController::class, 'showContinuation'])->middleware('can:admin.managers.generalShow');
+Route::get('/assistant/continuation', [ AssistantController::class, 'showContinuation'])->middleware('can:admin.view.rhContinuation');
 Route::get('/assistant/unified', [ AssistantController::class, 'showUnified'])->middleware('can:admin.managers.generalShow');
 Route::get('/assistant/unifiedContinuation', [ AssistantController::class, 'showUnifiedContinuation'])->middleware('can:admin.managers.generalShow');
 
