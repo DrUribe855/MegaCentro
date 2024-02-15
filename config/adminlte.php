@@ -320,7 +320,7 @@ return [
                 [
                     'text' => 'RH Continuación',
                     'url'  => '/assistant/continuation',
-                    'can' => 'assistant.statistics.generalShow'
+                    'can' => 'assistant.statistics.rhcontinuation'
                 ],
                 [
                     'text' => 'Unificado anual',
@@ -333,6 +333,11 @@ return [
                     'can' => 'assistant.statistics.generalShow'
                 ],
             ],
+        ],
+        [
+            'text' => 'RH Continuación',
+            'url'  => '/assistant/continuation',
+            'can' => 'collector.rhContinuation.view'
         ],
         [
             'text' => 'Registrar recolección',

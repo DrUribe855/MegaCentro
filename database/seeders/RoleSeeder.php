@@ -29,12 +29,14 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'admin.managers.generalShow'])->assignRole($assistantRole, $administratorRole);
         Permission::create(['name' => 'admin.managers.create'])->assignRole($administratorRole);
         Permission::create(['name' => 'admin.managers.edit'])->assignRole($administratorRole);
+        Permission::create(['name' => 'admin.view.rhContinuation'])->assignRole($administratorRole, $assistantRole, $collectorRole);
 
         // ------------------------ Rol asistente -------------------------- \\
 
         Permission::create(['name' => 'assistant.statistics.generalShow'])->assignRole($assistantRole, $administratorRole);
         Permission::create(['name' => 'assistant.statistics.create'])->assignRole($administratorRole);
         Permission::create(['name' => 'assistant.statistics.edit'])->assignRole($administratorRole);
+        Permission::create(['name' => 'assistant.statistics.rhcontinuation'])->assignRole($administratorRole, $assistantRole);    
 
         // ------------------------ Rol recolector ---------------------------- \\
 
@@ -42,6 +44,8 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'collector.collections.create'])->assignRole($collectorRole);
         Permission::create(['name' => 'collector.collections.edit'])->assignRole($collectorRole);
         Permission::create(['name' => 'collector.storedWaste.view'])->assignRole($collectorRole);
+        Permission::Create(['name' => 'collector.rhContinuation.view'])->assignRole($collectorRole);
+
         // ------------------------ Rol encargado y dueño -------------------------------- \\
 
         Permission::create(['name' => 'manager.clinics.generalShow'])->assignRole($managerRole, $ownerRole);
