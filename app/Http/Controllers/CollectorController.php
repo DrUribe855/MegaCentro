@@ -9,6 +9,7 @@ use App\Models\CollectionLog;
 use App\Models\Residue;
 use App\Models\Clinic;
 use App\Models\Waste_collection;
+use Illuminate\Support\Facades\Auth;
 
 class CollectorController extends Controller
 {
@@ -17,8 +18,8 @@ class CollectorController extends Controller
         return view('Collector/index');
     }
 
-    public function create(){
-    
+    public function noHazardousView(){
+        return view('Collector/nonhazardous');
     }
 
     public function store(Request $request)
@@ -26,6 +27,7 @@ class CollectorController extends Controller
         $clinics = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
+        $currentDate = date('Y-m-d');
         $validationStatus = true;
 
         
@@ -35,13 +37,26 @@ class CollectorController extends Controller
                 foreach ($clinics as $key => $clinic) {
                     if(!$this->collectionExists($general_data, $clinic)){
                         if($this->clinicValidate($clinic)){
-                            $collection = new CollectionLog();
-                            $collection->user_id = auth()->user()->id;
-                            $collection->clinic_id = $clinic["clinic_id"];
-                            $collection->year = $general_data["year"];
-                            $collection->month = $general_data["month"];
-                            $collection->schedule = $general_data["schedule"];
-                            $collection->save();
+                            if($general_data["schedule"] == 'Extra - 6:00 AM'){
+                                $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
+                                $collection = new CollectionLog();
+                                $collection->user_id = auth()->user()->id;
+                                $collection->clinic_id = $clinic["clinic_id"];
+                                $collection->year = $general_data["year"];
+                                $collection->month = $general_data["month"];
+                                $collection->schedule = $general_data["schedule"];
+                                $collection->created_at = $lastDate;
+                                $collection->save();
+                            }else{
+                                $collection = new CollectionLog();
+                                $collection->user_id = auth()->user()->id;
+                                $collection->clinic_id = $clinic["clinic_id"];
+                                $collection->year = $general_data["year"];
+                                $collection->month = $general_data["month"];
+                                $collection->schedule = $general_data["schedule"];
+                                $collection->save();
+                            }
+
                             foreach ($clinic["data"] as $key => $residue) {
                                 if($residue["weight"] != 0 && $residue["weight"] != 0){
                                     $residues = new Waste_collection();
@@ -171,17 +186,8 @@ class CollectorController extends Controller
         $towerNumber = $request->towerNumber;
 
         $id = auth()->user()->id;
-        $clinics = Clinic_user::whereHas('user', function ($query) use ($id) {
-            $query->where('clinic_users.user_id', '=', $id);
-        })
-        ->with('clinic')
-        ->whereHas('clinic', function ($query) use ($clinicNumber) {
-            $query->where('clinic_number', "LIKE", "%$clinicNumber%"); 
-        })
-        ->whereHas('clinic', function ($query) use ($towerNumber) {
-            $query->where('tower_id', "LIKE", "%$towerNumber%"); 
-        })
-        ->get();
+        
+        $clinics = Clinic::get();
 
         $residues = Residue::get();
         $currentDate = date('Y-m');
@@ -195,6 +201,18 @@ class CollectorController extends Controller
             'year' => $currentYear,
             'month' => $currentMonth,
         ];
+
+        return response()->json($data);
+    }
+
+    public function getUserRole(){
+
+       $user = Auth::user();
+       $role = $user->getRoleNames();
+        $data = [
+            'status' => true,
+            'role' => $role,
+       ];
 
         return response()->json($data);
     }

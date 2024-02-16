@@ -28,6 +28,7 @@ Vue.component('unified-continuation', require('./components/Assistant/UnifiedCon
 
 //Collector
 Vue.component('index-collector', require('./components/Collector/IndexCollector.vue').default);
+Vue.component('non-hazardous-vue', require('./components/Collector/NonhazardousWaste.vue').default);
  
 //Manager
 Vue.component('index-manager', require('./components/Manager/IndexManager.vue').default);

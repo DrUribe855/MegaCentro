@@ -306,6 +306,7 @@ return [
             'url'  => '/clinic/view',
             'icon' => 'fas fa-fw fa-users',
             'can' => 'admin.managers.generalShow'
+
         ],
         [
             'text'    => 'Información residuos',
@@ -340,10 +341,18 @@ return [
             'can' => 'collector.rhContinuation.view'
         ],
         [
-            'text' => 'Registrar recolección',
+            'text' => 'Residuos peligrosos',
             'url'  => '/collector/index',
             'icon' => 'fas fa-fw fa-trash',
-            'can' => 'collector.collections.generalShow'
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-danger'
+        ],
+        [
+            'text' => 'Residuos no peligrosos',
+            'url'  => '/collector/non-hazardous-waste',
+            'icon' => 'fas fa-fw fa-trash',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-dark'
         ],
         [
             'text' => 'Lista de consultorios',

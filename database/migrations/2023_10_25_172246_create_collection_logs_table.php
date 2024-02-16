@@ -17,10 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('clinic_id');
             $table->Integer('month');
             $table->Integer('year');
-            $table->enum('horario', ['Diurno', 'Nocturno', 'Extra']);
             $table->date('collection_date')->nullable();
             $table->enum('stored_stated', ['ALMACENADO', 'RECOLECTADO']); // Estado del almacenado
-            $table->enum('schedule', ['Diurno', 'Nocturno', 'Extra']);
+            $table->enum('schedule', ['Extra - 6:00 AM','Diurno', 'Nocturno', 'Extra']);
             $table->enum('invoice_status', ['Debe', 'Pago']);
             $table->timestamps();
             

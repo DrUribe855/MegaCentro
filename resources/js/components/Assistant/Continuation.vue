@@ -143,9 +143,9 @@
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <input type="text" class="border border-black form-control" style="width: 5em; height: 2.8em;">
+                                            <input type="text" class="border border-black form-control" style="width: 5em; height: 2.8em;" :disabled="isAdmin" >
                                             <td class="text-center p-0"> 
-                                            <select class="border border-black form-control" style="width: 5em; height: 2.8em;">
+                                            <select class="border border-black form-control" style="width: 5em; height: 2.8em;" :disabled="isAdmin">
                                                 <option selected></option>
                                                 <option>Si</option>
                                                 <option>No</option>
@@ -222,6 +222,7 @@ export default {
             total_temp: 0,
             totalDay: 0,
             focus: new Date(),
+            isAdmin: false,
         }
     },
     watch: {
@@ -246,6 +247,7 @@ export default {
     created() {
         this.setToday();
         this.clinicNumber();
+        this.getuserRole();
     },
 
     methods: {
@@ -484,6 +486,23 @@ export default {
             }
             this.clinicInitialize(this.clinic);
         },
+        getuserRole(){
+            axios.get('/collector/getRole').then(res => {
+                console.log("Respuesta del servidor");
+                console.log(res);
+                if(res.data.role == 'Administrador' || res.data.role == 'Auxiliar Contable'){
+                    this.isAdmin = true;
+                    console.log("trhis is admin", this.isAdmin);
+                }else{
+                    this.isAdmin = false;
+                    console.log("this id admin: ", this.isAdmin);
+                }
+            }).catch(error => {
+                console.log("Error en axios");
+                console.log(error);
+                console.log(error.response);
+            })
+        }
     }
 }
 </script>

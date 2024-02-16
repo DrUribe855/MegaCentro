@@ -94,7 +94,7 @@
           <div v-for="(clinic, index) in clinics" class="mt-3">
             <v-expansion-panels>
               <v-expansion-panel v-if="datos[index].show">
-                <v-expansion-panel-header >Consultorio: {{clinic.clinic.clinic_number  }}  / Torre: {{clinic.clinic.tower_id}}</v-expansion-panel-header>
+                <v-expansion-panel-header >Consultorio: {{clinic.clinic_number  }}  / Torre: {{clinic.tower_id}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -150,7 +150,7 @@
       'collection-form' : CollectionForm,
     },
     data: () => ({
-      items: ['Diurno', 'Nocturno', 'Extra'],
+      items: ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra'],
       clinics: [], 
       searchTimer: '',
       clinicNumber: '',
@@ -176,25 +176,19 @@
 
     methods: {
       getClinics(){
-        axios.get('/collector/clinics', {
-          params: {
-            clinicNumber: this.clinicNumber,
-            towerNumber: this.towerNumber,
-          }
-        }).then(res => {
-          let iterar = 0;
+        axios.get('/collector/clinics').then(res => {
             this.clinics = res.data.clinics;
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            console.log("Esta es la impresión de consultorios: ",this.clinics);
+            // console.log("Esta es la impresión de consultorios: ",this.clinics);
             res.data.clinics.forEach(clinic => {
-            let aux = {
-                clinic_id: clinic.clinic_id,
+              let aux = {
+                clinic_id: clinic.id,
                 data: [],
                 show: true,
-                towerNumber: clinic.clinic.tower_id,
-                clinicNumber: clinic.clinic.clinic_number,
+                towerNumber: clinic.tower_id,
+                clinicNumber: clinic.clinic_number,
                 
               };
               res.data.residues.forEach(residue => {
