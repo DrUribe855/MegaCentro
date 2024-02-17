@@ -386,6 +386,7 @@
 
       initialize (optionFilter) {
         axios.get('/clinic/generalShow').then(res => {
+          console.log(res.data.responsible);
           if (optionFilter == 0) {
             this.dataBill = res.data.responsible.filter(item => item.clinic_user.length > 0);
             this.desserts = res.data.responsible.map(item => ({ ...item, invoice: 0, position: -1 })).filter(item => item.clinic_user.length > 0);              

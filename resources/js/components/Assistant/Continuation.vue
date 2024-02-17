@@ -534,7 +534,7 @@ export default {
 
             let formattedDate = `${year}-${month}-${day}`;
             for (let i = 0; i < size; i++) {
-                if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined && this.hoursText[i] !== null && this.selectYesOrNot[i] != null) {
+                if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined) {
                     if (this.validateHour(this.hoursText[i])) {
                         data = {
                             'yesOrNot': this.selectYesOrNot[i],
@@ -555,8 +555,6 @@ export default {
                 this.alertFalse("Parece que algo salio mal");
             }else if (typeAlert == 2){
                 this.alertFalse("Parece que algunos campos de la hora son incorrectos");
-            }else{
-                this.alertTrue("Se registraron los datos correctamente")
             }
         },
 
