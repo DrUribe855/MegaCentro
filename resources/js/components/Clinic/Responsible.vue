@@ -378,7 +378,6 @@
         axios.get('/clinic/generalShowClinic').then(res => {
           this.clinics = res.data.clinics;
         }).catch(error => {
-          console.log(error);
         });
         this.infoResponsible = item
         this.dialog = true
@@ -386,7 +385,6 @@
 
       initialize (optionFilter) {
         axios.get('/clinic/generalShow').then(res => {
-          console.log(res.data.responsible);
           if (optionFilter == 0) {
             this.dataBill = res.data.responsible.filter(item => item.clinic_user.length > 0);
             this.desserts = res.data.responsible.map(item => ({ ...item, invoice: 0, position: -1 })).filter(item => item.clinic_user.length > 0);              
@@ -415,8 +413,6 @@
           }
           this.selectedClinic = ''
         }).catch(error => {
-          console.log(error);
-          console.log(error.response);
         });
       },
 
@@ -442,14 +438,14 @@
           number = accounting.formatMoney(number, {
             symbol: '$',
             precision: '3',
-            thousand: '.',
-            decimal: '.'
+            thousand: ',',
+            decimal: ','
           });
         }else{
           number = accounting.formatMoney(number, {
             symbol: '$',
             precision: '',
-            thousand: '.',
+            thousand: ',',
             decimal: ','
           });
         }
@@ -484,7 +480,6 @@
             this.initialize(2);
           }
         }).catch(error => {
-          console.log(error);
           if (error.response.status == 422) {
             this.alertFalse('Parece que el campo agregar cosultorio esta vaío'); 
           }else{
@@ -516,7 +511,6 @@
             this.dialogRegister = false
             this.showFilterClinic = true
           }).catch(error => {
-            console.log(error);
             if (error.response.status == 422) {
               this.alertFalse('Parece que algunos campos estan vaíos'); 
             }else{
