@@ -48,10 +48,10 @@ class ResidueController extends Controller
     public function showContinuation($date){
         $dateTime = DateTime::createFromFormat('Y-n', $date);
         $formattedDate = $dateTime->format('Y-m');
-        $residues = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        $residues = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags, hour, yesOrNot')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->whereHas('collection_logs')
-        ->groupBy('month', 'created_at')
+        ->groupBy('month', 'created_at', 'hour', 'yesOrNot')
         ->get();
 
         $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
@@ -212,15 +212,9 @@ class ResidueController extends Controller
     // Recolecciones almacenadas
     public function showCollectorResidue($typeTable){
         if ($typeTable == 'true') {
-            $records = CollectionLog::whereHas('user', function($query){
-                $query->role('Recolector');
-                $query->whereHas('clinic_user', function($query){
-                    $query->whereHas('clinic');
-                });
-            })
-            ->where('stored_stated', 'ALMACENADO')
-            ->whereHas('clinic')
-            ->with('user', 'clinic')
+            $records = CollectionLog::where('stored_stated', 'ALMACENADO')
+            ->whereNull('collection_date')
+            ->with('clinic')
             ->get();
 
             $records->transform(function ($record) {
@@ -230,15 +224,9 @@ class ResidueController extends Controller
                 return $record;
             });
         }else{
-            $records = CollectionLog::whereHas('user', function($query){
-                $query->role('Recolector');
-                $query->whereHas('clinic_user', function($query){
-                    $query->whereHas('clinic');
-                });
-            })
-            ->where('stored_stated', 'RECOLECTADO')
-            ->whereHas('clinic')
-            ->with('user', 'clinic')
+            $records = CollectionLog::where('stored_stated', 'RECOLECTADO')
+            ->whereNotNull('collection_date')
+            ->with('clinic')
             ->get();
 
             $records->transform(function ($record) {
@@ -271,4 +259,38 @@ class ResidueController extends Controller
 
         return response()->json($data);
     }
+
+    public function registerDateCollector(Request $request, $day){
+        Waste_collection::whereDay('created_at', $day)
+        ->update([
+            'yesOrNot' => $request->input('yesOrNot'),
+            'hour' => $request->input('hour'),
+        ]);
+        
+        $idCollectionLog = Waste_collection::whereHas('collection_logs')
+        ->whereNotNull('hour')
+        ->whereDay('created_at', $day)
+        ->pluck('collection_logs_id');
+
+        $size = count($idCollectionLog);
+
+        for ($i=0; $i < $size ; $i++) { 
+            $update = CollectionLog::find($idCollectionLog[$i]);
+            $update->collection_date = $request->input('date');
+            $update->stored_stated = 'RECOLECTADO';
+            $update->save();
+        };
+
+        $data = [
+            'status' => true,
+            'data' => $idCollectionLog,
+            'yesOrNot' => $request->input('yesOrNot'),
+            'hour' => $request->input('hour'),
+            'date' => $request->input('date'),
+            'day' => $day
+        ];
+
+        return response()->json($data);
+    }   
 }
+

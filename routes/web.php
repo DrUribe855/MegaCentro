@@ -91,6 +91,7 @@ Route::post('/residue/registerCollector/{id}/{date}', [ResidueController::class,
 Route::get('/residue/clinicNumber', [ResidueController::class, 'showClinic']);
 Route::get('/residue/clinicSelected/{date}/{id}', [ResidueController::class, 'showClinicSelected']);
 Route::get('/residue/clinicContinuation/{date}/{id}', [ResidueController::class, 'showClinicConstinuation']);
+Route::post('/residue/registerDateCollector/{day}', [ResidueController::class, 'registerDateCollector']);
 
 
 // ------------------------------- Rutas de precio residuos --------------------------------------- 

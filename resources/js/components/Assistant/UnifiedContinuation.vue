@@ -96,15 +96,15 @@
                                                 <td class="pl-0 pr-1">{{ month }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,0) }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,1) }}</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">BENZALDINA</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">1</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">TERMINCO</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">6:30:00 A.M</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SI</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SI</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">ROJO</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SALUD</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center px-2" v-if="month == 'ENERO'">0</td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center px-2" v-if="month == 'ENERO'"></td>
                                             </tr>
                                             <tr>
                                                 <td class="">TOTAL</td>
