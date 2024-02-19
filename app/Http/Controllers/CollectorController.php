@@ -189,7 +189,8 @@ class CollectorController extends Controller
         
         $clinics = Clinic::get();
 
-        $residues = Residue::get();
+        $NonHazardousWaste = Residue::where('residue_type_id', 1)->get();
+        $HazardousWaste = Residue::where('residue_type_id', 2)->get();
         $currentDate = date('Y-m');
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -197,7 +198,7 @@ class CollectorController extends Controller
         $data = [
             'status' => true,
             'clinics' => $clinics,
-            'residues' => $residues,
+            'residues' => $NonHazardousWaste,
             'year' => $currentYear,
             'month' => $currentMonth,
         ];

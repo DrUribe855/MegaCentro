@@ -110,6 +110,7 @@
                                 :label="residue.residue_name"
                                 v-model="datos[index].data[i].weight"
                                 @change="changeValue()"
+
                               >adasda</v-text-field>
                             </v-col>
                           </v-row>
@@ -181,7 +182,8 @@
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            // console.log("Esta es la impresión de consultorios: ",this.clinics);
+            console.log("Esta es la impresión de consultorios: ",this.clinics);
+            console.log("Esta es la impresión de residuos: ", this.residues);
             res.data.clinics.forEach(clinic => {
               let aux = {
                 clinic_id: clinic.id,
