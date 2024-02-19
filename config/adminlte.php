@@ -355,6 +355,13 @@ return [
             'classes' => 'bg-dark'
         ],
         [
+            'text' => 'Quimicos-respel',
+            'url'  => '/collector/non-hazardous-waste',
+            'icon' => 'fas fa-fw fa-trash',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-dark'
+        ],
+        [
             'text' => 'Lista de consultorios',
             'url'  => '/manager/index',
             'icon' => 'fas fa-fw fa-users',

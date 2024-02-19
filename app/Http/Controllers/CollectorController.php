@@ -22,6 +22,10 @@ class CollectorController extends Controller
         return view('Collector/nonhazardous');
     }
 
+    public function residueChemical(){
+        return view('Collector/residueChemical');
+    }
+
     public function store(Request $request)
     {
         $clinics = $request->datos;
@@ -191,6 +195,7 @@ class CollectorController extends Controller
 
         $NonHazardousWaste = Residue::where('residue_type_id', 1)->get();
         $HazardousWaste = Residue::where('residue_type_id', 2)->get();
+        $residueChemical = Residue::where('residue_type_id', 3)->get();
         $currentDate = date('Y-m');
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -198,7 +203,8 @@ class CollectorController extends Controller
         $data = [
             'status' => true,
             'clinics' => $clinics,
-            'residues' => $NonHazardousWaste,
+            'residues' => $residueChemical,
+            'residueChemical' => $residueChemical,
             'year' => $currentYear,
             'month' => $currentMonth,
         ];
