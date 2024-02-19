@@ -349,11 +349,20 @@ return [
             'classes' => 'bg-dark'
         ],
         [
+
             'text' => 'Residuos biologicos',
             'url'  => '/collector/non-hazardous-waste',
             'icon' => 'fas fa-fw fa-recycle',
             'can' => 'collector.collections.generalShow',
-            'classes' => 'bg-danger'
+            'classes' => 'bg-danger',
+        ],
+        [
+
+            'text' => 'Quimicos-respel',
+            'url'  => '/collector/non-hazardous-waste',
+            'icon' => 'fas fa-fw fa-trash',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-dark'
         ],
         [
             'text' => 'Lista de consultorios',
