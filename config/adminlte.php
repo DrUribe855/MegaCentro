@@ -338,21 +338,22 @@ return [
         [
             'text' => 'RH Continuación',
             'url'  => '/assistant/continuation',
-            'can' => 'collector.rhContinuation.view'
-        ],
-        [
-            'text' => 'Residuos peligrosos',
-            'url'  => '/collector/index',
-            'icon' => 'fas fa-fw fa-trash',
-            'can' => 'collector.collections.generalShow',
-            'classes' => 'bg-danger'
+            'can' => 'collector.rhContinuation.view',
+            'icon' => 'fas-fg-fw fa-list-check',
         ],
         [
             'text' => 'Residuos no peligrosos',
-            'url'  => '/collector/non-hazardous-waste',
+            'url'  => '/collector/index',
             'icon' => 'fas fa-fw fa-trash',
             'can' => 'collector.collections.generalShow',
             'classes' => 'bg-dark'
+        ],
+        [
+            'text' => 'Residuos biologicos',
+            'url'  => '/collector/non-hazardous-waste',
+            'icon' => 'fas fa-fw fa-recycle',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-danger'
         ],
         [
             'text' => 'Lista de consultorios',

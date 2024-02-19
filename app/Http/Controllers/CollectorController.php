@@ -180,6 +180,8 @@ class CollectorController extends Controller
         //
     }
 
+    // Función para traer las consultorios registrados en el sistema y los residuos.
+
     public function getClinics(Request $request){
 
         $clinicNumber = $request->clinicNumber;
@@ -189,8 +191,8 @@ class CollectorController extends Controller
         
         $clinics = Clinic::get();
 
-        $NonHazardousWaste = Residue::where('residue_type_id', 1)->get();
-        $HazardousWaste = Residue::where('residue_type_id', 2)->get();
+        $nonHazardousWaste = Residue::where('residue_type_id', 1)->get();
+        $hazardousWaste = Residue::where('residue_type_id', 2)->get();
         $currentDate = date('Y-m');
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -198,7 +200,8 @@ class CollectorController extends Controller
         $data = [
             'status' => true,
             'clinics' => $clinics,
-            'residues' => $NonHazardousWaste,
+            'residues' => $nonHazardousWaste,
+            'hazardouswaste' => $hazardousWaste,
             'year' => $currentYear,
             'month' => $currentMonth,
         ];

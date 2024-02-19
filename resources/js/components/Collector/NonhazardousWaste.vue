@@ -177,11 +177,14 @@
     methods: {
       getClinics(){
         axios.get('/collector/clinics').then(res => {
+
             this.clinics = res.data.clinics;
-            this.residues = res.data.residues;
+            this.residues = res.data.hazardouswaste;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
             console.log("Esta es la impresión de consultorios: ",this.clinics);
+            console.log("Esta es la impresión de residuos: ", this.residues);
+
             res.data.clinics.forEach(clinic => {
               let aux = {
                 clinic_id: clinic.id,
@@ -191,7 +194,7 @@
                 clinicNumber: clinic.clinic_number,
                 
               };
-              res.data.residues.forEach(residue => {
+              res.data.hazardouswaste.forEach(residue => {
                 aux.data.push({
                     residue_id: residue.id,
                     weight: 0,
