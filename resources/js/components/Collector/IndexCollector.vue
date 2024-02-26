@@ -91,10 +91,10 @@
           </v-form>
         </div>
         <div>
-          <div v-for="(clinic, index) in clinics" class="mt-3">
+          <div v-for="(panel, indexLocalStorage) in filteredPanels"  :key="indexLocalStorage" class="mt-3">
             <v-expansion-panels>
-              <v-expansion-panel v-if="datos[index].show">
-                <v-expansion-panel-header >Consultorio: {{clinic.clinic_number  }}  / Torre: {{clinic.tower_id}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="datos[indexLocalStorage2+indexLocalStorage].show">
+                <v-expansion-panel-header >Consultorio: {{panel.clinic_number  }}  / Torre: {{panel.tower_id}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -108,10 +108,9 @@
                             >
                               <v-text-field
                                 :label="residue.residue_name"
-                                v-model="datos[index].data[i].weight"
+                                v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].weight"
                                 @change="changeValue()"
-
-                              >adasda</v-text-field>
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                       </div>
@@ -125,7 +124,7 @@
                           >
                             <v-text-field
                               :label="residue.residue_name"
-                              v-model="datos[index].data[i].bags"
+                              v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].bags"
                               @change="changeValue()"
                             ></v-text-field>
                           </v-col>
@@ -137,6 +136,7 @@
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
+          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -151,7 +151,10 @@
       'collection-form' : CollectionForm,
     },
     data: () => ({
+      currentPage: 1,
+      itemsPerPage: 15,
       items: ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra'],
+      indexLocalStorage: 0,
       clinics: [], 
       searchTimer: '',
       clinicNumber: '',
@@ -166,13 +169,26 @@
     }),
 
     computed: {
-
+      paginationRange() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage - 1;
+      return { startIndex, endIndex };
+      },
+      filteredPanels() {
+        let datos = this.clinics.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
+        this.indexLocalStorage = this.paginationRange.startIndex;
+        console.log(this.datos);
+        return datos;
+      },
+      indexLocalStorage2() {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage - 1;
+        return startIndex;
+      },
     },
     created () {
       this.getClinics();
       this.filterClinics();
-
-
     },
 
     methods: {
@@ -339,6 +355,12 @@
             localStorage.setItem("collectionData", JSON.stringify(this.datos));
           }
         }
+      },
+      nextPage() {
+        this.currentPage++;
+      },
+      previousPage() {
+        this.currentPage--;
       }
     },
   }

@@ -351,7 +351,7 @@ return [
         [
 
             'text' => 'Residuos biologicos',
-            'url'  => '/collector/non-hazardous-waste',
+            'url'  => '/collector/non-hazardous-wast',
             'icon' => 'fas fa-fw fa-recycle',
             'can' => 'collector.collections.generalShow',
             'classes' => 'bg-danger',
@@ -362,7 +362,7 @@ return [
             'url'  => '/collector/non-hazardous-waste',
             'icon' => 'fas fa-fw fa-trash',
             'can' => 'collector.collections.generalShow',
-            'classes' => 'bg-dark'
+            'classes' => 'bg-danger'
         ],
         [
             'text' => 'Lista de consultorios',

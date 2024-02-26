@@ -14,13 +14,20 @@ use Illuminate\Support\Facades\Auth;
 class CollectorController extends Controller
 {
     
+    // Vista de residuos no peligrosos
+
     public function index(){
         return view('Collector/index');
     }
 
+    // Vista de residuos biologicos
+
     public function noHazardousView(){
         return view('Collector/nonhazardous');
     }
+
+
+    //Vista de residuos: Quimicos - Respel
 
     public function residueChemical(){
         return view('Collector/residueChemical');
@@ -39,6 +46,7 @@ class CollectorController extends Controller
             $result = $this->collectionValidate($clinics);
             if($result === true){
                 foreach ($clinics as $key => $clinic) {
+                    // return $clinics[1];
                     if(!$this->collectionExists($general_data, $clinic)){
                         if($this->clinicValidate($clinic)){
                             if($general_data["schedule"] == 'Extra - 6:00 AM'){
@@ -74,11 +82,13 @@ class CollectorController extends Controller
                             $data = [
                                 'message' => 'Recolección registrada',
                                 'status' => true,
+                                'datos' => $clinics,    
                             ];
-                            return response()->json($data);
                         }
                     }
                 }
+
+                return response()->json($data);
             }else{
                 $data = [
                     'message' => 'Datos incompletos',
@@ -99,6 +109,8 @@ class CollectorController extends Controller
         
             
     }
+
+
 
     public function dateValidations($general_data, $anioActual){
 
@@ -146,6 +158,8 @@ class CollectorController extends Controller
         return true;
     }
 
+    // Funcion para validar que los campos se encuentren diligenciados
+
     public function clinicValidate($clinic){
         foreach ($clinic["data"] as $key => $residue) {
             if($residue["weight"] != 0 && $residue["bags"] != 0){
@@ -155,6 +169,8 @@ class CollectorController extends Controller
 
         return false; 
     }
+
+    // Función para validar la existencia de una recolección
 
     public function collectionExists($date, $clinic){
 
@@ -198,7 +214,7 @@ class CollectorController extends Controller
 
         $nonHazardousWaste = Residue::where('residue_type_id', 1)->get();
         $hazardousWaste = Residue::where('residue_type_id', 2)->get();
-        $residueChemical = Residue::where('residue_type_id', 3)->get();
+        $residueChemical = Residue::whereIn('residue_type_id', [3, 4])->get();
         $currentDate = date('Y-m');
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -216,6 +232,8 @@ class CollectorController extends Controller
 
         return response()->json($data);
     }
+
+    // Funcion para traer el rol del usuario
 
     public function getUserRole(){
 

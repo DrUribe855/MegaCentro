@@ -69,7 +69,7 @@ Route::post('/residue/payBill/{id}', [ClinicController::class, 'payBill']);
 // ----------------------------- Rutas de recolector --------------------------------- \\
 
 Route::get('/collector/index', [ CollectorController::class, 'index'])->middleware('can:collector.collections.generalShow');
-Route::get('/collector/non-hazardous-waste', [CollectorController::class, 'noHazardousView']);
+Route::get('/collector/non-hazardous-wast', [CollectorController::class, 'noHazardousView']);
 Route::get('/collector/non-hazardous-waste', [CollectorController::class, 'residueChemical']);
 Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
 Route::post('/collector/saveCollection', [ CollectorController::class, 'store']);

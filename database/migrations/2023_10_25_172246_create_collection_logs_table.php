@@ -19,7 +19,7 @@ return new class extends Migration
             $table->Integer('year');
             $table->date('collection_date')->nullable();
             $table->enum('stored_stated', ['ALMACENADO', 'RECOLECTADO']); // Estado del almacenado
-            $table->enum('schedule', ['Extra - 6:00 AM','Diurno', 'Nocturno', 'Extra']);
+            $table->enum('schedule', ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra']);
             $table->enum('invoice_status', ['Debe', 'Pago']);
             $table->timestamps();
             
