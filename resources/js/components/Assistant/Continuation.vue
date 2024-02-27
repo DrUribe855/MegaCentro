@@ -333,6 +333,7 @@ export default {
                     this.total_temp = this.total;
                     this.changeData();
                 }).catch(error => {
+                    console.log(error.response);
                 });
             }
         },
@@ -497,7 +498,6 @@ export default {
             }
             this.clinicInitialize(this.clinic);
         },
-<<<<<<< HEAD
         getuserRole(){
             axios.get('/collector/getRole').then(res => {
                 console.log("Respuesta del servidor");
@@ -514,8 +514,7 @@ export default {
                 console.log(error);
                 console.log(error.response);
             })
-        }
-=======
+        },
 
         uperCaseText(text,position){
             return this.hoursText[position] = text.toUpperCase();
@@ -580,7 +579,6 @@ export default {
                 icon: "error",
             });
         },
->>>>>>> c55c2848e257b9e15bcccc4c9364fc3664d270e3
     }
 }
 </script>
