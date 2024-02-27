@@ -105,7 +105,6 @@
                 tittle: 'Residuos almacenados',
                 headers: [
                     { text: 'N consultorio', value: 'clinic.clinic_number' },
-                    { text: 'Recolector', value: 'user.document' },
                     { text: 'Días almacenado', value: 'storeTime' },
                     { text: 'Fecha recoleccion', value: 'date' },
                     { text: 'Estado almacenamiento', value: 'stored_stated' },
@@ -113,7 +112,6 @@
                 desserts: [],
                 headersCollected: [
                     { text: 'N consultorio', value: 'clinic.clinic_number' },
-                    { text: 'Recolector', value: 'user.document' },
                     { text: 'Días almacenado', value: 'storeTime' },
                     { text: 'Fecha recoleccion', value: 'date' },
                     { text: 'Fecha retiro residuo', value: 'collection_date' },
@@ -137,14 +135,8 @@
                     console.log(res.data);
                     if (typeTable) {
                         this.desserts = res.data.records.map(item => ({ ...item, positionId: this.generateUniqueId(), storeTime: this.setToday(res.data.records[this.positionTime]) }));
-                        if (res.data.records.length == 0) {
-                            this.alertFalse("No existen residuos almacenados");
-                        }
                     }else{
                         this.dessertsCollected = res.data.records.map(item => ({ ...item, positionId: this.generateUniqueId(), storeTime: this.setToday(res.data.records[this.positionTime]) }));
-                        if (res.data.records.length == 0) {
-                            this.alertFalse("No existen residuos retirados");
-                        }
                     }
                 }).catch(error => {
                     console.log("Error en servidor");
@@ -194,15 +186,16 @@
 
             setToday (position) {
                 this.positionTime++;
+                let firstDate = "";
+                let secondDate = "";
                 if (position.collection_date != null) {
-                    const firstDate = new Date(position.collection_date);
-                    const secondDate = new Date(position.date);
-                    return Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
+                    firstDate = new Date(position.collection_date);
+                    secondDate = new Date(position.date);
                 }else{
-                    const firstDate = moment().toDate(); 
-                    const secondDate = moment(position.date, 'YYYY-MM-DD').toDate();
-                    return Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
+                    firstDate = moment().toDate(); 
+                    secondDate = moment(position.date, 'YYYY-MM-DD').toDate();
                 }
+                return Math.floor((firstDate - secondDate) / (1000 * 60 * 60 * 24));
             },
 
             changeDate(){

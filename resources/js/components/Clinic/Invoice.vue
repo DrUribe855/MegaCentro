@@ -2,9 +2,9 @@
     <div>
         <v-app>
             <v-main>
-                <h5 class="mx-4 mt-4 mb-0">{{ title }}</h5>
+                <h5 class="text-center mx-4 mt-4 mb-0">{{ title }}</h5>
                 <v-card-title>
-                    {{ infoUser.document }}
+                    Responsable: {{ infoUser.document }}
                     <v-spacer></v-spacer>
                     <v-text-field
                         v-model="search"
@@ -25,42 +25,102 @@
                         </v-icon>
                         {{ changeTable }}
                     </v-btn>
-                </v-card-title>
+                </v-card-title> 
                 <template>
                     <!-- Tabla de las facturas no pagadas -->
-                    <v-data-table
-                        v-if="showBtn"
-                        v-model="selected"
-                        :search="search"
-                        :headers="headers"
-                        :items="desserts"
-                        item-key="positionId"
-                        show-select
-                        class="elevation-1 mt-5"
-                        sort-by="calories">
-                        <template v-slot:top>
-                            <v-toolbar flat>
-                                <v-toolbar-title>Total: {{ price }}</v-toolbar-title>
-                                <v-divider
-                                    class="mx-4"
-                                    inset
-                                    vertical
-                                ></v-divider>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    v-if="showBtn"
-                                    color="primary"
-                                    dark
-                                    class="mb-2 ml-4"
-                                    @click="payBill">
-                                    <v-icon dark>
-                                        mdi-currency-usd
-                                    </v-icon>
-                                    Pagar
-                                </v-btn>
-                            </v-toolbar>
-                        </template>
-                    </v-data-table>
+                    <v-toolbar flat>
+                        <v-toolbar-title>Total: {{ price }}</v-toolbar-title>
+                        <v-divider
+                            class="mx-4"
+                            inset
+                            vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            v-if="showBtn"  
+                            class="mb-2 ml-4"
+                            color="green"
+                            dark
+                            @click="exportToExcel">
+                            <v-icon
+                                left>
+                                mdi-content-save
+                            </v-icon>
+                            EXCEL
+                        </v-btn>
+                        <div v-if="!showTable">
+                            <v-btn
+                                v-if="showBtn"
+                                color="primary"
+                                dark
+                                class="mb-2 ml-4"
+                                @click="payBill">
+                                <v-icon dark>
+                                    mdi-currency-usd
+                                </v-icon>
+                                Pagar
+                            </v-btn>
+                        </div>
+                        <div v-if="showTable">
+                            <v-btn
+                                v-if="showBtn"
+                                color="primary"
+                                dark
+                                class="mb-2 ml-4"
+                                @click="changeTableExcel">
+                                <v-icon dark>
+                                    mdi-currency-usd
+                                </v-icon>
+                                Realizar pagos
+                            </v-btn>
+                        </div>
+                    </v-toolbar>
+                    <div ref="tableContainer">
+                        <table id="table" class="table table-bordered" v-if="showTable">
+                            <thead>
+                                <tr class="text-center">
+                                    <th colspan="5">Facturas</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">N Consultorio</th>
+                                    <th class="text-center">Peso recolectado</th>
+                                    <th class="text-center">Pago total</th>
+                                    <th class="text-center">Estado factura</th>
+                                    <th class="text-center">Fecha recoleccion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="list in desserts">
+                                    <td class="text-center">{{ list.clinic_number }}</td>
+                                    <td class="text-center">{{ list.totalWeight }}</td>
+                                    <td class="text-center">{{ list.totalInvoice }}</td>
+                                    <td class="text-center">{{ list.invoice_status }}</td>
+                                    <td class="text-center">{{ list.created_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total:</td>
+                                    <td colspan="4">{{ price }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Responsable:</td>
+                                    <td colspan="4">{{ infoUser.document }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-if="!showTable">
+                            <v-data-table
+                                v-if="showBtn"
+                                v-model="selected"
+                                :search="search"
+                                :headers="headers"
+                                :items="desserts"
+                                item-key="positionId"
+                                show-select
+                                class="elevation-1 mt-5"
+                                sort-by="calories">
+                            </v-data-table>
+                        </div>
+                    </div>
                     <!-- Tabla de pagos -->
                     <v-data-table
                         v-if="!showBtn"
@@ -69,17 +129,6 @@
                         :headers="headers"
                         :items="desserts"
                         class="elevation-1 mt-5">
-                        <template v-slot:top>
-                            <v-toolbar flat>
-                                <v-toolbar-title>Total: {{ price }}</v-toolbar-title>
-                                <v-divider
-                                    class="mx-4"
-                                    inset
-                                    vertical
-                                ></v-divider>
-                                <v-spacer></v-spacer>
-                            </v-toolbar>
-                        </template>
                     </v-data-table>
                 </template>
                 <v-card-actions class="d-flex justify-left align-left">
@@ -106,6 +155,7 @@
 
 <script>
     import accounting from 'accounting'
+    import * as XLSX from 'xlsx/xlsx.mjs';
     export default {
         props: ['responsible'],
         data () {
@@ -119,6 +169,7 @@
                 position: '',
                 singleSelect: false,
                 showBtn: true,
+                showTable: true,
                 selected: [],
                 headers: [
                     { text: 'N Consultorio', value: 'clinic_number' },
@@ -143,7 +194,6 @@
         methods: {
             initialize(){
                 this.desserts = [];
-                console.log(this.infoUser);
                 let prueba = 0;
                 for (let i = 0; i < this.infoUser.clinic_user.length; i++) {
                     for (let j = 0; j < this.infoUser.clinic_user[i].clinic.collection_log.length; j++) {
@@ -176,18 +226,15 @@
                         this.desserts.push(dessertsTemp);
                     }
                 }
-                console.log(prueba);
             },
 
             payBill(){// Pagar factura
-                console.log(this.selected);
                 let alert = true;
                 this.cleanData = this.selected.length;
                 if (this.selected.length != 0) {
                     for (let i = 0; i < this.selected.length; i++) {
                         axios.post(`/residue/payBill/${this.selected[i].id}`).then(res => {
                             this.price = this.foramat(this.price.replace(/\D/g, '') - this.selected[i].totalInvoice.replace(/\D/g, ''));
-                            console.log(this.price ," -- ",this.selected[i].totalInvoice);
                             this.cleanData--;
                             if (alert) {
                                 this.title = 'Facturas pagadas';
@@ -198,8 +245,6 @@
                             }
                             alert = false;
                         }).catch(error => {
-                            console.log(error);
-                            console.log(error.response);
                             this.alertFalse("Parece que algo salio mal");
                         });
                     }
@@ -209,7 +254,6 @@
             },
 
             billsPaid(status){
-                console.log(this.cleanData); 
                 if (this.cleanData == 0) {
                     this.selected = [];
                 }
@@ -218,8 +262,6 @@
                     this.infoUser = res.data.responsible[0];
                     this.initialize();
                 }).catch(error => {
-                    console.log(error);
-                    console.log(error.response);
                     this.alertFalse("Parece que algo salio mal");
                 });
             },
@@ -229,15 +271,15 @@
                     number = accounting.formatMoney(number, {
                         symbol: '$',
                         precision: '3',
-                        thousand: '.',
-                        decimal: '.'
+                        thousand: ',',
+                        decimal: ','
                     });
                 }else{
                     number = accounting.formatMoney(number, {
                         symbol: '$',
                         precision: '',
-                        thousand: '.',
-                        decimal: '.'
+                        thousand: ',',
+                        decimal: ','
                     });
                 }
                 return number;
@@ -264,10 +306,10 @@
             },
                 
             changeView(){
-                console.log(this.changeTable);
                 if (this.changeTable == 'Facturas pagas' ) {
                     this.title = 'Facturas pagadas';
                     this.showBtn = false;
+                    this.showTable = false;
                     this.changeTable = 'Facturas recolecion';
                     this.billsPaid('Pago');
                 }else if (this.changeTable == 'Facturas recolecion'){
@@ -275,8 +317,19 @@
                     this.title = 'Facturas por recolecciones';
                     this.changeTable = 'Facturas pagas';
                     this.showBtn = true;
+                    this.showTable = true;
                     this.billsPaid('Debe');
                 }
+            },
+
+            exportToExcel() {
+                var table_elt = document.getElementById("table");
+                var workbook = XLSX.utils.table_to_book(table_elt);
+                XLSX.writeFile(workbook, 'Factura.xlsx');
+            },
+
+            changeTableExcel(){
+                this.showTable = false;
             },
         }
     }

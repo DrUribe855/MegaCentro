@@ -4,7 +4,7 @@
             <v-main>
                 <v-card>
                     <v-card-title>
-                        {{ infoUser.document }}
+                        Responsable: {{ infoUser.document }}
                         <v-spacer></v-spacer>
                         <v-text-field
                             v-model="search"
@@ -152,9 +152,8 @@
                                             sm="6"
                                             md="4">
                                             <v-text-field
-                                                type="number"
                                                 v-model="editedItem.clinic_number"
-                                                label="Numero Clinica"
+                                                label="Numero clinica o local"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col
@@ -329,27 +328,19 @@
 
         created(){
             this.infoUser = this.clinic
-            console.log("infoUser ",this.infoUser);
             this.initialize()
         },
 
         methods: {
             initialize(){
                 axios.post(`/clinic/infoClinic/${this.infoUser.id}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de ventana ",res.data);
                     this.desserts = res.data.clinic;
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
             },
 
             infoPersonnel(item, option){
                 axios.get(`/clinic/consultation/${item.id}/${option}`).then(res => {
-                    console.log("Respuesta del servidor dueño o recolenctor");
-                    console.log("Datos de tabla",res.data);
                     if (option == 1) {
                         this.titlePersonnel = 'Dueño'
                         this.clinicPersonner = res.data.infoClinic  
@@ -359,9 +350,6 @@
                     }
                     this.dialog = true
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
                 this.dataClinic = item
             },
@@ -390,7 +378,6 @@
                     validate = false
                 }
                 if (validate) {
-                    console.log(this.editedItem);
                     swal({
                         title: "Quiere editar este consultorio?",
                         text: "Los cambios se aplicaran permanentemente!",
@@ -400,8 +387,6 @@
                     }).then((willDelete) => {
                         if (willDelete) {
                             axios.put(`/clinic/update/${this.editedItem.id}`, {data: this.editedItem}).then(res => {
-                                console.log("Respuesta del servidor");
-                                console.log(res.data);
                                 this.initialize();
                                 this.dialogEdit= false
                                 swal(
@@ -410,9 +395,6 @@
                                     'success'
                                 )
                             }).catch(error => {
-                                console.log("Error en servidor");
-                                console.log(error);
-                                console.log(error.response);
                             });
                         }
                     })
@@ -422,8 +404,6 @@
 
             showUser(title){
                 axios.get('/clinic/consultationUser').then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("datos ",res.data);
                     if (title == 'Dueño') {
                         this.title = 'dueño'
                         this.textLable = 'Agregar Dueño'
@@ -433,12 +413,8 @@
                         this.textLable = 'Agregar Recolector'
                         this.user = res.data.infoClinicCollector   
                     }
-                    console.log("Dueños ",this.user);
                     this.showAdd = true
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
             },
 
@@ -448,8 +424,6 @@
             },
             
             saveUser(){
-                console.log(this.selectedUser);
-                console.log(this.dataClinic.id);
                 var status = 0;
                 if (this.titlePersonnel == 'Dueño') {
                     status = 1;
@@ -462,8 +436,6 @@
                     'status': status,
                 }
                 axios.post('/clinic/addUser', data).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de agregar consultorio ",res.data);
                     if (res.data.status == false) {
                         if (this.titlePersonnel == 'Dueño') {
                             this.alertFalse('Parece que el dueño ya tiene este consultorio');
@@ -482,9 +454,6 @@
                     }
                     this.selectedUser = ''
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                     if (error.response.status == 422) {
                         if (this.titlePersonnel == 'Dueño') {
                             this.alertFalse('Parece que el campo agregar dueño estan vacío');
@@ -517,8 +486,6 @@
                 }).then((willDelete) => {
                     if (willDelete) {
                         axios.post(`/clinic/deleteUser/${role}`, item).then(res => {
-                            console.log("Respuesta del servidor");
-                            console.log("Datos de delete ",res.data);
                             if (this.titlePersonnel == 'Dueño') {
                                 this.clinicPersonner = res.data.users
                             }else if(this.titlePersonnel == 'Recolector'){
@@ -530,14 +497,9 @@
                                 `Se quito el ${message} del la lista de ${role}`,
                                 'success'
                             )
-                            console.log("filtro ",this.titlePersonnel);
                         }).catch(error => {
-                            console.log("Error en servidor");
-                            console.log(error);
-                            console.log(error.response);
                             this.alertFalse('Parece que algo salio mal')
                         });
-                        console.log("item ",item);
                     }
                 })
             },

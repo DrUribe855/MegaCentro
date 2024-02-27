@@ -79,9 +79,8 @@
                                                 sm="6"
                                                 md="4">
                                                 <v-text-field
-                                                    type="number"
                                                     v-model="editedItem.clinic_number"
-                                                    label="Numero Consultorio"
+                                                    label="Numero consultorio o local"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -159,9 +158,8 @@
                                         md="4"
                                         >
                                         <v-text-field
-                                            type="number"
                                             v-model="registerClinic.clinic_number"
-                                            label="Numero Consultorio"
+                                            label="Numero consultorio o local"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col
@@ -276,21 +274,15 @@
         },
 
         created () {
-            console.log("05",this.selectedFilter);
             this.initialize(1)
         },
 
         methods: {
             initialize (tower) {
                 axios.get(`/clinic/showTower/${tower}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log(res.data);
                     this.desserts = res.data.tower
                     this.selectedFilter = ''
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
             },
 
@@ -304,18 +296,15 @@
                 }else if (this.selectedFilter == 'TORRE #2') {
                     this.initialize(2)
                 }
-                console.log("Filtro seleccionado ",this.selectedFilter);
             },
 
             showInfoEdit(item){
                 this.editedIndex = this.desserts.indexOf(item)
                 this.editedItem = Object.assign({}, item)
-                console.log("03 ",this.editedItem);
                 this.dialogEdit = true
             },
 
             save () {
-                console.log(this.editedItem)
                 var validate = true;
                 if (this.editedItem.clinic_number == "") {
                     this.alertFalse('Parece que el campo numero consultorio esta vacío');
@@ -337,18 +326,12 @@
                     }).then((willDelete) => {
                         if (willDelete) {
                             axios.put(`/clinic/update/${this.editedItem.id}`, {data: this.editedItem}).then(res => {
-                                console.log("Respuesta del servidor");
-                                console.log(res.data);
-                                console.log(this.editedItem);
                                 this.initialize(this.editedItem.tower_id);
                                 this.dialogEdit = false
                                 swal("Se edito correctamente el consultorio!", {
                                     icon: "success",
                                 });
                             }).catch(error => {
-                                console.log("Error en servidor");
-                                console.log(error);
-                                console.log(error.response);
                             });   
                         }
                     });
@@ -367,9 +350,7 @@
             },
 
             saveRegister(){
-                console.log("Registro", this.registerClinic);
                 var validate = true;
-                console.log("registrar consultorio ",this.registerClinic);
                 if (this.registerClinic.clinic_number == "") {
                     this.alertFalse('Parece que el campo numero consultorio esta vacío');
                     validate = false 
@@ -382,17 +363,12 @@
                 }
                 if (validate == true) {
                     axios.post('/clinic/register', this.registerClinic).then(res => {
-                        console.log("Respuesta del servidor");
-                        console.log("Datos de registrar consultorio ",res.data.clinic);
                         this.alertTrue(`Se registro el consultorio ${res.data.clinic.clinic_number} correctamente!`);
                         this.dialogRegister = false
                         this.showFilterClinic = true
                         this.initialize(res.data.clinic.tower_id)
                         this.registerClinic = {}
                     }).catch(error => {
-                        console.log("Error en servidor");
-                        console.log(error);
-                        console.log(error.response);
                         if (error.response.status == 422) {
                           this.alertFalse('Parece que algunos campos estan vaíos'); 
                         }else{

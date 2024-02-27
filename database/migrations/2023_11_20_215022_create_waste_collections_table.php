@@ -15,7 +15,9 @@ return new class extends Migration
             $table->float('weight');
             $table->Integer('garbage_bags');
             $table->timestamps();
-
+            $table->enum('yesOrNot', ['','Si', 'No'])->nullable();
+            $table->string('hour')->nullable();
+            
             $table->foreign('collection_logs_id')->references('id')->on('collection_logs');
             $table->foreign('id_residue')->references('id')->on('residues');
         });

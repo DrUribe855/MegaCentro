@@ -103,9 +103,8 @@
                               sm="6"
                               md="4">
                               <v-text-field
-                                type="number"
                                 v-model="registerClinic.clinic_number"
-                                label="Numero Consultorio"
+                                label="Número consultorio o local"
                               ></v-text-field>
                             </v-col>
                             <v-col
@@ -379,7 +378,6 @@
         axios.get('/clinic/generalShowClinic').then(res => {
           this.clinics = res.data.clinics;
         }).catch(error => {
-          console.log(error);
         });
         this.infoResponsible = item
         this.dialog = true
@@ -415,8 +413,6 @@
           }
           this.selectedClinic = ''
         }).catch(error => {
-          console.log(error);
-          console.log(error.response);
         });
       },
 
@@ -442,14 +438,14 @@
           number = accounting.formatMoney(number, {
             symbol: '$',
             precision: '3',
-            thousand: '.',
-            decimal: '.'
+            thousand: ',',
+            decimal: ','
           });
         }else{
           number = accounting.formatMoney(number, {
             symbol: '$',
             precision: '',
-            thousand: '.',
+            thousand: ',',
             decimal: ','
           });
         }
@@ -484,7 +480,6 @@
             this.initialize(2);
           }
         }).catch(error => {
-          console.log(error);
           if (error.response.status == 422) {
             this.alertFalse('Parece que el campo agregar cosultorio esta vaío'); 
           }else{
@@ -516,7 +511,6 @@
             this.dialogRegister = false
             this.showFilterClinic = true
           }).catch(error => {
-            console.log(error);
             if (error.response.status == 422) {
               this.alertFalse('Parece que algunos campos estan vaíos'); 
             }else{

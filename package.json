@@ -28,6 +28,7 @@
         "sweetalert": "^2.1.2",
         "vue-paginate": "^2.1.0",
         "vue-template-compiler": "^2.6.12",
-        "vuetify": "^2.7.1"
+        "vuetify": "^2.7.1",
+        "xlsx": "^0.18.5"
     }
 }

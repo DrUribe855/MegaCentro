@@ -55,7 +55,7 @@
                   <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text" @click="pdf">
                     PDF
                     <v-icon right dark>
-                      mdi-cloud-upload
+                      mdi-content-save
                     </v-icon>
                   </v-btn>
                 </div>
@@ -286,13 +286,8 @@
     methods: {
       clinicNumber() {
         axios.get('/residue/clinicNumber').then(res => {
-          console.log("Respuesta del servidor");
-          console.log("Datos de consulta ", res.data);
           this.items = res.data.clinic;
         }).catch(error => {
-          console.log("Error en servidor");
-          console.log(error);
-          console.log(error.response);
         });
       },
 
@@ -335,11 +330,8 @@
       },
 
       initialize(date){
-        console.log("date ", date);
         if (date != '') {
           axios.get(`/residue/generalShow/${date}`).then(res =>{
-            console.log("Respuesta del servidor");
-            console.log("Datos de consulta ",res.data);
             this.total_weight = res.data.total;
             this.total_weight_temp = this.total_weight;
             this.list_residues = res.data.residues;
@@ -349,9 +341,6 @@
             this.index = res.data.date;
             this.changeData();
           }).catch(error => {
-            console.log("Error en servidor");
-            console.log(error);
-            console.log(error.response);
           });
         }
       },
@@ -359,16 +348,10 @@
       clinicInitialize(id) {
         if (this.dateAxios != '' && id != '') {
           axios.get(`/residue/clinicSelected/${this.dateAxios}/${id}`).then(res => {
-            console.log("Respuesta del servidor");
-            console.log("Datos de consulta ", res.data);
             this.list_residues_clinic = res.data.clinicResidue;
             this.total_weight_clinic = res.data.totalClinic;
             this.changeData();
           }).catch(error => {
-            console.log("Error en servidor");
-            console.log("000 ", id);
-            console.log(error);
-            console.log(error.response);
           });
         }
       },
@@ -380,7 +363,6 @@
         } else {
           this.list_residues = this.list_residues_clinic;
           this.total_weight = this.total_weight_clinic;
-          console.log("02 ", this.list_residues);
         }
         this.getResidueValue();
       },
@@ -410,7 +392,6 @@
       },
 
       getResidueValue() {
-        console.log("01 ", this.total_weight);
         this.data_total = [];
         for (let i = 0; i < this.residueIds.length; i++) {
           if (!this.data_total[i]) {
@@ -472,7 +453,6 @@
           this.position = '0'+this.position--;
         }
         this.dateAxios = year+'-'+this.position;
-        console.log("FECHA ",this.dateAxios);
         this.initialize(this.dateAxios);
         this.clinicInitialize(this.clinic);
       },
@@ -495,7 +475,6 @@
         this.dateAxios = year+'-'+this.position;
         this.initialize(this.dateAxios);
         this.clinicInitialize(this.clinic);
-        console.log(this.date);
       },
 
       mounted() {
