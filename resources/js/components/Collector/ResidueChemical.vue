@@ -187,7 +187,7 @@
       },
     },
     created () {
-      storage.removeItem('collectionData');
+      //storage.removeItem('collectionData');
       this.getClinics();
       this.filterClinics();
 
