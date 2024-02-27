@@ -20,7 +20,7 @@
                                 Ahora esta en el formualario general
                             </v-alert>
                         </v-container>
-                        <v-toolbar flat>
+                        <v-toolbar flat class="mb-6">
                             <div class="row">
                                 <div>
                                     <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
@@ -57,7 +57,7 @@
                                     @click="pdf">
                                     PDF
                                     <v-icon right dark>
-                                        mdi-cloud-upload
+                                        mdi-file-download
                                     </v-icon>
                                 </v-btn>
                             </div>
@@ -65,38 +65,52 @@
                             <v-menu bottom right>
                             </v-menu>
                         </v-toolbar>
-                        <div class="m-6" style="width: 200px !important;">
-                            <v-autocomplete v-if="!alert" 
-                                v-model="clinic" 
-                                :items="items" 
-                                label="Consultorio"
-                                @input="clinicSelected()"
-                                item-text="clinic_number"
-                                item-value='id'>
-                            </v-autocomplete>
-                            <v-btn
-                                v-if="!alert"
-                                class="ma-2"
-                                color="primary"
-                                dark
-                                @click="mounted(), alert = true, changeData(), showAlert = false">
-                                <v-icon
+                        <div class="col-6 m-6 row">
+                            <div class="col-12 col-sm-6" style="width: 200px !important;">
+                                <v-autocomplete v-if="!alert" 
+                                    v-model="clinic" 
+                                    :items="items" 
+                                    label="Consultorio"
+                                    @input="clinicSelected()"
+                                    item-text="clinic_number"
+                                    item-value='id'>
+                                </v-autocomplete>
+                                <v-btn
+                                    v-if="!alert"
+                                    class="ma-2"
+                                    color="primary"
                                     dark
-                                    left>
-                                    mdi-arrow-left
-                                </v-icon>
-                                volver
-                            </v-btn>
-                            <v-btn
-                                v-if="alert"
-                                color="primary"
-                                @click="mounted(), alert = !alert, showAlert = !showAlert, changeData()">
-                                <v-icon
-                                    left>
-                                    fas fa-search
-                                </v-icon>
-                                Consultorios
-                            </v-btn>
+                                    @click="mounted(), alert = true, changeData(), showAlert = false">
+                                    <v-icon
+                                        dark
+                                        left>
+                                        mdi-arrow-left
+                                    </v-icon>
+                                    volver
+                                </v-btn>
+                                <v-btn
+                                    v-if="alert"
+                                    color="primary"
+                                    @click="mounted(), alert = !alert, showAlert = !showAlert, changeData()">
+                                    <v-icon
+                                        left>
+                                        fas fa-search
+                                    </v-icon>
+                                    Consultorios
+                                </v-btn>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <v-btn
+                                    color="red"
+                                    class="white--text"
+                                    @click="saveChange">
+                                    Guardar cambios
+                                    <v-icon
+                                        right>
+                                        mdi-content-save
+                                    </v-icon>
+                                </v-btn>
+                            </div>
                         </div>
                     </div>
                     <div id="element-to-pdf" class="col-12 row">
@@ -121,10 +135,10 @@
                                             <th class="text-center p-0" style="font-size: 15px;">Camas ocupadas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Consultas/ día</th>
                                             <th class="text-center p-0" style="font-size: 15px;">No. Bolsas Entregadas</th>
-                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamineto usando de desactivacion</th>
-                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenaminetos (días)</th>
+                                            <th class="text-center p-0" style="font-size: 15px;">Pretratamiento usado de desactivacion</th>
+                                            <th class="text-center p-0" style="font-size: 15px;" v-if="!alert && clinic != ''">Almacenamientos (días)</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Tipo de tratamiento</th>
-                                            <th class="text-center p-0" style="font-size: 15px;">Hora de recolección</th>
+                                            <th class="text-center p-1" style="font-size: 15px;">Hora de recolección</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Dotacion personal General </th>
                                             <th class="text-center p-0" style="font-size: 15px;">Dotacion PSEA adecuada?</th>
                                             <th class="text-center p-0" style="font-size: 15px;">Color bolsa utilizada</th>
@@ -142,32 +156,42 @@
                                             <td class="text-center"></td>
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
+                                            <td class="text-center p-0">
+                                                <input 
+                                                    v-model="hoursText[i]"
+                                                    type="text" 
+                                                    @input="uperCaseText(hoursText[i],i)" 
+                                                    class="border border-black form-control" 
+                                                    style="width: 100%; height: 2.8em;"
+                                                >
+                                            </td>
                                             <td class="text-center"></td>
-                                            <input type="text" class="border border-black form-control" style="width: 5em; height: 2.8em;" :disabled="isAdmin" >
                                             <td class="text-center p-0"> 
-                                            <select class="border border-black form-control" style="width: 5em; height: 2.8em;" :disabled="isAdmin">
-                                                <option selected></option>
-                                                <option>Si</option>
-                                                <option>No</option>
-                                            </select></td>
+                                                <select v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                    <option selected></option>
+                                                    <option>Si</option>
+                                                    <option>No</option>
+                                                </select>
+                                            </td>
+                                            <td class="text-center">ROJO</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-center">TOTAL</td>
                                             <td class="text-center">{{ revalidateData(0,2) }}</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
                                             <td class="text-center">{{ revalidateData(0,3) }}</td>
-                                            <td class="text-center">0</td>
+                                            <td class="text-center"></td>
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ totalDay }}</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
-                                            <td class="text-center">0</td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -206,6 +230,9 @@ export default {
             validateTable: false,
             alert: true,
             showAlert: true,
+            selectYesOrNot: [],
+            hoursText: [],
+            day: [],
             list_residues: [],
             data_residues: [],
             list_residues_clinic: [],
@@ -291,22 +318,14 @@ export default {
 
         clinicNumber() {
             axios.get('/residue/clinicNumber').then(res => {
-                console.log("Respuesta del servidor");
-                console.log("Datos de consulta ", res.data);
                 this.items = res.data.clinic;
             }).catch(error => {
-                console.log("Error en servidor");
-                console.log(error);
-                console.log(error.response);
             });
         },
 
         initialize(date) {
-            console.log("date ", date);
             if (date != '') {
                 axios.get(`/residue/showContinuation/${date}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de consulta ", res.data);
                     this.list_residues = res.data.residues;
                     this.index = res.data.date;
                     this.total = res.data.total;
@@ -314,8 +333,6 @@ export default {
                     this.total_temp = this.total;
                     this.changeData();
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
                     console.log(error.response);
                 });
             }
@@ -324,16 +341,11 @@ export default {
         clinicInitialize(id) {
             if (this.dateAxios != '' && id != '') {
                 axios.get(`/residue/clinicContinuation/${this.dateAxios}/${id}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de consulta ", res.data);
                     this.list_residues_clinic = res.data.clinicResidue;
                     this.total_clinic = res.data.totalClinic;
                     this.collection_logs = res.data.collectionLog;
                     this.changeData();
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
             }
         },
@@ -350,7 +362,7 @@ export default {
         },
 
         revalidateData(index, type) {
-            if (this.data_residues[index] !== undefined && type == 0) {
+            if (this.data_residues[index] != undefined && type == 0) {
                 return this.data_residues[index];
             }else if (this.data_garbage_bags[index] != undefined && type == 1){
                 return this.data_garbage_bags[index];
@@ -368,7 +380,7 @@ export default {
             this.data_residues = [];
             this.data_garbage_bags = [];
             this.stored = [];
-            this.stored_days = [];
+            this.stored_day = [];
             this.totalDay = 0;
             let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
@@ -400,6 +412,8 @@ export default {
                         if (this.list_residues[l].day == i) {
                             this.data_garbage_bags[i] = this.formater(this.list_residues[l].garbage_bags);
                             this.data_residues[i] = this.formater(this.list_residues[l].total_weight);
+                            this.hoursText[i] = this.list_residues[l].hour;
+                            this.selectYesOrNot[i] = this.list_residues[l].yesOrNot;
                         }
                     }
                 }
@@ -445,7 +459,6 @@ export default {
                 this.position = '0' + this.position--;
             }
             this.dateAxios = year + '-' + this.position;
-            console.log("FECHA ", this.dateAxios);
             this.initialize(this.dateAxios);
             this.clinicInitialize(this.clinic);
         },
@@ -467,7 +480,6 @@ export default {
             }
             this.dateAxios = year + '-' + this.position;
             this.initialize(this.dateAxios);
-            console.log(this.date);
             this.clinicInitialize(this.clinic);
         },
 
@@ -502,7 +514,71 @@ export default {
                 console.log(error);
                 console.log(error.response);
             })
-        }
+        },
+
+        uperCaseText(text,position){
+            return this.hoursText[position] = text.toUpperCase();
+        },
+
+        saveChange(){
+            let data = [];
+            let size = 0;
+            let typeAlert = 0;
+            if (this.hoursText.length > this.selectYesOrNot.length) {
+                size = this.hoursText.length;
+            }else{
+                size = this.selectYesOrNot.length;
+            }
+            let currentDate = new Date();
+            let year = currentDate.getFullYear();
+            let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            let day = currentDate.getDate().toString().padStart(2, '0');
+
+            let formattedDate = `${year}-${month}-${day}`;
+            for (let i = 0; i < size; i++) {
+                if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined) {
+                    if (this.validateHour(this.hoursText[i])) {
+                        data = {
+                            'yesOrNot': this.selectYesOrNot[i],
+                            'hour': this.hoursText[i],
+                            'date': formattedDate,
+                        };
+                        axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
+                        }).catch(error => {
+                            typeAlert = 1;
+                        })
+                    }else{
+                        typeAlert = 2;
+                    }
+                }
+            }
+            if (typeAlert == 1) {
+                this.alertFalse("Parece que algo salio mal");
+            }else if (typeAlert == 2){
+                this.alertFalse("Parece que algunos campos de la hora son incorrectos");
+            }
+        },
+
+        validateHour(hour){
+            let restriction = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i;
+            return restriction.test(hour);
+        },
+
+        alertTrue(text){
+            swal({
+                title: "Cambio Exitoso!",
+                text: text,
+                icon: "success",
+            });
+        },
+
+        alertFalse(text){
+            swal({
+                title: "ERROR!",
+                text: text,
+                icon: "error",
+            });
+        },
     }
 }
 </script>

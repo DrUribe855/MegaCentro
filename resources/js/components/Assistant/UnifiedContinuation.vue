@@ -32,25 +32,25 @@
                                 </div>
                                 <div class="ml-2">
                                     <!-- <v-btn
-                      :loading="loading3"
-                      :disabled="loading3"
-                      color="green"
-                      class="ma-2 white--text"
-                      @click="loader = 'loading3'"
-                    >
-                      EXCEL
-                      <v-icon
-                        right
-                        dark
-                      >
-                        mdi-cloud-upload
-                      </v-icon>
-                    </v-btn> -->
+                                        :loading="loading3"
+                                        :disabled="loading3"
+                                        color="green"
+                                        class="ma-2 white--text"
+                                        @click="loader = 'loading3'"
+                                        >
+                                        EXCEL
+                                        <v-icon
+                                            right
+                                            dark
+                                        >
+                                            mdi-cloud-upload
+                                        </v-icon>
+                                    </v-btn> -->
                                     <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
                                         @click="pdf">
                                         PDF
                                         <v-icon right dark>
-                                            mdi-cloud-upload
+                                            mdi-content-save
                                         </v-icon>
                                     </v-btn>
                                 </div>
@@ -96,15 +96,15 @@
                                                 <td class="pl-0 pr-1">{{ month }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,0) }}</td>
                                                 <td class="text-center" >{{ revalidateResidue(i,1) }}</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">BENZALDINA</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">1</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">TERMINCO</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">6:30:00 A.M</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SI</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SI</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">ROJO</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'">SALUD</td>
-                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center px-2" v-if="month == 'ENERO'">0</td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center" v-if="month == 'ENERO'"></td>
+                                                <td rowspan="12" style="padding-top: 20.5%;" class="text-center px-2" v-if="month == 'ENERO'"></td>
                                             </tr>
                                             <tr>
                                                 <td class="">TOTAL</td>
@@ -193,15 +193,10 @@ export default {
         initialize(date) {
             if (date != '') {
                 axios.get(`/residue/showUnifiedContinuation/${date}`).then(res => {
-                    console.log("Respuesta del servidor");
-                    console.log("Datos de consulta ", res.data);
                     this.total = res.data.total;
                     this.list_residues = res.data.residues;
                     this.getResidueValue();
                 }).catch(error => {
-                    console.log("Error en servidor");
-                    console.log(error);
-                    console.log(error.response);
                 });
             }
         },
@@ -249,7 +244,6 @@ export default {
                         }
                     }
                 }
-                console.log(this.data_garbage_bags);
             }
         },
 
@@ -263,14 +257,12 @@ export default {
 
         prev() {
             this.position--;
-            console.log("prev " + this.position);
             this.date = this.position
             this.initialize(this.position);
         },
 
         next() {
             this.position++;
-            console.log("next ", this.position);
             this.date = this.position
             this.initialize(this.position);
         },
