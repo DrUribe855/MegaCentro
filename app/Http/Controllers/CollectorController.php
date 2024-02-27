@@ -79,14 +79,16 @@ class CollectorController extends Controller
                                     $residues->save();
                                 }
                             }
-                            $data = [
-                                'message' => 'Recolección registrada',
-                                'status' => true,
-                                'datos' => $clinics,    
-                            ];
+                           
                         }
                     }
                 }
+
+                 $data = [
+                                'message' => 'Recolección registrada',
+                                'status' => true,
+                                'datos' => $clinics,    
+                        ];
 
                 return response()->json($data);
             }else{
