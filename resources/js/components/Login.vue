@@ -7,7 +7,7 @@
                         <div class="col-md-9 col-lg-10 mt-5">
                             <v-card class="pa-4 text-center" elevation="5">
                             <div class="text-center mb-4 mt-3">
-                                <img src="./img/logo-megacentro.png" alt="Logo Megacentro" width="250em" class="img-fluid">
+                                <img src="/images/logo.png" alt="Logo Megacentro" width="250em" class="img-fluid">
                             </div>
                     			<form>
                                     <div class="form-group">
@@ -32,7 +32,7 @@
                                           class="mb-3"
                                         ></v-text-field>
                                     </div>
-                    				<v-btn 
+                    				<v-btn
                                     class="mt-4 mb-2 block mx-auto"
                                     color="primary"
                                     @click="onSubmit()">
@@ -48,7 +48,7 @@
 	</div>
 </template>
 <script>
-    
+
 import swal from 'sweetalert';
 
 export default {
