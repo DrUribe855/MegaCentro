@@ -46,7 +46,6 @@ class CollectorController extends Controller
             $result = $this->collectionValidate($clinics);
             if($result === true){
                 foreach ($clinics as $key => $clinic) {
-                    // return $clinics[1];
                     if(!$this->collectionExists($general_data, $clinic)){
                         if($this->clinicValidate($clinic)){
                             if($general_data["schedule"] == 'Extra - 6:00 AM'){

@@ -221,8 +221,8 @@
               this.datos.push(aux);
             });
 
-            if(localStorage.getItem("collectionData")){
-              let localData = JSON.parse(localStorage.getItem("collectionData"));
+            if(localStorage.getItem("collectionDataNonHazardous")){
+              let localData = JSON.parse(localStorage.getItem("collectionDataNonHazardous"));
               if(localData.length < this.datos.length){
                 for (let i = 0; i < this.datos.length; i++) {
                   if(localData[i] == undefined){
@@ -230,7 +230,7 @@
                   }
                 }
                 this.datos = localData;
-                localStorage.setItem("collectionData", JSON.stringify(localData)); 
+                localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData)); 
               }else if(localData.length > this.datos.length){
 
                 //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
@@ -242,13 +242,13 @@
                 });
 
                 this.datos = localData;
-                localStorage.setItem("collectionData", JSON.stringify(localData));
+                localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData));
               }else{
                 this.datos = localData;
               }
               
             }else{
-              localStorage.setItem("collectionData", JSON.stringify(this.datos));    
+              localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));    
             }
         }).catch(error => {
             console.log('Error en axios: ');
@@ -285,8 +285,8 @@
         });
       },
       changeValue(){
-        localStorage.setItem("collectionData", JSON.stringify(this.datos));
-        const localData = JSON.parse(localStorage.getItem("collectionData"));
+        localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
+        const localData = JSON.parse(localStorage.getItem("collectionDataNonHazardous"));
       },
       filterClinics() {
 
@@ -354,7 +354,7 @@
           for (let j = 0; j < this.residues.length; j++) {
             this.datos[i].data[j].bags = 0;
             this.datos[i].data[j].weight = 0;
-            localStorage.setItem("collectionData", JSON.stringify(this.datos));
+            localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
           }
         }
       },

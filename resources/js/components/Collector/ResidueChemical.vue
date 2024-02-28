@@ -134,7 +134,7 @@
                   </v-form>
                 </v-expansion-panel-content>
               </v-expansion-panel>
-            </v-expansion-panels> 
+            </v-expansion-panels>
           </div>
           <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
@@ -155,7 +155,7 @@
       itemsPerPage: 15,
       items: ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra'],
       indexLocalStorage: 0,
-      clinics: [], 
+      clinics: [],
       searchTimer: '',
       clinicNumber: '',
       towerNumber: '',
@@ -200,8 +200,6 @@
             this.residues = res.data.residueChemical;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            console.log("Esta es la impresión de consultorios: ",this.clinics);
-            console.log("Esta es la impresión de residuos: ", this.residues);
             res.data.clinics.forEach(clinic => {
               let aux = {
                 clinic_id: clinic.id,
@@ -209,7 +207,7 @@
                 show: true,
                 towerNumber: clinic.tower_id,
                 clinicNumber: clinic.clinic_number,
-                
+
               };
               res.data.residueChemical.forEach(residue => {
                 aux.data.push({
@@ -217,12 +215,12 @@
                     weight: 0,
                     bags: 0,
                 });
-              }); 
+              });
               this.datos.push(aux);
             });
 
-            if(localStorage.getItem("collectionData")){
-              let localData = JSON.parse(localStorage.getItem("collectionData"));
+            if(localStorage.getItem("residueChemicalCollection")){
+              let localData = JSON.parse(localStorage.getItem("residueChemicalCollection"));
               if(localData.length < this.datos.length){
                 for (let i = 0; i < this.datos.length; i++) {
                   if(localData[i] == undefined){
@@ -230,25 +228,25 @@
                   }
                 }
                 this.datos = localData;
-                localStorage.setItem("collectionData", JSON.stringify(localData)); 
+                localStorage.setItem("residueChemicalCollection", JSON.stringify(localData));
               }else if(localData.length > this.datos.length){
 
                 //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
                 const objetosFaltantes = localData.filter((localDato) => !this.datos.some((dato) => dato.clinicNumber === localDato.clinicNumber));
 
-                
+
                 objetosFaltantes.forEach((objetoFaltante) => {
                   localData.splice(this.datos.indexOf(objetoFaltante), 1);
                 });
 
                 this.datos = localData;
-                localStorage.setItem("collectionData", JSON.stringify(localData));
+                localStorage.setItem("residueChemicalCollection", JSON.stringify(localData));
               }else{
                 this.datos = localData;
               }
-              
+
             }else{
-              localStorage.setItem("collectionData", JSON.stringify(this.datos));    
+              localStorage.setItem("residueChemicalCollection", JSON.stringify(this.datos));
             }
         }).catch(error => {
             console.log('Error en axios: ');
@@ -275,7 +273,7 @@
         }).catch(error => {
           console.log(error.response);
         });
-        
+
       },
       showAlert(title, text, icon){
         swal({
@@ -285,8 +283,8 @@
         });
       },
       changeValue(){
-        localStorage.setItem("collectionData", JSON.stringify(this.datos));
-        const localData = JSON.parse(localStorage.getItem("collectionData"));
+        localStorage.setItem("residueChemicalCollection", JSON.stringify(this.datos));
+        const localData = JSON.parse(localStorage.getItem("residueChemicalCollection"));
       },
       filterClinics() {
 
@@ -334,7 +332,7 @@
             residueNameValidation = this.residues[i].residue_name;
             console.log("El residuo que se encuentra sin llenar es el: ", residueNameValidation);
             break;
-          } 
+          }
         }
 
         for(let j = 0; j < this.clinics.length; j++){
@@ -354,7 +352,7 @@
           for (let j = 0; j < this.residues.length; j++) {
             this.datos[i].data[j].bags = 0;
             this.datos[i].data[j].weight = 0;
-            localStorage.setItem("collectionData", JSON.stringify(this.datos));
+            localStorage.setItem("residueChemicalCollection", JSON.stringify(this.datos));
           }
         }
       },
@@ -367,3 +365,8 @@
     },
   }
 </script>
+
+
+
+
+array_push()
