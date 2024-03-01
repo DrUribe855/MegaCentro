@@ -86,6 +86,17 @@
                     @keyup="filterClinics()"
                   ></v-text-field>
                 </v-col>
+                 <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-text-field
+                    v-model="towerNumber"
+                    label="Ingrese el piso"
+                    type="number"
+                    @keyup="filterClinics()"
+                  ></v-text-field>
+                </v-col>
               </v-row>
             </v-container>
           </v-form>
@@ -104,7 +115,7 @@
                             <v-col
                               v-for="(residue,i) in residues" :key="residue.id"
                               cols="12"
-                              md="3"
+                              md="4"
                             >
                               <v-text-field
                                 :label="residue.residue_name"
@@ -159,6 +170,7 @@
       searchTimer: '',
       clinicNumber: '',
       towerNumber: '',
+      floorNumber: '',
       residues: [],
       datos: [],
       general_data: {
