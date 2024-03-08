@@ -261,36 +261,40 @@ class ResidueController extends Controller
     }
 
     public function registerDateCollector(Request $request, $day){
-        Waste_collection::whereDay('created_at', $day)
-        ->update([
-            'yesOrNot' => $request->input('yesOrNot'),
-            'hour' => $request->input('hour'),
-        ]);
-        
-        $idCollectionLog = Waste_collection::whereHas('collection_logs')
-        ->whereNotNull('hour')
-        ->whereDay('created_at', $day)
-        ->pluck('collection_logs_id');
+        $length = count($request->all());
+        $data = [];
+        for ($i=0; $i < $length; $i++) { 
+            Waste_collection::whereDay('created_at', $day)
+            ->update([
+                'yesOrNot' => $request[$i][0]['yesOrNot'],
+                'hour' => $request[$i][0]['hour'],
+            ]);
+            
+            $idCollectionLog = Waste_collection::whereHas('collection_logs')
+            ->whereNotNull('hour')
+            ->whereDay('created_at', $day)
+            ->pluck('collection_logs_id');
+    
+            $size = count($idCollectionLog);
+    
+            for ($i=0; $i < $size ; $i++) { 
+                $update = CollectionLog::find($idCollectionLog[$i]);
+                $update->collection_date = $request[$i][0]['date'];
+                $update->stored_stated = 'RECOLECTADO';
+                $update->save();
+            };
+    
+            $data[$i] = [
+                'status' => true,
+                'data' => $idCollectionLog,
+                'yesOrNot' => $request[$i][0]['yesOrNot'],
+                'hour' => $request[$i][0]['hour'],
+                'date' => $request[$i][0]['date'],
+                'day' => $day,
+            ];   
+        }
 
-        $size = count($idCollectionLog);
-
-        for ($i=0; $i < $size ; $i++) { 
-            $update = CollectionLog::find($idCollectionLog[$i]);
-            $update->collection_date = $request->input('date');
-            $update->stored_stated = 'RECOLECTADO';
-            $update->save();
-        };
-
-        $data = [
-            'status' => true,
-            'data' => $idCollectionLog,
-            'yesOrNot' => $request->input('yesOrNot'),
-            'hour' => $request->input('hour'),
-            'date' => $request->input('date'),
-            'day' => $day
-        ];
-
-        return response()->json($data);
+        return response()->json($request[$i][0]['date']);
     }   
 }
 

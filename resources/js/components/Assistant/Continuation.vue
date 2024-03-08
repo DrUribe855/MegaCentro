@@ -503,6 +503,8 @@ export default {
         saveChange(){
             let data = [];
             let size = 0;
+            let pos = 0;
+            let dayAxios = 0;
             let typeAlert = 0;
             if (this.hoursText.length > this.selectYesOrNot.length) {
                 size = this.hoursText.length;
@@ -513,25 +515,30 @@ export default {
             let year = currentDate.getFullYear();
             let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
             let day = currentDate.getDate().toString().padStart(2, '0');
-
             let formattedDate = `${year}-${month}-${day}`;
             for (let i = 0; i < size; i++) {
                 if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined) {
                     if (this.validateHour(this.hoursText[i])) {
-                        data = {
-                            'yesOrNot': this.selectYesOrNot[i],
-                            'hour': this.hoursText[i],
-                            'date': formattedDate,
-                        };
-                        axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
-                        }).catch(error => {
-                            typeAlert = 1;
-                        })
+                        data[pos] = [
+                            {
+                                'yesOrNot': this.selectYesOrNot[i],
+                                'hour': this.hoursText[i],
+                                'date': formattedDate,
+                            }
+                        ];
+                        dayAxios = i;
+                        pos++;
                     }else{
                         typeAlert = 2;
                     }
                 }
             }
+            axios.post(`/residue/registerDateCollector/${dayAxios}`, data).then(res => {
+                console.log(res.data);
+            }).catch(error => {
+                console.log(error.response);
+                typeAlert = 1;
+            })
             if (typeAlert == 1) {
                 this.alertFalse("Parece que algo salio mal");
             }else if (typeAlert == 2){
