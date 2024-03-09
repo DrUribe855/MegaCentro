@@ -249,6 +249,7 @@ export default {
             total_temp: 0,
             totalDay: 0,
             focus: new Date(),
+            isAdmin: false,
         }
     },
     watch: {
@@ -273,6 +274,7 @@ export default {
     created() {
         this.setToday();
         this.clinicNumber();
+        this.getuserRole();
     },
 
     methods: {
@@ -332,6 +334,7 @@ export default {
                     this.total_temp = this.total;
                     this.changeData();
                 }).catch(error => {
+                    console.log(error.response);
                 });
             }
         },
@@ -495,6 +498,23 @@ export default {
                 }
             }
             this.clinicInitialize(this.clinic);
+        },
+        getuserRole(){
+            axios.get('/collector/getRole').then(res => {
+                console.log("Respuesta del servidor");
+                console.log(res);
+                if(res.data.role == 'Administrador' || res.data.role == 'Auxiliar Contable'){
+                    this.isAdmin = true;
+                    console.log("trhis is admin", this.isAdmin);
+                }else{
+                    this.isAdmin = false;
+                    console.log("this id admin: ", this.isAdmin);
+                }
+            }).catch(error => {
+                console.log("Error en axios");
+                console.log(error);
+                console.log(error.response);
+            })
         },
 
         uperCaseText(text,position){

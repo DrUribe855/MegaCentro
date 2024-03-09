@@ -86,15 +86,26 @@
                     @keyup="filterClinics()"
                   ></v-text-field>
                 </v-col>
+                 <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-text-field
+                    v-model="floorNumber"
+                    label="Ingrese el piso"
+                    type="number"
+                    @keyup="filterClinics()"
+                  ></v-text-field>
+                </v-col>
               </v-row>
             </v-container>
           </v-form>
         </div>
         <div>
-          <div v-for="(clinic, index) in clinics" class="mt-3">
+          <div v-for="(panel, indexLocalStorage) in filteredPanels"  :key="indexLocalStorage" class="mt-3">
             <v-expansion-panels>
-              <v-expansion-panel v-if="datos[index].show">
-                <v-expansion-panel-header >Consultorio: {{clinic.clinic.clinic_number  }}  / Torre: {{clinic.clinic.tower_id}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="datos[indexLocalStorage2+indexLocalStorage].show">
+                <v-expansion-panel-header >Consultorio: {{panel.clinic_number  }}  / Torre: {{panel.tower_id}} / Piso: {{ panel.floor }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -104,13 +115,13 @@
                             <v-col
                               v-for="(residue,i) in residues" :key="residue.id"
                               cols="12"
-                              md="3"
+                              md="6"
                             >
                               <v-text-field
                                 :label="residue.residue_name"
-                                v-model="datos[index].data[i].weight"
+                                v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].weight"
                                 @change="changeValue()"
-                              >adasda</v-text-field>
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                       </div>
@@ -124,7 +135,7 @@
                           >
                             <v-text-field
                               :label="residue.residue_name"
-                              v-model="datos[index].data[i].bags"
+                              v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].bags"
                               @change="changeValue()"
                             ></v-text-field>
                           </v-col>
@@ -136,6 +147,7 @@
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
+          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -150,11 +162,15 @@
       'collection-form' : CollectionForm,
     },
     data: () => ({
-      items: ['Diurno', 'Nocturno', 'Extra'],
+      currentPage: 1,
+      itemsPerPage: 15,
+      items: ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra'],
+      indexLocalStorage: 0,
       clinics: [], 
       searchTimer: '',
       clinicNumber: '',
       towerNumber: '',
+      floorNumber: '',
       residues: [],
       datos: [],
       general_data: {
@@ -165,36 +181,45 @@
     }),
 
     computed: {
-
+      paginationRange() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage - 1;
+      return { startIndex, endIndex };
+      },
+      filteredPanels() {
+        let datos = this.clinics.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
+        this.indexLocalStorage = this.paginationRange.startIndex;
+        console.log(this.datos);
+        return datos;
+      },
+      indexLocalStorage2() {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage - 1;
+        return startIndex;
+      },
     },
     created () {
       this.getClinics();
       this.filterClinics();
-
-
     },
 
     methods: {
       getClinics(){
-        axios.get('/collector/clinics', {
-          params: {
-            clinicNumber: this.clinicNumber,
-            towerNumber: this.towerNumber,
-          }
-        }).then(res => {
-          let iterar = 0;
+        axios.get('/collector/clinics').then(res => {
             this.clinics = res.data.clinics;
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
             console.log("Esta es la impresión de consultorios: ",this.clinics);
+            console.log("Esta es la impresión de residuos: ", this.residues);
             res.data.clinics.forEach(clinic => {
-            let aux = {
-                clinic_id: clinic.clinic_id,
+              let aux = {
+                clinic_id: clinic.id,
                 data: [],
                 show: true,
-                towerNumber: clinic.clinic.tower_id,
-                clinicNumber: clinic.clinic.clinic_number,
+                towerNumber: clinic.tower_id,
+                clinicNumber: clinic.clinic_number,
+                floorNumber: clinic.floor,
                 
               };
               res.data.residues.forEach(residue => {
@@ -276,7 +301,11 @@
       },
       filterClinics() {
 
-        if(this.clinicNumber != '' && this.towerNumber == ''){
+        let filtro = this.datos;
+
+        // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
+
+        if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
          for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
               this.datos[i].show = true;
@@ -286,7 +315,9 @@
           }
         }
 
-        if(this.towerNumber != '' &&  this.clinicNumber == ''){
+        // Filtro para cuando el numero de torre sea diligenciado y los demás no
+
+        if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber){
               this.datos[i].show = true;
@@ -296,9 +327,11 @@
           }
         }
 
-        if(this.towerNumber != '' && this.clinicNumber != ''){
+        //Filtro para cuando el numero de piso sea diligenciado y los demás no
+
+        if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+            if(this.datos[i].floorNumber == this.floorNumber){
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -306,7 +339,45 @@
           }
         }
 
-        if(this.towerNumber == '' && this.clinicNumber == ''){
+        //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
+
+        if(this.towerNumber != '' && this.floorNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].floorNumber.includes(this.floorNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
+
+        if(this.clinicNumber != '' && this.floorNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if( this.datos[i].floorNumber == this.floorNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        // Filtro para cuando el numero de clinica y el numero de torre sean diligenciados a la vez, pero numero de piso no.
+
+        if(this.clinicNumber != '' && this.towerNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if( this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        //Filtro para cuando los 3 campos se encuentren sin diligenciar
+
+        if(this.towerNumber == '' && this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             this.datos[i].show = true;
           }
@@ -343,6 +414,12 @@
             localStorage.setItem("collectionData", JSON.stringify(this.datos));
           }
         }
+      },
+      nextPage() {
+        this.currentPage++;
+      },
+      previousPage() {
+        this.currentPage--;
       }
     },
   }

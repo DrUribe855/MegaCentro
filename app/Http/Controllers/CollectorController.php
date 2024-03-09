@@ -9,16 +9,28 @@ use App\Models\CollectionLog;
 use App\Models\Residue;
 use App\Models\Clinic;
 use App\Models\Waste_collection;
+use Illuminate\Support\Facades\Auth;
 
 class CollectorController extends Controller
 {
     
+    // Vista de residuos no peligrosos
+
     public function index(){
         return view('Collector/index');
     }
 
-    public function create(){
-    
+    // Vista de residuos biologicos
+
+    public function noHazardousView(){
+        return view('Collector/nonhazardous');
+    }
+
+
+    //Vista de residuos: Quimicos - Respel
+
+    public function residueChemical(){
+        return view('Collector/residueChemical');
     }
 
     public function store(Request $request)
@@ -26,6 +38,7 @@ class CollectorController extends Controller
         $clinics = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
+        $currentDate = date('Y-m-d');
         $validationStatus = true;
 
         
@@ -35,13 +48,26 @@ class CollectorController extends Controller
                 foreach ($clinics as $key => $clinic) {
                     if(!$this->collectionExists($general_data, $clinic)){
                         if($this->clinicValidate($clinic)){
-                            $collection = new CollectionLog();
-                            $collection->user_id = auth()->user()->id;
-                            $collection->clinic_id = $clinic["clinic_id"];
-                            $collection->year = $general_data["year"];
-                            $collection->month = $general_data["month"];
-                            $collection->schedule = $general_data["schedule"];
-                            $collection->save();
+                            if($general_data["schedule"] == 'Extra - 6:00 AM'){
+                                $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
+                                $collection = new CollectionLog();
+                                $collection->user_id = auth()->user()->id;
+                                $collection->clinic_id = $clinic["clinic_id"];
+                                $collection->year = $general_data["year"];
+                                $collection->month = $general_data["month"];
+                                $collection->schedule = $general_data["schedule"];
+                                $collection->created_at = $lastDate;
+                                $collection->save();
+                            }else{
+                                $collection = new CollectionLog();
+                                $collection->user_id = auth()->user()->id;
+                                $collection->clinic_id = $clinic["clinic_id"];
+                                $collection->year = $general_data["year"];
+                                $collection->month = $general_data["month"];
+                                $collection->schedule = $general_data["schedule"];
+                                $collection->save();
+                            }
+
                             foreach ($clinic["data"] as $key => $residue) {
                                 if($residue["weight"] != 0 && $residue["weight"] != 0){
                                     $residues = new Waste_collection();
@@ -52,14 +78,18 @@ class CollectorController extends Controller
                                     $residues->save();
                                 }
                             }
-                            $data = [
-                                'message' => 'Recolección registrada',
-                                'status' => true,
-                            ];
-                            return response()->json($data);
+                           
                         }
                     }
                 }
+
+                 $data = [
+                                'message' => 'Recolección registrada',
+                                'status' => true,
+                                'datos' => $clinics,    
+                        ];
+
+                return response()->json($data);
             }else{
                 $data = [
                     'message' => 'Datos incompletos',
@@ -80,6 +110,8 @@ class CollectorController extends Controller
         
             
     }
+
+
 
     public function dateValidations($general_data, $anioActual){
 
@@ -127,6 +159,8 @@ class CollectorController extends Controller
         return true;
     }
 
+    // Funcion para validar que los campos se encuentren diligenciados
+
     public function clinicValidate($clinic){
         foreach ($clinic["data"] as $key => $residue) {
             if($residue["weight"] != 0 && $residue["bags"] != 0){
@@ -136,6 +170,8 @@ class CollectorController extends Controller
 
         return false; 
     }
+
+    // Función para validar la existencia de una recolección
 
     public function collectionExists($date, $clinic){
 
@@ -165,25 +201,21 @@ class CollectorController extends Controller
         //
     }
 
+    // Función para traer las consultorios registrados en el sistema y los residuos.
+
     public function getClinics(Request $request){
 
         $clinicNumber = $request->clinicNumber;
         $towerNumber = $request->towerNumber;
 
         $id = auth()->user()->id;
-        $clinics = Clinic_user::whereHas('user', function ($query) use ($id) {
-            $query->where('clinic_users.user_id', '=', $id);
-        })
-        ->with('clinic')
-        ->whereHas('clinic', function ($query) use ($clinicNumber) {
-            $query->where('clinic_number', "LIKE", "%$clinicNumber%"); 
-        })
-        ->whereHas('clinic', function ($query) use ($towerNumber) {
-            $query->where('tower_id', "LIKE", "%$towerNumber%"); 
-        })
-        ->get();
+        
+        $clinics = Clinic::get();
 
-        $residues = Residue::get();
+
+        $nonHazardousWaste = Residue::where('residue_type_id', 1)->get();
+        $hazardousWaste = Residue::where('residue_type_id', 2)->get();
+        $residueChemical = Residue::whereIn('residue_type_id', [3, 4])->get();
         $currentDate = date('Y-m');
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -191,10 +223,27 @@ class CollectorController extends Controller
         $data = [
             'status' => true,
             'clinics' => $clinics,
-            'residues' => $residues,
+
+            'residues' => $nonHazardousWaste,
+            'hazardouswaste' => $hazardousWaste,
+            'residueChemical' => $residueChemical,
             'year' => $currentYear,
             'month' => $currentMonth,
         ];
+
+        return response()->json($data);
+    }
+
+    // Funcion para traer el rol del usuario
+
+    public function getUserRole(){
+
+       $user = Auth::user();
+       $role = $user->getRoleNames();
+        $data = [
+            'status' => true,
+            'role' => $role,
+       ];
 
         return response()->json($data);
     }

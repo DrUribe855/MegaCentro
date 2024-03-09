@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/logo-blanco.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -109,7 +109,7 @@ return [
     'preloader' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/logo-blanco.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -306,6 +306,7 @@ return [
             'url'  => '/clinic/view',
             'icon' => 'fas fa-fw fa-users',
             'can' => 'admin.managers.generalShow'
+
         ],
         [
             'text'    => 'Información residuos',
@@ -337,13 +338,31 @@ return [
         [
             'text' => 'RH Continuación',
             'url'  => '/assistant/continuation',
-            'can' => 'collector.rhContinuation.view'
+            'can' => 'collector.rhContinuation.view',
+            'icon' => 'fas-fg-fw fa-list-check',
         ],
         [
-            'text' => 'Registrar recolección',
+            'text' => 'Residuos no peligrosos',
             'url'  => '/collector/index',
             'icon' => 'fas fa-fw fa-trash',
-            'can' => 'collector.collections.generalShow'
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-dark'
+        ],
+        [
+
+            'text' => 'Residuos biologicos',
+            'url'  => '/collector/non-hazardous-wast',
+            'icon' => 'fas fa-fw fa-recycle',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-danger',
+        ],
+        [
+
+            'text' => 'Quimicos-respel',
+            'url'  => '/collector/non-hazardous-waste',
+            'icon' => 'fas fa-fw fa-trash',
+            'can' => 'collector.collections.generalShow',
+            'classes' => 'bg-danger'
         ],
         [
             'text' => 'Lista de consultorios',
