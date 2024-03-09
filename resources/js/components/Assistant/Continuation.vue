@@ -324,6 +324,7 @@ export default {
         initialize(date) {
             if (date != '') {
                 axios.get(`/residue/showContinuation/${date}`).then(res => {
+                    console.log(res.data);
                     this.list_residues = res.data.residues;
                     this.index = res.data.date;
                     this.total = res.data.total;
@@ -501,10 +502,7 @@ export default {
         },
 
         saveChange(){
-            let data = [];
             let size = 0;
-            let pos = 0;
-            let dayAxios = 0;
             let typeAlert = 0;
             if (this.hoursText.length > this.selectYesOrNot.length) {
                 size = this.hoursText.length;
@@ -516,33 +514,55 @@ export default {
             let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
             let day = currentDate.getDate().toString().padStart(2, '0');
             let formattedDate = `${year}-${month}-${day}`;
+            let requests = [];
+            let validateHour = true;
             for (let i = 0; i < size; i++) {
-                if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined) {
+                if (this.hoursText[i] != undefined || this.selectYesOrNot[i] != undefined && this.data_residues[i] != undefined) {
+                    let hour = null;
+                    let selectYesOrNot = null;
                     if (this.validateHour(this.hoursText[i])) {
-                        data[pos] = [
-                            {
-                                'yesOrNot': this.selectYesOrNot[i],
-                                'hour': this.hoursText[i],
-                                'date': formattedDate,
-                            }
-                        ];
-                        dayAxios = i;
-                        pos++;
+                        if (this.hoursText[i] != undefined) {
+                            hour = this.hoursText[i];
+                        }
                     }else{
-                        typeAlert = 2;
+                        validateHour = false;
+                        this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00 AM/PM`);
+                    }
+                    console.log(validateHour);
+                    if (this.selectYesOrNot[i] != undefined) {
+                        selectYesOrNot = this.selectYesOrNot[i];
+                    }
+                    let data = {
+                        'yesOrNot': selectYesOrNot,
+                        'hour': hour,
+                        'date': formattedDate,
+                    };  
+                    if (validateHour) {
+                        let request = axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
+                            console.log(res.data);
+                        }).catch(error => {
+                        })
+                        requests.push(request);
                     }
                 }
             }
-            axios.post(`/residue/registerDateCollector/${dayAxios}`, data).then(res => {
-                console.log(res.data);
-            }).catch(error => {
-                console.log(error.response);
-                typeAlert = 1;
-            })
-            if (typeAlert == 1) {
-                this.alertFalse("Parece que algo salio mal");
-            }else if (typeAlert == 2){
-                this.alertFalse("Parece que algunos campos de la hora son incorrectos");
+            if (validateHour) {
+                axios.all(requests).then(
+                    axios.spread((...responses) => {
+                        typeAlert = 3;
+                    })
+                ).catch(error => {
+                    console.error(error);
+                    typeAlert = 1;
+                }).finally(() => {
+                    if (typeAlert == 1) {
+                        this.alertFalse("Parece que algo salió mal");
+                    }else if (typeAlert == 3) {
+                        this.alertTrue("Cambios exitosos. Recuerde que los cambios hechos en los días que no tienen recolección de residuos no serán registrados");
+                    }
+                    console.log(typeAlert);
+                });
+                console.log(typeAlert);
             }
         },
 
