@@ -107,7 +107,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
             'path' => 'vendor/adminlte/dist/img/logo-blanco.png',
             'alt' => 'AdminLTE Preloader Image',
@@ -311,7 +311,7 @@ return [
         [
             'text'    => 'Información residuos',
             'icon'    => 'fas fa-fw fa-list',
-            'can' => 'assistant.statistics.generalShow',
+            'can' => 'assistant.statistics.rhcontinuation',
             'submenu' => [
                 [
                     'text' => 'Formulario RH',
@@ -334,12 +334,6 @@ return [
                     'can' => 'assistant.statistics.generalShow'
                 ],
             ],
-        ],
-        [
-            'text' => 'RH Continuación',
-            'url'  => '/assistant/continuation',
-            'can' => 'collector.rhContinuation.view',
-            'icon' => 'fas-fg-fw fa-list-check',
         ],
         [
             'text' => 'Residuos no peligrosos',

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $users = User::factory(30)->create();
         $this->fake_clinic();
         $this->call(RoleSeeder::class);
+        $this->call(MorePermissionsSeeder::class);
 
         
 

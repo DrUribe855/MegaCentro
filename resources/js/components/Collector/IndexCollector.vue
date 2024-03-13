@@ -52,6 +52,7 @@
 
                 >
                   <v-btn
+                    v-if="this.role == 'Recolector'"
                     color="primary"
                     @click="save()"
                   >Registrar recolecciones</v-btn>
@@ -63,6 +64,7 @@
 
                 >
                   <v-btn
+                    v-if="this.role == 'Administrador'"
                     color="primary"
                     @click="update()"
                   >Modificar recolecciones</v-btn>
@@ -172,7 +174,8 @@
         month: '',
         year: '',
         schedule: '',
-      }
+      }, 
+      role: '',
     }),
 
     computed: {
@@ -194,6 +197,7 @@
       },
     },
     created () {
+      this.getuserRole();
       this.getClinics();
       this.filterClinics();
     },
@@ -408,7 +412,19 @@
       },
       previousPage() {
         this.currentPage--;
-      }
+      },
+      getuserRole(){
+        axios.get('/collector/getRole').then(res => {
+          console.log("Respuesta del servidor");
+          console.log(res);
+          this.role = res.data.role;
+          console.log("Este es el rol del usuario: ", this.role);
+        }).catch(error => {
+          console.log("Error en axios");
+          console.log(error);
+          console.log(error.response);
+        });
+      },
     },
   }
 </script>

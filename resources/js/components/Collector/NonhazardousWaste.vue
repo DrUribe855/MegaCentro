@@ -52,9 +52,22 @@
 
                 >
                   <v-btn
+                    v-if="this.role == 'Recolector'"
                     color="primary"
                     @click="save()"
                   >Registrar recolección</v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="3"
+
+                >
+                  <v-btn
+                    v-if="this.role == 'Administrador'"
+                    color="primary"
+                    @click="update()"
+                  >Modificar recolecciones</v-btn>
                 </v-col>
                 <v-col
                   cols="12"
@@ -150,7 +163,8 @@
         month: '',
         year: '',
         schedule: '',
-      }
+      },
+      role: '',
     }),
 
     computed: {
@@ -172,6 +186,7 @@
       },
     },
     created () {
+      this.getuserRole();
       this.getClinics();
       this.filterClinics();
 
@@ -258,9 +273,28 @@
           }
         }).catch(error => {
           console.log(error.response);
-        });
-        
+        }); 
       },
+      update(){
+        let request = {
+          datos: this.datos,
+          data_general: this.general_data,
+        }
+        console.log('Click a update');
+        axios.post('/collector/updateCollection', request).then(resp => {
+          if(resp.data.message == "Modificacion registrada"){
+            this.cleanInputs();
+            this.showAlert('Validado', 'Se ha registado con exitos la(s) modificacion(es)','success');
+          }else if(resp.data.message == 'Informacion de modificacion incompleta'){
+            this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
+          }
+        }).catch(error => {
+            console.log('Error en axios: ');
+            console.log(error);
+            console.log(error.response);
+        });
+      },
+
       showAlert(title, text, icon){
         swal({
           title: title,
@@ -393,7 +427,19 @@
       },
       previousPage() {
         this.currentPage--;
-      }
+      },
+      getuserRole(){
+        axios.get('/collector/getRole').then(res => {
+            console.log("Respuesta del servidor");
+            console.log(res);
+            this.role = res.data.role;
+            console.log("Este es el rol del usuario: ", this.role);
+        }).catch(error => {
+            console.log("Error en axios");
+            console.log(error);
+            console.log(error.response);
+        })
+      },
     },
   }
 </script>
