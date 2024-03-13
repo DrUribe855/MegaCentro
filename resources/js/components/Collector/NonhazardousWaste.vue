@@ -114,22 +114,6 @@
                             </v-col>
                           </v-row>
                       </div>
-                      <div>
-                        <h5 class="mt-3">Bolsas</h5>
-                        <v-row>
-                          <v-col
-                            v-for="(residue, i) in residues" :key="residue.id"
-                            cols="12"
-                            md="3"
-                          >
-                            <v-text-field
-                              :label="residue.residue_name"
-                              v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].bags"
-                              @change="changeValue()"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </div>
                     </v-container>
                   </v-form>
                 </v-expansion-panel-content>
@@ -159,6 +143,7 @@
       searchTimer: '',
       clinicNumber: '',
       towerNumber: '',
+      floorNumber: '',
       residues: [],
       datos: [],
       general_data: {
@@ -215,7 +200,6 @@
                 aux.data.push({
                     residue_id: residue.id,
                     weight: 0,
-                    bags: 0,
                 });
               }); 
               this.datos.push(aux);
@@ -290,7 +274,11 @@
       },
       filterClinics() {
 
-        if(this.clinicNumber != '' && this.towerNumber == ''){
+        let filtro = this.datos;
+
+        // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
+
+        if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
          for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
               this.datos[i].show = true;
@@ -300,7 +288,9 @@
           }
         }
 
-        if(this.towerNumber != '' &&  this.clinicNumber == ''){
+        // Filtro para cuando el numero de torre sea diligenciado y los demás no
+
+        if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber){
               this.datos[i].show = true;
@@ -310,9 +300,11 @@
           }
         }
 
-        if(this.towerNumber != '' && this.clinicNumber != ''){
+        //Filtro para cuando el numero de piso sea diligenciado y los demás no
+
+        if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+            if(this.datos[i].floorNumber == this.floorNumber){
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -320,7 +312,45 @@
           }
         }
 
-        if(this.towerNumber == '' && this.clinicNumber == ''){
+        //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
+
+        if(this.towerNumber != '' && this.floorNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].floorNumber.includes(this.floorNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
+
+        if(this.clinicNumber != '' && this.floorNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if( this.datos[i].floorNumber == this.floorNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        // Filtro para cuando el numero de clinica y el numero de torre sean diligenciados a la vez, pero numero de piso no.
+
+        if(this.clinicNumber != '' && this.towerNumber != ''){
+          for (let i = 0; i < this.datos.length; i++) {
+            if( this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos[i].show = true;
+            }else{
+              this.datos[i].show = false;
+            }
+          }
+        }
+
+        //Filtro para cuando los 3 campos se encuentren sin diligenciar
+
+        if(this.towerNumber == '' && this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             this.datos[i].show = true;
           }

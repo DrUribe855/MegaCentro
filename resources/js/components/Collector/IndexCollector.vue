@@ -54,7 +54,18 @@
                   <v-btn
                     color="primary"
                     @click="save()"
-                  >Registrar recolección</v-btn>
+                  >Registrar recolecciones</v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="3"
+
+                >
+                  <v-btn
+                    color="primary"
+                    @click="update()"
+                  >Modificar recolecciones</v-btn>
                 </v-col>
                 <v-col
                   cols="12"
@@ -124,22 +135,6 @@
                               ></v-text-field>
                             </v-col>
                           </v-row>
-                      </div>
-                      <div>
-                        <h5 class="mt-3">Bolsas</h5>
-                        <v-row>
-                          <v-col
-                            v-for="(residue, i) in residues" :key="residue.id"
-                            cols="12"
-                            md="3"
-                          >
-                            <v-text-field
-                              :label="residue.residue_name"
-                              v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].bags"
-                              @change="changeValue()"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
                       </div>
                     </v-container>
                   </v-form>
@@ -226,7 +221,6 @@
                 aux.data.push({
                     residue_id: residue.id,
                     weight: 0,
-                    bags: 0,
                 });
               }); 
               this.datos.push(aux);
@@ -272,14 +266,10 @@
           datos: this.datos,
           data_general: this.general_data,
         }
-        console.log("request asdas: ",request);
         axios.post('/collector/saveCollection', request).then(resp => {
-          console.log("request: ", resp);
           if(resp.data.message == "Recolección registrada"){
             this.cleanInputs();
             this.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
-          }else if(resp.data.message == "Datos incompletos"){
-            this.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
           }else if(resp.data.message == 'Datos incorrectos en la fecha'){
             this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
           }
@@ -287,6 +277,25 @@
           console.log(error.response);
         });
         
+      },
+      update(){
+        let request = {
+          datos: this.datos,
+          data_general: this.general_data,
+        }
+        console.log('Click a update');
+        axios.post('/collector/updateCollection', request).then(resp => {
+          if(resp.data.message == "Modificacion registrada"){
+            this.cleanInputs();
+            this.showAlert('Validado', 'Se ha registado con exitos la(s) modificacion(es)','success');
+          }else if(resp.data.message == 'Informacion de modificacion incompleta'){
+            this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
+          }
+        }).catch(error => {
+            console.log('Error en axios: ');
+            console.log(error);
+            console.log(error.response);
+        });
       },
       showAlert(title, text, icon){
         swal({
@@ -382,27 +391,6 @@
             this.datos[i].show = true;
           }
         }
-      },
-      collectionValidation(clinicNumber, residueId){
-        let clinicNumberValidation;
-        let residueNameValidation;
-        for (let i = 0; i < this.residues.length; i++) {
-          if(this.residues[i].id == residueId){
-            residueNameValidation = this.residues[i].residue_name;
-            console.log("El residuo que se encuentra sin llenar es el: ", residueNameValidation);
-            break;
-          } 
-        }
-
-        for(let j = 0; j < this.clinics.length; j++){
-          if(this.clinics[j].clinic_id == clinicNumber){
-            clinicNumberValidation = this.clinics[j].clinic.clinic_number;
-            console.log("En el consultorio numero: ", clinicNumberValidation);
-            break;
-          }
-        }
-
-        this.showAlert("Aviso",  `Falta diligenciar información del residuo ${residueNameValidation} en el consultorio ${clinicNumberValidation}`, "warning");
       },
       cleanInputs(){
         this.general_data.schedule = '';
