@@ -153,8 +153,8 @@
                       </tr>
                       <tr>
                         <th class="text-center px-0" colspan="4"></th>
-                        <th class="text-center px-0" colspan="4">INFECCIOSOS O RIESGO BIOLOGICO</th>
-                        <th class="text-center px-0" colspan="6">QUIMICOS</th>
+                        <th class="text-center px-0" colspan="5">INFECCIOSOS O RIESGO BIOLOGICO</th>
+                        <th class="text-center px-0" colspan="5">QUIMICOS</th>
                         <th class="text-center px-0" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>

@@ -125,7 +125,7 @@
                                 <h3>REGISTRO DIARIO DE GENERACIÓN DE RESIDUOS HOSPITALARIOS Y SIMILARES</h3>
                             </div>
                         </div>
-                        <div class="col-sm-12 container">
+                        <div class="col-sm-12 container" tabindex="0" @keyup.enter="evntoEnter">
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
@@ -152,18 +152,24 @@
                                             <td class="text-center">{{ revalidateData(i,0) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ revalidateData(i,1) }}</td>
+                                            <td class="text-center p-0">
+                                                <input 
+                                                    v-model="garbageBags[i]"
+                                                    type="number" 
+                                                    class="border border-black form-control" 
+                                                    style="width: 100%; height: 2.8em;"
+                                                >
+                                            </td>
                                             <td class="text-center"></td>
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center p-0">
-                                                <input 
+                                                <v-combobox 
+                                                    class="border border-black form-control" style="width: 100%; height: 2.8em;"
                                                     v-model="hoursText[i]"
-                                                    type="text" 
-                                                    @input="uperCaseText(hoursText[i],i)" 
-                                                    class="border border-black form-control" 
-                                                    style="width: 100%; height: 2.8em;"
-                                                >
+                                                    :items="itemsSelect"
+                                                    solo>
+                                                </v-combobox>
                                             </td>
                                             <td class="text-center"></td>
                                             <td class="text-center p-0"> 
@@ -182,7 +188,7 @@
                                             <td class="text-center">{{ revalidateData(0,2) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ revalidateData(0,3) }}</td>
+                                            <td class="text-center">{{ totalGarbageBags }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ totalDay }}</td>
                                             <td class="text-center"></td>
@@ -232,22 +238,37 @@ export default {
             showAlert: true,
             selectYesOrNot: [],
             hoursText: [],
+            garbageBags: [],
             day: [],
             list_residues: [],
             data_residues: [],
             list_residues_clinic: [],
             list_residues_temp: [],
-            data_garbage_bags: [],
             items: [],
             collection_logs: [],
             stored_days: [],
             stored: [],
+            itemsSelect: [
+                '01:00',
+                '02:00',
+                '03:00',
+                '04:00',
+                '05:00',
+                '06:00',
+                '07:00',
+                '08:00',
+                '09:00',
+                '10:00',
+                '11:00',
+                '12:00',
+            ],
             index: 0,
             position: 0,
             total: 0,
             total_clinic: 0,
             total_temp: 0,
             totalDay: 0,
+            totalGarbageBags: 0,
             focus: new Date(),
             isAdmin: false,
         }
@@ -278,6 +299,10 @@ export default {
     },
 
     methods: {
+        evntoEnter() {
+            this.saveChange();
+        },
+
         pdf() {
             this.loaderPdf = 'loadingPdf'
             var element = document.getElementById('element-to-pdf');
@@ -288,11 +313,11 @@ export default {
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 3 },
                     jsPDF: {
-                    unit: 'mm',
-                    format: 'a4',
-                    orientation: 'landscape',
-                    width: 500,
-                    height: 297
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'landscape',
+                        width: 500,
+                        height: 397
                     }
                 };
             }else if(this.clinic != ''){
@@ -332,6 +357,7 @@ export default {
                     this.total = res.data.total;
                     this.list_residues_temp = this.list_residues;
                     this.total_temp = this.total;
+                    this.totalGarbageBags = res.data.totalGarbageBags;
                     this.changeData();
                 }).catch(error => {
                     console.log(error.response);
@@ -365,13 +391,9 @@ export default {
         revalidateData(index, type) {
             if (this.data_residues[index] != undefined && type == 0) {
                 return this.data_residues[index];
-            }else if (this.data_garbage_bags[index] != undefined && type == 1){
-                return this.data_garbage_bags[index];
             }else if (this.total[index] != undefined) {
                 if (type == 2) {
                     return this.formater(this.total[index].total_weight)
-                }else{
-                    return this.formater(this.total[index].garbage_bags)
                 }
             }
             return '0';
@@ -379,9 +401,11 @@ export default {
 
         getResidueValue() {
             this.data_residues = [];
-            this.data_garbage_bags = [];
             this.stored = [];
             this.stored_day = [];
+            this.garbageBags = [];
+            this.hoursText = [];
+            this.selectYesOrNot = [];
             this.totalDay = 0;
             let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
@@ -411,10 +435,10 @@ export default {
                     }
                     for (let l = 0; l < this.list_residues.length; l++) {
                         if (this.list_residues[l].day == i) {
-                            this.data_garbage_bags[i] = this.formater(this.list_residues[l].garbage_bags);
                             this.data_residues[i] = this.formater(this.list_residues[l].total_weight);
                             this.hoursText[i] = this.list_residues[l].hour;
                             this.selectYesOrNot[i] = this.list_residues[l].yesOrNot;
+                            this.garbageBags[i] = this.list_residues[l].garbage_bags;
                         }
                     }
                 }
@@ -499,16 +523,13 @@ export default {
             }
             this.clinicInitialize(this.clinic);
         },
+
         getuserRole(){
             axios.get('/collector/getRole').then(res => {
-                console.log("Respuesta del servidor");
-                console.log(res);
                 if(res.data.role == 'Administrador' || res.data.role == 'Auxiliar Contable'){
                     this.isAdmin = true;
-                    console.log("trhis is admin", this.isAdmin);
                 }else{
                     this.isAdmin = false;
-                    console.log("this id admin: ", this.isAdmin);
                 }
             }).catch(error => {
                 console.log("Error en axios");
@@ -517,17 +538,15 @@ export default {
             })
         },
 
-        uperCaseText(text,position){
-            return this.hoursText[position] = text.toUpperCase();
-        },
-
         saveChange(){
             let size = 0;
             let typeAlert = 0;
-            if (this.hoursText.length > this.selectYesOrNot.length) {
+            if (this.hoursText.length > this.selectYesOrNot.length && this.hoursText.length > this.garbageBags.length) {
                 size = this.hoursText.length;
-            }else{
+            }else if(this.selectYesOrNot.length > this.hoursText.length && this.selectYesOrNot.length > this.garbageBags.length){
                 size = this.selectYesOrNot.length;
+            }else{
+                size = this.garbageBags.length;
             }
             let currentDate = new Date();
             let year = currentDate.getFullYear();
@@ -537,30 +556,38 @@ export default {
             let requests = [];
             let validateHour = true;
             for (let i = 0; i < size; i++) {
-                if (this.hoursText[i] != undefined || this.selectYesOrNot[i] != undefined && this.data_residues[i] != undefined) {
+                console.log("01", this.data_residues[i]);
+                if (this.data_residues[i] != undefined) {
                     let hour = null;
                     let selectYesOrNot = null;
-                    if (this.validateHour(this.hoursText[i])) {
-                        if (this.hoursText[i] != undefined) {
-                            hour = this.hoursText[i];
+                    let garbage_bags = null;
+                    if (this.hoursText[i] != null && this.hoursText[i] != '') {
+                        if (this.validateHour(this.hoursText[i])) {
+                            if (this.hoursText[i] != undefined) {
+                                hour = this.hoursText[i];
+                            }
+                        }else{
+                            validateHour = false;
+                            this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00 AM/PM`);
                         }
-                    }else{
-                        validateHour = false;
-                        this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00 AM/PM`);
                     }
-                    console.log(validateHour);
                     if (this.selectYesOrNot[i] != undefined) {
                         selectYesOrNot = this.selectYesOrNot[i];
+                    }
+                    if (this.garbageBags[i] != undefined) {
+                        garbage_bags = this.garbageBags[i];
                     }
                     let data = {
                         'yesOrNot': selectYesOrNot,
                         'hour': hour,
+                        'garbage_bags': garbage_bags,
                         'date': formattedDate,
                     };  
                     if (validateHour) {
                         let request = axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
                             console.log(res.data);
                         }).catch(error => {
+                            console.log(error.response);
                         })
                         requests.push(request);
                     }
@@ -578,16 +605,15 @@ export default {
                     if (typeAlert == 1) {
                         this.alertFalse("Parece que algo salió mal");
                     }else if (typeAlert == 3) {
+                        this.setToday()
                         this.alertTrue("Cambios exitosos. Recuerde que los cambios hechos en los días que no tienen recolección de residuos no serán registrados");
                     }
-                    console.log(typeAlert);
                 });
-                console.log(typeAlert);
             }
         },
 
         validateHour(hour){
-            let restriction = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i;
+            let restriction = /^(0?[1-9]|1[0-2]):[0-5][0-9]$/i;
             return restriction.test(hour);
         },
 

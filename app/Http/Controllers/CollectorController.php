@@ -67,7 +67,6 @@ class CollectorController extends Controller
                                 $collection->schedule = $general_data["schedule"];
                                 $collection->save();
                             }
-
                             foreach ($clinic["data"] as $key => $residue) {
                                 if($residue["weight"] != 0 && $residue["weight"] != 0){
                                     $residues = new Waste_collection();
@@ -75,6 +74,9 @@ class CollectorController extends Controller
                                     $residues->id_residue = $residue["residue_id"];
                                     $residues->weight = $residue["weight"];
                                     $residues->garbage_bags = $residue["bags"];
+                                    if ($general_data["schedule"] == 'Extra - 6:00 AM') {
+                                        $residues->created_at = $lastDate;
+                                    }
                                     $residues->save();
                                 }
                             }
