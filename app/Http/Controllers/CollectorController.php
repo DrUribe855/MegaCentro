@@ -65,12 +65,14 @@ class CollectorController extends Controller
                             $collection->save();
                         }
                         foreach ($clinic["data"] as $key => $residue) {
-                            
+                            if($residue["weight"] > 0){
                                 $residues = new Waste_collection();
                                 $residues->collection_logs_id = $collection->id;
                                 $residues->id_residue = $residue["residue_id"];
                                 $residues->weight = $residue["weight"];
                                 $residues->save();
+
+                            }
                             
                         }
                        
@@ -103,12 +105,13 @@ class CollectorController extends Controller
         $general_data = $request->data_general;
         $anioActual = getdate();
 
-        if($this->dateValidations($general_data, $anioActual)){
+
+        // if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
-                    $collectionToUpdate = Waste_collection::join('collection_logs', 'collection_logs.id', '=', 'waste_collections.id')  
+                    $collectionToUpdate = Waste_collection::join('collection_logs', 'collection_logs.id', '=', 'waste_collections.collection_logs_id')  
                     ->where('month', $general_data["month"])
                     ->where('year', $general_data["year"])
-                    ->where('schedule', $general_data["schedule"]) 
+                    ->where('schedule', $general_data["schedule"])
                     ->value('collection_logs_id');
 
                     foreach ($collection["data"] as $key2 => $residue) {
@@ -125,19 +128,23 @@ class CollectorController extends Controller
                 $data = [
                             'message' => 'Modificacion registrada',
                             'status' => true,
+                            'collectionToUpdate' => $collectionToUpdate,
                                            
                         ];
 
-                return response()->json($data);
-        }else{
-            $data = [
-                        'message' => 'Informacion de modificacion incompleta',
-                        'status' => true,
-                                           
-                    ];
 
-            return response()->json($data);
-        }
+                return response()->json($data);
+
+               
+        // }else{
+        //     $data = [
+        //                 'message' => 'Informacion de modificacion incompleta',
+        //                 'status' => true,
+                                           
+        //             ];
+
+        //     return response()->json($data);
+        // }
         
             
             
@@ -159,7 +166,7 @@ class CollectorController extends Controller
             return false;
         }
 
-        if($general_data['schedule'] == '' || $general_data["schedule"] == null){
+        if($general_data['schedule'] == '' || $general_data["schedule"] == null || $general_data["schedule"] == "undefined")  {
             return false;
         }
 

@@ -174,7 +174,8 @@
         month: '',
         year: '',
         schedule: '',
-      }, 
+      },
+
       role: '',
     }),
 
@@ -187,7 +188,6 @@
       filteredPanels() {
         let datos = this.clinics.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
         this.indexLocalStorage = this.paginationRange.startIndex;
-        console.log(this.datos);
         return datos;
       },
       indexLocalStorage2() {
@@ -209,8 +209,6 @@
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            console.log("Esta es la impresión de consultorios: ",this.clinics);
-            console.log("Esta es la impresión de residuos: ", this.residues);
             res.data.clinics.forEach(clinic => {
               let aux = {
                 clinic_id: clinic.id,
@@ -287,8 +285,12 @@
           datos: this.datos,
           data_general: this.general_data,
         }
+
+
         console.log('Click a update');
+        console.log("console request", this.general_data.schedule );
         axios.post('/collector/updateCollection', request).then(resp => {
+          console.log(resp);
           if(resp.data.message == "Modificacion registrada"){
             this.cleanInputs();
             this.showAlert('Validado', 'Se ha registado con exitos la(s) modificacion(es)','success');
@@ -415,10 +417,7 @@
       },
       getuserRole(){
         axios.get('/collector/getRole').then(res => {
-          console.log("Respuesta del servidor");
-          console.log(res);
           this.role = res.data.role;
-          console.log("Este es el rol del usuario: ", this.role);
         }).catch(error => {
           console.log("Error en axios");
           console.log(error);
