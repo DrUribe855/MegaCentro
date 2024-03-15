@@ -171,7 +171,13 @@
                                                     solo>
                                                 </v-combobox>
                                             </td>
-                                            <td class="text-center"></td>
+                                            <td class="text-center p-0"> 
+                                                <select v-model="staffing[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                    <option selected></option>
+                                                    <option>Si</option>
+                                                    <option>No</option>
+                                                </select>
+                                            </td>
                                             <td class="text-center p-0"> 
                                                 <select v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
                                                     <option selected></option>
@@ -237,6 +243,7 @@ export default {
             alert: true,
             showAlert: true,
             selectYesOrNot: [],
+            staffing:[],
             hoursText: [],
             garbageBags: [],
             day: [],
@@ -406,6 +413,7 @@ export default {
             this.garbageBags = [];
             this.hoursText = [];
             this.selectYesOrNot = [];
+            this.staffing = [];
             this.totalDay = 0;
             let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
@@ -439,6 +447,7 @@ export default {
                             this.hoursText[i] = this.list_residues[l].hour;
                             this.selectYesOrNot[i] = this.list_residues[l].yesOrNot;
                             this.garbageBags[i] = this.list_residues[l].garbage_bags;
+                            this.staffing[i] = this.list_residues[l].staffing;
                         }
                     }
                 }
@@ -561,6 +570,7 @@ export default {
                     let hour = null;
                     let selectYesOrNot = null;
                     let garbage_bags = null;
+                    let staffing = null;
                     if (this.hoursText[i] != null && this.hoursText[i] != '') {
                         if (this.validateHour(this.hoursText[i])) {
                             if (this.hoursText[i] != undefined) {
@@ -568,19 +578,29 @@ export default {
                             }
                         }else{
                             validateHour = false;
-                            this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00 AM/PM`);
+                            this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00`);
                         }
                     }
                     if (this.selectYesOrNot[i] != undefined) {
                         selectYesOrNot = this.selectYesOrNot[i];
                     }
                     if (this.garbageBags[i] != undefined) {
-                        garbage_bags = this.garbageBags[i];
+                        if (this.garbageBags[i] >= 0) {
+                            garbage_bags = this.garbageBags[i];
+                        }else{
+                            validateHour = false;
+                            this.alertFalse(`La cantidad de bolsas del día: ${i} deben ser números positivos`);
+                        }
                     }
+                    if (this.staffing[i] != undefined) {
+                        staffing = this.staffing[i];
+                    }
+                    console.log(staffing);
                     let data = {
                         'yesOrNot': selectYesOrNot,
                         'hour': hour,
                         'garbage_bags': garbage_bags,
+                        'staffing': staffing,
                         'date': formattedDate,
                     };  
                     if (validateHour) {

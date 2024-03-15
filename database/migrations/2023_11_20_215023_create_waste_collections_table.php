@@ -16,6 +16,7 @@ return new class extends Migration
             $table->Integer('garbage_bags')->nullable();
             $table->timestamps();
             $table->enum('yesOrNot', ['','Si', 'No'])->nullable();
+            $table->enum('staffing', ['','Si', 'No'])->nullable();
             $table->string('hour')->nullable();
             
             $table->foreign('collection_logs_id')->references('id')->on('collection_logs');

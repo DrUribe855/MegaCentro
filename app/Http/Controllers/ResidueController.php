@@ -48,10 +48,10 @@ class ResidueController extends Controller
     public function showContinuation($date){
         $dateTime = DateTime::createFromFormat('Y-n', $date);
         $formattedDate = $dateTime->format('Y-m');
-        $residues = Waste_collection::selectRaw('DAY(created_at) as day, MONTH(created_at) as month, YEAR(created_at) as year, SUM(weight) as total_weight, garbage_bags, hour, yesOrNot')
+        $residues = Waste_collection::selectRaw('DAY(created_at) as day, MONTH(created_at) as month, YEAR(created_at) as year, SUM(weight) as total_weight, garbage_bags, hour, yesOrNot, staffing')
         ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
         ->whereHas('collection_logs')
-        ->groupBy('day', 'month', 'year', 'hour', 'yesOrNot', 'garbage_bags')
+        ->groupBy('day', 'month', 'year', 'hour', 'yesOrNot', 'garbage_bags', 'staffing')
         ->get();
 
         $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight')
@@ -280,6 +280,7 @@ class ResidueController extends Controller
             'garbage_bags' => $request->input('garbage_bags'),
             'yesOrNot' => $request->input('yesOrNot'),
             'hour' => $request->input('hour'),
+            'staffing' => $request->input('staffing'),
         ]);
         
         $idCollectionLog = Waste_collection::whereHas('collection_logs')
