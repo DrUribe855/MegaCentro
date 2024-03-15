@@ -115,7 +115,6 @@ class EmployeesController extends Controller
             'email' => 'required|email|',
             'role_name' => 'required',
             'status' => 'required',
-            // 'password' => 'required',
         ]);
 
         $document = $request->input('document');

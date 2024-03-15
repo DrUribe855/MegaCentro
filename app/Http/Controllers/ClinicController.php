@@ -73,11 +73,18 @@ class ClinicController extends Controller
     }
 
     public function generalShowClinic(){
-        $records = Clinic::doesnthave('clinic_user')->get();
+        $recordsTower1 = Clinic::doesnthave('clinic_user')
+        ->where('tower_id', 1)
+        ->get();
+
+        $recordsTower2 = Clinic::doesnthave('clinic_user')
+        ->where('tower_id', 2)
+        ->get();
 
         $data = [
                     'status' => true,
-                    'clinics' => $records, 
+                    'clinicsTower1' => $recordsTower1,
+                    'clinicsTower2' => $recordsTower2, 
                 ];
 
         return response()->json($data);

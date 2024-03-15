@@ -44,7 +44,7 @@ Route::put('administrator/updateEmployees/{id}', [EmployeesController::class, 'u
 // Auth::routes();
 
 Route::get('/assistant/index', [ AssistantController::class, 'index'])->middleware('can:admin.managers.generalShow');
-Route::get('/assistant/continuation', [ AssistantController::class, 'showContinuation'])->middleware('can:admin.view.rhContinuation');
+Route::get('/assistant/continuation', [ AssistantController::class, 'showContinuation'])->middleware('can:assistant.statistics.rhcontinuation');
 Route::get('/assistant/unified', [ AssistantController::class, 'showUnified'])->middleware('can:admin.managers.generalShow');
 Route::get('/assistant/unifiedContinuation', [ AssistantController::class, 'showUnifiedContinuation'])->middleware('can:admin.managers.generalShow');
 
@@ -74,6 +74,7 @@ Route::get('/collector/non-hazardous-waste', [CollectorController::class, 'resid
 Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
 Route::post('/collector/saveCollection', [ CollectorController::class, 'store']);
 Route::get('/collector/getRole', [ CollectorController::class, 'getUserRole']);
+Route::post('/collector/updateCollection', [ CollectorController::class, 'updateCollection']);
 // ------------------------------- Rutas de encargado --------------------------------------- \\
 
 Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('can:manager.clinics.generalShow');

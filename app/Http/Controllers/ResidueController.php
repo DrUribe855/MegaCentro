@@ -120,13 +120,13 @@ class ResidueController extends Controller
 
     public function showUnifiedContinuation($date){
         $dateTime = DateTime::createFromFormat('Y', $date);
-        $formattedDate = $dateTime->format('Y-m');
-        $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        $formattedDate = $dateTime->format('Y');
+        $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(DISTINCT garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month')
         ->get();
 
-        $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(DISTINCT garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year')
         ->get();

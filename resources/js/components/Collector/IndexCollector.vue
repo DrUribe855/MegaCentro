@@ -52,9 +52,22 @@
 
                 >
                   <v-btn
+                    v-if="this.role == 'Recolector'"
                     color="primary"
                     @click="save()"
-                  >Registrar recolección</v-btn>
+                  >Registrar recolecciones</v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="3"
+
+                >
+                  <v-btn
+                    v-if="this.role == 'Administrador'"
+                    color="primary"
+                    @click="update()"
+                  >Modificar recolecciones</v-btn>
                 </v-col>
                 <v-col
                   cols="12"
@@ -105,7 +118,7 @@
           <div v-for="(panel, indexLocalStorage) in filteredPanels"  :key="indexLocalStorage" class="mt-3">
             <v-expansion-panels>
               <v-expansion-panel v-if="datos[indexLocalStorage2+indexLocalStorage].show">
-                <v-expansion-panel-header >Consultorio: {{panel.clinic_number  }}  / Torre: {{panel.tower_id}} / Piso: {{ panel.floor }}</v-expansion-panel-header>
+                <v-expansion-panel-header >Consultorio: {{panel.clinicNumber  }}  / Torre: {{panel.towerNumber}} / Piso: {{ panel.floorNumber }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -125,29 +138,13 @@
                             </v-col>
                           </v-row>
                       </div>
-                      <div>
-                        <h5 class="mt-3">Bolsas</h5>
-                        <v-row>
-                          <v-col
-                            v-for="(residue, i) in residues" :key="residue.id"
-                            cols="12"
-                            md="3"
-                          >
-                            <v-text-field
-                              :label="residue.residue_name"
-                              v-model="datos[indexLocalStorage2+indexLocalStorage].data[i].bags"
-                              @change="changeValue()"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </div>
                     </v-container>
                   </v-form>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
-          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
+          <v-pagination  v-if="mostrarPaginador" v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -177,7 +174,9 @@
         month: '',
         year: '',
         schedule: '',
-      }
+      },
+      mostrarPaginador : true,
+      role: '',
     }),
 
     computed: {
@@ -187,9 +186,8 @@
       return { startIndex, endIndex };
       },
       filteredPanels() {
-        let datos = this.clinics.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
+        let datos = this.datos.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
         this.indexLocalStorage = this.paginationRange.startIndex;
-        console.log(this.datos);
         return datos;
       },
       indexLocalStorage2() {
@@ -199,6 +197,7 @@
       },
     },
     created () {
+      this.getuserRole();
       this.getClinics();
       this.filterClinics();
     },
@@ -210,8 +209,6 @@
             this.residues = res.data.residues;
             this.general_data.month = res.data.month;
             this.general_data.year = res.data.year;
-            console.log("Esta es la impresión de consultorios: ",this.clinics);
-            console.log("Esta es la impresión de residuos: ", this.residues);
             res.data.clinics.forEach(clinic => {
               let aux = {
                 clinic_id: clinic.id,
@@ -226,7 +223,6 @@
                 aux.data.push({
                     residue_id: residue.id,
                     weight: 0,
-                    bags: 0,
                 });
               }); 
               this.datos.push(aux);
@@ -272,14 +268,10 @@
           datos: this.datos,
           data_general: this.general_data,
         }
-        console.log("request asdas: ",request);
         axios.post('/collector/saveCollection', request).then(resp => {
-          console.log("request: ", resp);
           if(resp.data.message == "Recolección registrada"){
             this.cleanInputs();
             this.showAlert('Validado', 'Se han registrado las recolecciones con éxito', 'success');
-          }else if(resp.data.message == "Datos incompletos"){
-            this.collectionValidation(resp.data.collectionData.clinicNumber, resp.data.collectionData.residue_id);
           }else if(resp.data.message == 'Datos incorrectos en la fecha'){
             this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
           }
@@ -287,6 +279,29 @@
           console.log(error.response);
         });
         
+      },
+      update(){
+        let request = {
+          datos: this.datos,
+          data_general: this.general_data,
+        }
+
+
+        console.log('Click a update');
+        console.log("console request", this.general_data.schedule );
+        axios.post('/collector/updateCollection', request).then(resp => {
+          console.log(resp);
+          if(resp.data.message == "Modificacion registrada"){
+            this.cleanInputs();
+            this.showAlert('Validado', 'Se ha registado con exitos la(s) modificacion(es)','success');
+          }else if(resp.data.message == 'Informacion de modificacion incompleta'){
+            this.showAlert('Error', 'Falta diligenciar el horario de recolección', 'error');
+          }
+        }).catch(error => {
+            console.log('Error en axios: ');
+            console.log(error);
+            console.log(error.response);
+        });
       },
       showAlert(title, text, icon){
         swal({
@@ -301,13 +316,12 @@
       },
       filterClinics() {
 
-        let filtro = this.datos;
-
         // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
 
         if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
          for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -320,6 +334,7 @@
         if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -332,6 +347,7 @@
         if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].floorNumber == this.floorNumber){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -344,6 +360,7 @@
         if(this.towerNumber != '' && this.floorNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].floorNumber.includes(this.floorNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -356,6 +373,7 @@
         if(this.clinicNumber != '' && this.floorNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if( this.datos[i].floorNumber == this.floorNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -368,6 +386,7 @@
         if(this.clinicNumber != '' && this.towerNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if( this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -375,38 +394,17 @@
           }
         }
 
-        //Filtro para cuando los 3 campos se encuentren sin diligenciar
+        // //Filtro para cuando los 3 campos se encuentren sin diligenciar
 
         if(this.towerNumber == '' && this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             this.datos[i].show = true;
+            this.mostrarPaginador = true;
           }
         }
-      },
-      collectionValidation(clinicNumber, residueId){
-        let clinicNumberValidation;
-        let residueNameValidation;
-        for (let i = 0; i < this.residues.length; i++) {
-          if(this.residues[i].id == residueId){
-            residueNameValidation = this.residues[i].residue_name;
-            console.log("El residuo que se encuentra sin llenar es el: ", residueNameValidation);
-            break;
-          } 
-        }
-
-        for(let j = 0; j < this.clinics.length; j++){
-          if(this.clinics[j].clinic_id == clinicNumber){
-            clinicNumberValidation = this.clinics[j].clinic.clinic_number;
-            console.log("En el consultorio numero: ", clinicNumberValidation);
-            break;
-          }
-        }
-
-        this.showAlert("Aviso",  `Falta diligenciar información del residuo ${residueNameValidation} en el consultorio ${clinicNumberValidation}`, "warning");
       },
       cleanInputs(){
         this.general_data.schedule = '';
-        console.log(this.general_data);
         for (let i = 0; i < this.datos.length; i++) {
           for (let j = 0; j < this.residues.length; j++) {
             this.datos[i].data[j].bags = 0;
@@ -420,7 +418,16 @@
       },
       previousPage() {
         this.currentPage--;
-      }
+      },
+      getuserRole(){
+        axios.get('/collector/getRole').then(res => {
+          this.role = res.data.role;
+        }).catch(error => {
+          console.log("Error en axios");
+          console.log(error);
+          console.log(error.response);
+        });
+      },
     },
   }
 </script>

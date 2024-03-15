@@ -275,7 +275,6 @@ import 'bootstrap/dist/js/bootstrap.bundle';
         getEmployees(){
             axios.get('administrator/generalShow').then(res => {
                 console.log('Respuesta del servidor');
-                console.log(res);
                 this.desserts = res.data.employees;
             }).catch(error => {
                 console.log('Error en axios: ');
