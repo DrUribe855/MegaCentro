@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('collection_logs_id');
             $table->unsignedBigInteger('id_residue');
             $table->float('weight');
-            $table->Integer('garbage_bags');
+            $table->Integer('garbage_bags')->nullable();
             $table->timestamps();
             $table->enum('yesOrNot', ['','Si', 'No'])->nullable();
             $table->string('hour')->nullable();

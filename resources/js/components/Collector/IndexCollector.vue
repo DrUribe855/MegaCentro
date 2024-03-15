@@ -118,7 +118,7 @@
           <div v-for="(panel, indexLocalStorage) in filteredPanels"  :key="indexLocalStorage" class="mt-3">
             <v-expansion-panels>
               <v-expansion-panel v-if="datos[indexLocalStorage2+indexLocalStorage].show">
-                <v-expansion-panel-header >Consultorio: {{panel.clinic_number  }}  / Torre: {{panel.tower_id}} / Piso: {{ panel.floor }}</v-expansion-panel-header>
+                <v-expansion-panel-header >Consultorio: {{panel.clinicNumber  }}  / Torre: {{panel.towerNumber}} / Piso: {{ panel.floorNumber }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-form>
                     <v-container>
@@ -144,7 +144,7 @@
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
-          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
+          <v-pagination  v-if="mostrarPaginador" v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -175,7 +175,7 @@
         year: '',
         schedule: '',
       },
-
+      mostrarPaginador : true,
       role: '',
     }),
 
@@ -186,7 +186,7 @@
       return { startIndex, endIndex };
       },
       filteredPanels() {
-        let datos = this.clinics.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
+        let datos = this.datos.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
         this.indexLocalStorage = this.paginationRange.startIndex;
         return datos;
       },
@@ -316,13 +316,17 @@
       },
       filterClinics() {
 
-        let filtro = this.datos;
+        let filtro = this.filteredPanels;
+        console.log(this.datos);
 
         // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
 
         if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
+          console.log(filtro[0]);
          for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
+              console.log(this.datos[i]);
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -390,11 +394,12 @@
           }
         }
 
-        //Filtro para cuando los 3 campos se encuentren sin diligenciar
+        // //Filtro para cuando los 3 campos se encuentren sin diligenciar
 
         if(this.towerNumber == '' && this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             this.datos[i].show = true;
+            this.mostrarPaginador = true;
           }
         }
       },
