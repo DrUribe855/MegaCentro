@@ -316,17 +316,12 @@
       },
       filterClinics() {
 
-        let filtro = this.filteredPanels;
-        console.log(this.datos);
-
         // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
 
         if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
-          console.log(filtro[0]);
          for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
               this.mostrarPaginador = false;
-              console.log(this.datos[i]);
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -339,6 +334,7 @@
         if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -351,6 +347,7 @@
         if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].floorNumber == this.floorNumber){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -363,6 +360,7 @@
         if(this.towerNumber != '' && this.floorNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].floorNumber.includes(this.floorNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -375,6 +373,7 @@
         if(this.clinicNumber != '' && this.floorNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if( this.datos[i].floorNumber == this.floorNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -387,6 +386,7 @@
         if(this.clinicNumber != '' && this.towerNumber != ''){
           for (let i = 0; i < this.datos.length; i++) {
             if( this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
+              this.mostrarPaginador = false;
               this.datos[i].show = true;
             }else{
               this.datos[i].show = false;
@@ -405,7 +405,6 @@
       },
       cleanInputs(){
         this.general_data.schedule = '';
-        console.log(this.general_data);
         for (let i = 0; i < this.datos.length; i++) {
           for (let j = 0; j < this.residues.length; j++) {
             this.datos[i].data[j].bags = 0;

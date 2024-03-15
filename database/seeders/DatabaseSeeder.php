@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->fake_tower();
         $users = User::factory(30)->create();
-        $this->fake_clinic();
+        // $this->fake_clinic();
         $this->call(RoleSeeder::class);
         $this->call(MorePermissionsSeeder::class);
 
@@ -49,21 +49,21 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    public function fake_clinic(){
-        for ($i=0; $i < 300; $i++) { 
-            $clinic_number = rand(100,500);
-            $floor = rand(1,10);
-            $tower_id = rand(1,2);
-            while (Clinic::where('clinic_number', $clinic_number)->exists()) {
-                $clinic_number = rand(100, 500);
-            }
-            Clinic::insert([
-                'clinic_number' => $clinic_number,
-                'floor' => $floor,
-                'tower_id' => $tower_id,
-                'status' => 'DESOCUPADO',
-                'collection_status' => 'SIN RECOLECTAR',
-            ]);
-        }
-    }
+    // public function fake_clinic(){
+    //     for ($i=0; $i < 300; $i++) { 
+    //         $clinic_number = rand(100,500);
+    //         $floor = rand(1,10);
+    //         $tower_id = rand(1,2);
+    //         while (Clinic::where('clinic_number', $clinic_number)->exists()) {
+    //             $clinic_number = rand(100, 500);
+    //         }
+    //         Clinic::insert([
+    //             'clinic_number' => $clinic_number,
+    //             'floor' => $floor,
+    //             'tower_id' => $tower_id,
+    //             'status' => 'DESOCUPADO',
+    //             'collection_status' => 'SIN RECOLECTAR',
+    //         ]);
+    //     }
+    // }
 }
