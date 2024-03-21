@@ -131,10 +131,38 @@ class ResidueController extends Controller
         ->groupBy('year')
         ->get();
 
+        $totalGarbageBags = 0;
+
+        $consultaGarbageBags = Waste_collection::selectRaw('DAY(created_at) as day, MONTH(created_at) as month, SUM(DISTINCT garbage_bags) as totalGarbageBags')
+        ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
+        ->groupBy('day', 'month')
+        ->get();
+
+        foreach ($consultaGarbageBags as $consulta) {
+            $totalGarbageBags += $consulta->totalGarbageBags;
+        }
+
+        $total[0]['garbage_bags'] = $totalGarbageBags;
+        
+        $totalGarbageBagsMonth = [];
+        
+        foreach ($consultaGarbageBags as $item) {
+            if (!isset($totalGarbageBagsMonth[$item['month']])) {
+                $totalGarbageBagsMonth[$item['month']] = 0;
+            }
+            $totalGarbageBagsMonth[$item['month']] += intval($item['totalGarbageBags']);;
+        }
+
+        for ($i=0; $i < count($residues); $i++) { 
+            $residues[$i]['garbage_bags'] = $totalGarbageBagsMonth[$residues[$i]['month']];
+        }
+
         $data = [
             'status' => true,
             'residues' => $residues,
             'total' => $total,
+            'totalAño' => $consultaGarbageBags,
+            'totalMes' => $totalGarbageBagsMonth,
         ];
 
         return response()->json($data);

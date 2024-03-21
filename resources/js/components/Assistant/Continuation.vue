@@ -53,7 +53,7 @@
                                         mdi-cloud-upload
                                     </v-icon>
                                 </v-btn> -->
-                                <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
+                                <v-btn v-if="isAdmin == true" :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
                                     @click="pdf">
                                     PDF
                                     <v-icon right dark>
@@ -154,6 +154,7 @@
                                             <td class="text-center"></td>
                                             <td class="text-center p-0">
                                                 <input 
+                                                    :disabled="revalidateData(i,3)"
                                                     v-model="garbageBags[i]"
                                                     type="number" 
                                                     class="border border-black form-control" 
@@ -165,6 +166,7 @@
                                             <td class="text-center"></td>
                                             <td class="text-center p-0">
                                                 <v-combobox 
+                                                    :disabled="revalidateData(i,3)"
                                                     class="border border-black form-control" style="width: 100%; height: 2.8em;"
                                                     v-model="hoursText[i]"
                                                     :items="itemsSelect"
@@ -172,17 +174,17 @@
                                                 </v-combobox>
                                             </td>
                                             <td class="text-center p-0"> 
-                                                <select v-model="staffing[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                <select :disabled="revalidateData(i,3)" v-model="staffing[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
                                                     <option selected></option>
-                                                    <option>Si</option>
-                                                    <option>No</option>
+                                                    <option>SI</option>
+                                                    <option>NO</option>
                                                 </select>
                                             </td>
                                             <td class="text-center p-0"> 
-                                                <select v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                <select :disabled="revalidateData(i,3)" v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
                                                     <option selected></option>
-                                                    <option>Si</option>
-                                                    <option>No</option>
+                                                    <option>SI</option>
+                                                    <option>NO</option>
                                                 </select>
                                             </td>
                                             <td class="text-center">ROJO</td>
@@ -234,6 +236,8 @@ export default {
             dateAxios: '',
             clinic: '',
             clinic_number: '',
+            dateComplet: '',
+            validateMonth: '',
             type: 'month',
             loader: null,
             loaderPdf: null,
@@ -251,6 +255,7 @@ export default {
             data_residues: [],
             list_residues_clinic: [],
             list_residues_temp: [],
+            list_date: [],
             items: [],
             collection_logs: [],
             stored_days: [],
@@ -402,6 +407,12 @@ export default {
                 if (type == 2) {
                     return this.formater(this.total[index].total_weight)
                 }
+            }else if(type == 3){
+                if (this.list_date[index] != undefined && this.list_date[index] == this.dateComplet-1 || this.list_date[index] == this.dateComplet) {
+                    return false;
+                }else{
+                    return true;
+                }
             }
             return '0';
         },
@@ -414,6 +425,7 @@ export default {
             this.hoursText = [];
             this.selectYesOrNot = [];
             this.staffing = [];
+            this.list_date = [];
             this.totalDay = 0;
             let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
@@ -448,6 +460,7 @@ export default {
                             this.selectYesOrNot[i] = this.list_residues[l].yesOrNot;
                             this.garbageBags[i] = this.list_residues[l].garbage_bags;
                             this.staffing[i] = this.list_residues[l].staffing;
+                            this.list_date[i] = `${this.list_residues[l].year}${this.list_residues[l].month}${this.list_residues[l].day}`;
                         }
                     }
                 }
@@ -470,9 +483,12 @@ export default {
             const month = this.focus.toLocaleDateString('es-ES', options);
             const year = this.focus.getFullYear();
             const monthNumber = this.focus.getMonth() + 1;
+            const day = this.focus.getDate();
             this.position = monthNumber <= 9 ? this.position = '0' + monthNumber : this.position = monthNumber;
             this.date = month + ' ' + year;
             this.dateAxios = year + '-' + monthNumber;
+            this.validateMonth = monthNumber;
+            this.dateComplet = `${year}${monthNumber}${day}`;
             this.initialize(this.dateAxios);
             this.clinicInitialize(this.clinic);
         },
@@ -540,6 +556,7 @@ export default {
                 }else{
                     this.isAdmin = false;
                 }
+                console.log(this.isAdmin);
             }).catch(error => {
                 console.log("Error en axios");
                 console.log(error);
