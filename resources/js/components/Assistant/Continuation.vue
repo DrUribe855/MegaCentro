@@ -53,7 +53,7 @@
                                         mdi-cloud-upload
                                     </v-icon>
                                 </v-btn> -->
-                                <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
+                                <v-btn v-if="isAdmin == true" :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
                                     @click="pdf">
                                     PDF
                                     <v-icon right dark>
@@ -125,7 +125,7 @@
                                 <h3>REGISTRO DIARIO DE GENERACIÓN DE RESIDUOS HOSPITALARIOS Y SIMILARES</h3>
                             </div>
                         </div>
-                        <div class="col-sm-12 container">
+                        <div class="col-sm-12 container" tabindex="0" @keyup.enter="evntoEnter">
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
@@ -152,25 +152,39 @@
                                             <td class="text-center">{{ revalidateData(i,0) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ revalidateData(i,1) }}</td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
-                                            <td class="text-center"></td>
                                             <td class="text-center p-0">
                                                 <input 
-                                                    v-model="hoursText[i]"
-                                                    type="text" 
-                                                    @input="uperCaseText(hoursText[i],i)" 
+                                                    :disabled="revalidateData(i,3)"
+                                                    v-model="garbageBags[i]"
+                                                    type="number" 
                                                     class="border border-black form-control" 
                                                     style="width: 100%; height: 2.8em;"
                                                 >
                                             </td>
                                             <td class="text-center"></td>
+                                            <td class="text-center" v-if="!alert && clinic != ''">{{ stored[i] == i ? stored_days[i] : '0' }}</td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center p-0">
+                                                <v-combobox 
+                                                    :disabled="revalidateData(i,3)"
+                                                    class="border border-black form-control" style="width: 100%; height: 2.8em;"
+                                                    v-model="hoursText[i]"
+                                                    :items="itemsSelect"
+                                                    solo>
+                                                </v-combobox>
+                                            </td>
                                             <td class="text-center p-0"> 
-                                                <select v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                <select :disabled="revalidateData(i,3)" v-model="staffing[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
                                                     <option selected></option>
-                                                    <option>Si</option>
-                                                    <option>No</option>
+                                                    <option>SI</option>
+                                                    <option>NO</option>
+                                                </select>
+                                            </td>
+                                            <td class="text-center p-0"> 
+                                                <select :disabled="revalidateData(i,3)" v-model="selectYesOrNot[i]" class="border border-black form-control" style="width: 100%; height: 2.8em;">
+                                                    <option selected></option>
+                                                    <option>SI</option>
+                                                    <option>NO</option>
                                                 </select>
                                             </td>
                                             <td class="text-center">ROJO</td>
@@ -182,7 +196,7 @@
                                             <td class="text-center">{{ revalidateData(0,2) }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center"></td>
-                                            <td class="text-center">{{ revalidateData(0,3) }}</td>
+                                            <td class="text-center">{{ totalGarbageBags }}</td>
                                             <td class="text-center"></td>
                                             <td class="text-center" v-if="!alert && clinic != ''">{{ totalDay }}</td>
                                             <td class="text-center"></td>
@@ -222,6 +236,8 @@ export default {
             dateAxios: '',
             clinic: '',
             clinic_number: '',
+            dateComplet: '',
+            validateMonth: '',
             type: 'month',
             loader: null,
             loaderPdf: null,
@@ -231,23 +247,40 @@ export default {
             alert: true,
             showAlert: true,
             selectYesOrNot: [],
+            staffing:[],
             hoursText: [],
+            garbageBags: [],
             day: [],
             list_residues: [],
             data_residues: [],
             list_residues_clinic: [],
             list_residues_temp: [],
-            data_garbage_bags: [],
+            list_date: [],
             items: [],
             collection_logs: [],
             stored_days: [],
             stored: [],
+            itemsSelect: [
+                '01:00',
+                '02:00',
+                '03:00',
+                '04:00',
+                '05:00',
+                '06:00',
+                '07:00',
+                '08:00',
+                '09:00',
+                '10:00',
+                '11:00',
+                '12:00',
+            ],
             index: 0,
             position: 0,
             total: 0,
             total_clinic: 0,
             total_temp: 0,
             totalDay: 0,
+            totalGarbageBags: 0,
             focus: new Date(),
             isAdmin: false,
         }
@@ -278,6 +311,10 @@ export default {
     },
 
     methods: {
+        evntoEnter() {
+            this.saveChange();
+        },
+
         pdf() {
             this.loaderPdf = 'loadingPdf'
             var element = document.getElementById('element-to-pdf');
@@ -288,11 +325,11 @@ export default {
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 3 },
                     jsPDF: {
-                    unit: 'mm',
-                    format: 'a4',
-                    orientation: 'landscape',
-                    width: 500,
-                    height: 297
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'landscape',
+                        width: 500,
+                        height: 397
                     }
                 };
             }else if(this.clinic != ''){
@@ -326,11 +363,13 @@ export default {
         initialize(date) {
             if (date != '') {
                 axios.get(`/residue/showContinuation/${date}`).then(res => {
+                    console.log(res.data);
                     this.list_residues = res.data.residues;
                     this.index = res.data.date;
                     this.total = res.data.total;
                     this.list_residues_temp = this.list_residues;
                     this.total_temp = this.total;
+                    this.totalGarbageBags = res.data.totalGarbageBags;
                     this.changeData();
                 }).catch(error => {
                     console.log(error.response);
@@ -364,13 +403,15 @@ export default {
         revalidateData(index, type) {
             if (this.data_residues[index] != undefined && type == 0) {
                 return this.data_residues[index];
-            }else if (this.data_garbage_bags[index] != undefined && type == 1){
-                return this.data_garbage_bags[index];
             }else if (this.total[index] != undefined) {
                 if (type == 2) {
                     return this.formater(this.total[index].total_weight)
+                }
+            }else if(type == 3){
+                if (this.list_date[index] != undefined && this.list_date[index] == this.dateComplet-1 || this.list_date[index] == this.dateComplet) {
+                    return false;
                 }else{
-                    return this.formater(this.total[index].garbage_bags)
+                    return true;
                 }
             }
             return '0';
@@ -378,9 +419,13 @@ export default {
 
         getResidueValue() {
             this.data_residues = [];
-            this.data_garbage_bags = [];
             this.stored = [];
             this.stored_day = [];
+            this.garbageBags = [];
+            this.hoursText = [];
+            this.selectYesOrNot = [];
+            this.staffing = [];
+            this.list_date = [];
             this.totalDay = 0;
             let daysTemp = '';
             for (let i = 0; i < this.index; i++) {
@@ -410,10 +455,12 @@ export default {
                     }
                     for (let l = 0; l < this.list_residues.length; l++) {
                         if (this.list_residues[l].day == i) {
-                            this.data_garbage_bags[i] = this.formater(this.list_residues[l].garbage_bags);
                             this.data_residues[i] = this.formater(this.list_residues[l].total_weight);
                             this.hoursText[i] = this.list_residues[l].hour;
                             this.selectYesOrNot[i] = this.list_residues[l].yesOrNot;
+                            this.garbageBags[i] = this.list_residues[l].garbage_bags;
+                            this.staffing[i] = this.list_residues[l].staffing;
+                            this.list_date[i] = `${this.list_residues[l].year}${this.list_residues[l].month}${this.list_residues[l].day}`;
                         }
                     }
                 }
@@ -436,9 +483,12 @@ export default {
             const month = this.focus.toLocaleDateString('es-ES', options);
             const year = this.focus.getFullYear();
             const monthNumber = this.focus.getMonth() + 1;
+            const day = this.focus.getDate();
             this.position = monthNumber <= 9 ? this.position = '0' + monthNumber : this.position = monthNumber;
             this.date = month + ' ' + year;
             this.dateAxios = year + '-' + monthNumber;
+            this.validateMonth = monthNumber;
+            this.dateComplet = `${year}${monthNumber}${day}`;
             this.initialize(this.dateAxios);
             this.clinicInitialize(this.clinic);
         },
@@ -498,17 +548,15 @@ export default {
             }
             this.clinicInitialize(this.clinic);
         },
+
         getuserRole(){
             axios.get('/collector/getRole').then(res => {
-                console.log("Respuesta del servidor");
-                console.log(res);
                 if(res.data.role == 'Administrador' || res.data.role == 'Auxiliar Contable'){
                     this.isAdmin = true;
-                    console.log("trhis is admin", this.isAdmin);
                 }else{
                     this.isAdmin = false;
-                    console.log("this id admin: ", this.isAdmin);
                 }
+                console.log(this.isAdmin);
             }).catch(error => {
                 console.log("Error en axios");
                 console.log(error);
@@ -516,51 +564,93 @@ export default {
             })
         },
 
-        uperCaseText(text,position){
-            return this.hoursText[position] = text.toUpperCase();
-        },
-
         saveChange(){
-            let data = [];
             let size = 0;
             let typeAlert = 0;
-            if (this.hoursText.length > this.selectYesOrNot.length) {
+            if (this.hoursText.length > this.selectYesOrNot.length && this.hoursText.length > this.garbageBags.length) {
                 size = this.hoursText.length;
-            }else{
+            }else if(this.selectYesOrNot.length > this.hoursText.length && this.selectYesOrNot.length > this.garbageBags.length){
                 size = this.selectYesOrNot.length;
+            }else{
+                size = this.garbageBags.length;
             }
             let currentDate = new Date();
             let year = currentDate.getFullYear();
             let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
             let day = currentDate.getDate().toString().padStart(2, '0');
-
             let formattedDate = `${year}-${month}-${day}`;
+            let requests = [];
+            let validateHour = true;
             for (let i = 0; i < size; i++) {
-                if (this.hoursText[i] != undefined && this.selectYesOrNot[i] != undefined) {
-                    if (this.validateHour(this.hoursText[i])) {
-                        data = {
-                            'yesOrNot': this.selectYesOrNot[i],
-                            'hour': this.hoursText[i],
-                            'date': formattedDate,
-                        };
-                        axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
+                console.log("01", this.data_residues[i]);
+                if (this.data_residues[i] != undefined) {
+                    let hour = null;
+                    let selectYesOrNot = null;
+                    let garbage_bags = null;
+                    let staffing = null;
+                    if (this.hoursText[i] != null && this.hoursText[i] != '') {
+                        if (this.validateHour(this.hoursText[i])) {
+                            if (this.hoursText[i] != undefined) {
+                                hour = this.hoursText[i];
+                            }
+                        }else{
+                            validateHour = false;
+                            this.alertFalse(`La hora del día: ${i} es incorrecta el formato debe ser 00:00`);
+                        }
+                    }
+                    if (this.selectYesOrNot[i] != undefined) {
+                        selectYesOrNot = this.selectYesOrNot[i];
+                    }
+                    if (this.garbageBags[i] != undefined) {
+                        if (this.garbageBags[i] >= 0) {
+                            garbage_bags = this.garbageBags[i];
+                        }else{
+                            validateHour = false;
+                            this.alertFalse(`La cantidad de bolsas del día: ${i} deben ser números positivos`);
+                        }
+                    }
+                    if (this.staffing[i] != undefined) {
+                        staffing = this.staffing[i];
+                    }
+                    console.log(staffing);
+                    let data = {
+                        'yesOrNot': selectYesOrNot,
+                        'hour': hour,
+                        'garbage_bags': garbage_bags,
+                        'staffing': staffing,
+                        'date': formattedDate,
+                    };  
+                    if (validateHour) {
+                        let request = axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
+                            console.log(res.data);
                         }).catch(error => {
-                            typeAlert = 1;
+                            console.log(error.response);
                         })
-                    }else{
-                        typeAlert = 2;
+                        requests.push(request);
                     }
                 }
             }
-            if (typeAlert == 1) {
-                this.alertFalse("Parece que algo salio mal");
-            }else if (typeAlert == 2){
-                this.alertFalse("Parece que algunos campos de la hora son incorrectos");
+            if (validateHour) {
+                axios.all(requests).then(
+                    axios.spread((...responses) => {
+                        typeAlert = 3;
+                    })
+                ).catch(error => {
+                    console.error(error);
+                    typeAlert = 1;
+                }).finally(() => {
+                    if (typeAlert == 1) {
+                        this.alertFalse("Parece que algo salió mal");
+                    }else if (typeAlert == 3) {
+                        this.setToday()
+                        this.alertTrue("Cambios exitosos. Recuerde que los cambios hechos en los días que no tienen recolección de residuos no serán registrados");
+                    }
+                });
             }
         },
 
         validateHour(hour){
-            let restriction = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i;
+            let restriction = /^(0?[1-9]|1[0-2]):[0-5][0-9]$/i;
             return restriction.test(hour);
         },
 

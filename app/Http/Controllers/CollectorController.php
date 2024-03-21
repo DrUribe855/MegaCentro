@@ -70,6 +70,9 @@ class CollectorController extends Controller
                                 $residues->collection_logs_id = $collection->id;
                                 $residues->id_residue = $residue["residue_id"];
                                 $residues->weight = $residue["weight"];
+                                if ($general_data["schedule"] == 'Extra - 6:00 AM') {
+                                    $residues->created_at = $lastDate;
+                                }
                                 $residues->save();
 
                             }

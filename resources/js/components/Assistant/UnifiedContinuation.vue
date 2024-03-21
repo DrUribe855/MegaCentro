@@ -193,10 +193,12 @@ export default {
         initialize(date) {
             if (date != '') {
                 axios.get(`/residue/showUnifiedContinuation/${date}`).then(res => {
+                    console.log(res.data);
                     this.total = res.data.total;
                     this.list_residues = res.data.residues;
                     this.getResidueValue();
                 }).catch(error => {
+                    console.log(error.response);
                 });
             }
         },

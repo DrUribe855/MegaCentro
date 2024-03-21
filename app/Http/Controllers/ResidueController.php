@@ -48,27 +48,41 @@ class ResidueController extends Controller
     public function showContinuation($date){
         $dateTime = DateTime::createFromFormat('Y-n', $date);
         $formattedDate = $dateTime->format('Y-m');
-        $residues = Waste_collection::selectRaw('DAY (created_at) as day ,HOUR (created_at) as hour, MONTH(created_at) as month, created_at, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags, hour, yesOrNot')
-        ->where('created_at', 'LIKE',  $formattedDate. '%')
+        $residues = Waste_collection::selectRaw('DAY(created_at) as day, MONTH(created_at) as month, YEAR(created_at) as year, SUM(weight) as total_weight, garbage_bags, hour, yesOrNot, staffing')
+        ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
         ->whereHas('collection_logs')
-        ->groupBy('month', 'created_at', 'hour', 'yesOrNot')
+        ->groupBy('day', 'month', 'year', 'hour', 'yesOrNot', 'garbage_bags', 'staffing')
         ->get();
 
-        $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
-        ->where('created_at', 'LIKE',  $formattedDate. '%')
+        $total = Waste_collection::selectRaw('MONTH(created_at) as month, SUM(weight) as total_weight')
+        ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
         ->groupBy('month')
         ->get();
 
+        
         $dateParts = explode("-", $formattedDate);
         $year = $dateParts[0];
         $month = $dateParts[1];
         $numberDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        
+        $totalGarbageBags = 0;
+
+        $consultaGarbageBags = Waste_collection::selectRaw('DAY(created_at) as day, SUM(DISTINCT garbage_bags) as totalGarbageBags')
+            ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
+            ->groupBy('day')
+            ->get();
+
+        foreach ($consultaGarbageBags as $consulta) {
+            $totalGarbageBags += $consulta->totalGarbageBags;
+        }
 
         $data = [
             'status' => true,
             'residues' => $residues,
             'date' => $numberDay,
             'total' => $total,
+            'totalGarbageBags' => $totalGarbageBags,
+            'consulta' => $consultaGarbageBags,
         ];
 
         return response()->json($data);
@@ -106,21 +120,49 @@ class ResidueController extends Controller
 
     public function showUnifiedContinuation($date){
         $dateTime = DateTime::createFromFormat('Y', $date);
-        $formattedDate = $dateTime->format('Y-m');
-        $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        $formattedDate = $dateTime->format('Y');
+        $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(weight) as total_weight, SUM(DISTINCT garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year', 'month')
         ->get();
 
-        $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(garbage_bags) as garbage_bags')
+        $total = Waste_collection::selectRaw('YEAR(created_at) as year, SUM(weight) as total_weight, SUM(DISTINCT garbage_bags) as garbage_bags')
         ->where('created_at', 'LIKE',  $formattedDate. '%')
         ->groupBy('year')
         ->get();
+
+        $totalGarbageBags = 0;
+
+        $consultaGarbageBags = Waste_collection::selectRaw('DAY(created_at) as day, MONTH(created_at) as month, SUM(DISTINCT garbage_bags) as totalGarbageBags')
+        ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") LIKE ?', [$formattedDate . '%'])
+        ->groupBy('day', 'month')
+        ->get();
+
+        foreach ($consultaGarbageBags as $consulta) {
+            $totalGarbageBags += $consulta->totalGarbageBags;
+        }
+
+        $total[0]['garbage_bags'] = $totalGarbageBags;
+        
+        $totalGarbageBagsMonth = [];
+        
+        foreach ($consultaGarbageBags as $item) {
+            if (!isset($totalGarbageBagsMonth[$item['month']])) {
+                $totalGarbageBagsMonth[$item['month']] = 0;
+            }
+            $totalGarbageBagsMonth[$item['month']] += intval($item['totalGarbageBags']);;
+        }
+
+        for ($i=0; $i < count($residues); $i++) { 
+            $residues[$i]['garbage_bags'] = $totalGarbageBagsMonth[$residues[$i]['month']];
+        }
 
         $data = [
             'status' => true,
             'residues' => $residues,
             'total' => $total,
+            'totalAño' => $consultaGarbageBags,
+            'totalMes' => $totalGarbageBagsMonth,
         ];
 
         return response()->json($data);
@@ -263,8 +305,10 @@ class ResidueController extends Controller
     public function registerDateCollector(Request $request, $day){
         Waste_collection::whereDay('created_at', $day)
         ->update([
+            'garbage_bags' => $request->input('garbage_bags'),
             'yesOrNot' => $request->input('yesOrNot'),
             'hour' => $request->input('hour'),
+            'staffing' => $request->input('staffing'),
         ]);
         
         $idCollectionLog = Waste_collection::whereHas('collection_logs')
@@ -272,9 +316,7 @@ class ResidueController extends Controller
         ->whereDay('created_at', $day)
         ->pluck('collection_logs_id');
 
-        $size = count($idCollectionLog);
-
-        for ($i=0; $i < $size ; $i++) { 
+        for ($i=0; $i < count($idCollectionLog) ; $i++) { 
             $update = CollectionLog::find($idCollectionLog[$i]);
             $update->collection_date = $request->input('date');
             $update->stored_stated = 'RECOLECTADO';
@@ -287,10 +329,10 @@ class ResidueController extends Controller
             'yesOrNot' => $request->input('yesOrNot'),
             'hour' => $request->input('hour'),
             'date' => $request->input('date'),
-            'day' => $day
-        ];
+            'day' => $day,
+        ];   
+        
 
-        return response()->json($data);
+        return response()->json($request);
     }   
 }
-

@@ -202,6 +202,13 @@
                               sm="6"
                               md="4"
                             >
+                              <v-autocomplete
+                                v-model="selectedTower"
+                                :items="itemsTower"
+                                label="Seleccione la torre"
+                                @change="selectedOptionTower"
+                              ></v-autocomplete>
+                            </v-col>
                             <v-autocomplete
                               v-model="selectedClinic"
                               :items="clinics"
@@ -210,7 +217,6 @@
                               item-text="clinic_number"
                               item-value="id"
                             ></v-autocomplete>
-                            </v-col>
                           </v-row>
                         </v-container>
                       </v-card-text>
@@ -270,6 +276,7 @@
       title: '',
       search: '',
       selectedFilter: '',
+      selectedTower: '',
       itemsTower: ['1','2'],
       filters: ['CONSULTORIOS', 'TORRES', 'RESPONSABLES CON CONSULTORIOS', 'RESPONSABLES SIN CONSULTORIOS'],
       showFilterTower: false,
@@ -281,6 +288,8 @@
       showInvoice: false,
       selectedClinic: null,
       clinics: [],
+      clinicsTower1: [],
+      clinicsTower2: [],
       dataInfo: [],
       dataInvoice: [],
       user: [],
@@ -376,7 +385,8 @@
 
       addClinic(item){
         axios.get('/clinic/generalShowClinic').then(res => {
-          this.clinics = res.data.clinics;
+          this.clinicsTower1 = res.data.clinicsTower1;;
+          this.clinicsTower2 = res.data.clinicsTower2;
         }).catch(error => {
         });
         this.infoResponsible = item
@@ -411,7 +421,6 @@
             this.showBtn = false;
             this.showFilterClinic = false 
           }
-          this.selectedClinic = ''
         }).catch(error => {
         });
       },
@@ -544,7 +553,15 @@
       goToBackInvoice(price, position){
         this.desserts[position].invoice = price;
         this.showInvoice = false;
-      }
+      },
+
+      selectedOptionTower(){
+        if (this.selectedTower == '1') {
+          this.clinics = this.clinicsTower1;
+        }else{
+          this.clinics = this.clinicsTower2;
+        }
+      },
     },
   }
 </script>
