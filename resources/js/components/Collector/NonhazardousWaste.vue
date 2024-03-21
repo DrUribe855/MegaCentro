@@ -161,7 +161,7 @@
     data: () => ({
       currentPage: 1,
       itemsPerPage: 15,
-      items: ['Extra - 6:00 AM','Diurno', 'Tarde', 'Extra'],
+      items: ['Extra - 6:00 AM','Día','Extra'],
       indexLocalStorage: 0,
       clinics: [], 
       searchTimer: '',

@@ -107,7 +107,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'img' => [
             'path' => 'vendor/adminlte/dist/img/logo-blanco.png',
             'alt' => 'AdminLTE Preloader Image',
@@ -352,7 +352,7 @@ return [
         ],
         [
 
-            'text' => 'Quimicos-respel',
+            'text' => 'Quimicos - RESPEL',
             'url'  => '/collector/non-hazardous-waste',
             'icon' => 'fas fa-fw fa-trash',
             'can' => 'collector.collections.generalShow',

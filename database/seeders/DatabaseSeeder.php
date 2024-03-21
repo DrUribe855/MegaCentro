@@ -24,17 +24,17 @@ class DatabaseSeeder extends Seeder
 
         
 
-        $adminRole = Role::where('name','Administrador')->first();
-        $assistantRole = Role::where('name','Auxiliar contable')->first();
-        $collectorRole = Role::where('name','Recolector')->first();
-        $managerRole = Role::where('name', 'Responsable')->first();
-        $ownerRole = Role::where('name', 'Dueño')->first();
+        // $adminRole = Role::where('name','Administrador')->first();
+        // $assistantRole = Role::where('name','Auxiliar contable')->first();
+        // $collectorRole = Role::where('name','Recolector')->first();
+        // $managerRole = Role::where('name', 'Responsable')->first();
+        // $ownerRole = Role::where('name', 'Dueño')->first();
 
-        $users[0]->assignRole($adminRole);
-        $users[1]->assignRole($assistantRole);
-        $users[2]->assignRole($collectorRole);
-        $users[3]->assignRole($managerRole);
-        $users[4]->assignRole($ownerRole);
+        // $users[0]->assignRole($adminRole);
+        // $users[1]->assignRole($assistantRole);
+        // $users[2]->assignRole($collectorRole);
+        // $users[3]->assignRole($managerRole);
+        // $users[4]->assignRole($ownerRole);
 
     }
 
