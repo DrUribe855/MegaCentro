@@ -109,7 +109,7 @@ class CollectorController extends Controller
         $anioActual = getdate();
 
 
-        // if($this->dateValidations($general_data, $anioActual)){
+        if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
                     $collectionToUpdate = Waste_collection::join('collection_logs', 'collection_logs.id', '=', 'waste_collections.collection_logs_id')  
                     ->where('month', $general_data["month"])
@@ -139,15 +139,15 @@ class CollectorController extends Controller
                 return response()->json($data);
 
                
-        // }else{
-        //     $data = [
-        //                 'message' => 'Informacion de modificacion incompleta',
-        //                 'status' => true,
+        }else{
+            $data = [
+                        'message' => 'Informacion de modificacion incompleta',
+                        'status' => true,
                                            
-        //             ];
+                    ];
 
-        //     return response()->json($data);
-        // }
+            return response()->json($data);
+        }
         
             
             

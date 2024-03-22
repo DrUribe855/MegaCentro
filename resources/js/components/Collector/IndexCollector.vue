@@ -144,7 +144,7 @@
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
-          <v-pagination  v-if="mostrarPaginador" v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
+          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -316,6 +316,8 @@
       },
       filterClinics() {
 
+        let datosFiltrados = []
+
         // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
 
         if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
@@ -336,6 +338,7 @@
             if(this.datos[i].towerNumber == this.towerNumber){
               this.mostrarPaginador = false;
               this.datos[i].show = true;
+              this.datosFiltrados.push(this.datos[i])
             }else{
               this.datos[i].show = false;
             }
