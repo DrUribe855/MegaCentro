@@ -7,7 +7,7 @@
                         <div class="col-md-9 col-lg-10 mt-5">
                             <v-card class="pa-4 text-center" elevation="5">
                             <div class="text-center mb-4 mt-3">
-                                <img src="/images/logo.png" alt="Logo Megacentro" width="250em" class="img-fluid">
+                                <img src="/images/logo-cut.png" alt="Logo Megacentro" width="200em" class="img-fluid">
                             </div>
                     			<form>
                                     <div class="form-group">

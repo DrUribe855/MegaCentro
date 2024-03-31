@@ -10,6 +10,7 @@ use App\Models\Residue;
 use App\Models\Clinic;
 use App\Models\Waste_collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CollectorController extends Controller
 {
@@ -107,19 +108,21 @@ class CollectorController extends Controller
         $collections = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
-
+        $actualDate = date('Y-m-d');
 
         if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
-                    $collectionToUpdate = Waste_collection::join('collection_logs', 'collection_logs.id', '=', 'waste_collections.collection_logs_id')  
-                    ->where('month', $general_data["month"])
-                    ->where('year', $general_data["year"])
-                    ->where('schedule', $general_data["schedule"])
-                    ->value('collection_logs_id');
+
+                    $minDiffRecord = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                    ->select('id', DB::raw('DATEDIFF(NOW(), created_at) AS days_diff'))
+                    ->orderBy('days_diff')
+                    ->first();
+
+                    
 
                     foreach ($collection["data"] as $key2 => $residue) {
                         if($residue["weight"] > 0){
-                            Waste_collection::where('collection_logs_id', $collectionToUpdate)
+                            Waste_collection::where('collection_logs_id', $minDiffRecord["id"])
                             ->where('id_residue', $residue["residue_id"])
                             ->update(["weight" => $residue["weight"]]);    
                         }
@@ -129,12 +132,11 @@ class CollectorController extends Controller
                 }
 
                 $data = [
-                            'message' => 'Modificacion registrada',
-                            'status' => true,
-                            'collectionToUpdate' => $collectionToUpdate,
-                                           
-                        ];
-
+                    'message' => 'Modificacion registrada',
+                    'status' => true,
+                    'collection' => $actualDate,
+                                   
+                ];
 
                 return response()->json($data);
 
@@ -147,12 +149,52 @@ class CollectorController extends Controller
                     ];
 
             return response()->json($data);
-        }
-        
+        }   
             
-            
+    }
 
-            
+    public function getCollections(Request $request){
+        $schedule = $request->data_general["schedule"];
+        $actualDate = date('Y-m-d H:i:s');
+
+        $collectionData = [];
+        
+
+        $collections = CollectionLog::where('schedule', $schedule)
+        ->select('clinic_id')
+        ->distinct()
+        ->get();
+
+        foreach ($collections as $collection){
+            $minDiffRecord = CollectionLog::where('clinic_id', $collection["clinic_id"])
+            ->select('id', 'clinic_id', DB::raw('DATEDIFF(NOW(), created_at) AS days_diff'))
+            ->orderBy('days_diff')
+            ->first();
+
+            $weight = Waste_collection::where('collection_logs_id', $minDiffRecord["id"])
+            ->select("weight")
+            ->get();  
+
+            $data2 = [
+
+                        'message' => 'items',
+                        'weight' => $weight,
+                        'clinic' => $minDiffRecord["clinic_id"],
+                        
+
+                    ];
+
+            array_push($collectionData, $data2);  
+        }
+
+
+        $data = [
+                    'message' => 'INFORMACION DE RECOLECCION',
+                    'datos' => $collectionData,
+
+                ];
+
+        return response()->json($data);
     }
 
 

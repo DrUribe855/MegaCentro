@@ -43,6 +43,7 @@
                     label = "Horario de recolección"
                     :items="items"
                     v-model="general_data.schedule"
+                    @change="getCollections"
                   ></v-select>
                 </v-col>
                 <v-col
@@ -137,6 +138,19 @@
                               ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-for="(collection , j) in collections" :key="collection.clinic">
+                            <v-col
+                              v-for="dato in collection.data"
+                              v-if="collection.clinic == panel.clinic_id"
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                readonly
+                                v-model="dato.weight"
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
                       </div>
                     </v-container>
                   </v-form>
@@ -177,6 +191,7 @@
       },
       mostrarPaginador : true,
       role: '',
+      collections: [],
     }),
 
     computed: {
@@ -203,6 +218,36 @@
     },
 
     methods: {
+      getCollections(){
+        this.collections = [];
+        let request = {
+          data_general: this.general_data,
+        }
+        // console.log("se ejecutó");
+        axios.post('/collector/getCollections', request).then(res => {
+            console.log(res.data);
+            res.data.datos.forEach(collection => {
+
+              let aux = {
+                clinic: collection.clinic,
+                data: [],
+              };
+
+              // console.log("collectionn", collection);
+              collection.weight.forEach(item => {
+                // console.log(item.weight);
+                aux.data.push({
+                  weight: item.weight,  
+                });
+              });
+
+              this.collections.push(aux);  
+            });
+            // console.log("Esta es la variable collections con datos", this.collections);
+        }).catch(error => {
+          console.log(error.response);
+        });
+      },
       getClinics(){
         axios.get('/collector/clinics').then(res => {
             this.clinics = res.data.clinics;
@@ -287,7 +332,7 @@
         }
 
 
-        console.log('Click a update');
+        console.log('Click a update', request);
         console.log("console request", this.general_data.schedule );
         axios.post('/collector/updateCollection', request).then(resp => {
           console.log(resp);
