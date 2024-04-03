@@ -33,6 +33,7 @@ Route::get('/', function(){
 
 Route::post('/login2', [AuthController::class, 'login']);
 Route::get('/index', [HomeController::class, 'index']);
+Route::get('/logout', [AuthController::class, 'logout']);
 
 // --------------------------- Rutas de modulo empleados --------------------------- \\
 

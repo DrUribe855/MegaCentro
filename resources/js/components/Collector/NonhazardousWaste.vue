@@ -43,6 +43,7 @@
                     label = "Horario de recolección"
                     :items="items"
                     v-model="general_data.schedule"
+                    @change="getCollections"
                   ></v-select>
                 </v-col>
                 <v-col
@@ -55,7 +56,7 @@
                     v-if="this.role == 'Recolector'"
                     color="primary"
                     @click="save()"
-                  >Registrar recolección</v-btn>
+                  >Registrar recolecciones</v-btn>
                 </v-col>
                 <v-col
                   cols="12"
@@ -137,6 +138,20 @@
                               ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-for="(collection , j) in collections" :key="j">
+                            <v-col
+                              v-for="(dato, x) in collection.data" :key="x"
+                              v-if="collection.clinic == panel.clinic_id"
+                              cols="12"
+                              md="3"
+                            >
+                              <v-text-field
+                                readonly
+                                :label="dato.name"
+                                v-model="dato.weight"
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
                       </div>
                     </v-container>
                   </v-form>
@@ -144,7 +159,7 @@
               </v-expansion-panel>
             </v-expansion-panels> 
           </div>
-          <v-pagination v-if="mostrarPaginador" v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
+          <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
       </div>
     </v-main>
@@ -161,7 +176,7 @@
     data: () => ({
       currentPage: 1,
       itemsPerPage: 15,
-      items: ['Extra - 6:00 AM','Día','Extra'],
+      items: ['Extra - 6:00 AM','Día','Tarde'],
       indexLocalStorage: 0,
       clinics: [], 
       searchTimer: '',
@@ -170,13 +185,15 @@
       floorNumber: '',
       residues: [],
       datos: [],
+      datos2: [],
       general_data: {
         month: '',
         year: '',
         schedule: '',
       },
       role: '',
-      mostrarPaginador : true,
+      collections: [],
+      
     }),
 
     computed: {
@@ -205,6 +222,35 @@
     },
 
     methods: {
+      getCollections(){
+        this.collections = [];
+        let request = {
+          data_general: this.general_data,
+          type: "INFECCIOSOS O RIESGO BIOLOGICO"
+        }
+        axios.post('/collector/getCollections', request).then(res => {
+            console.log(res.data);
+            res.data.datos.forEach(collection => {
+
+              let aux = {
+                clinic: collection.clinic,
+                data: [],
+              };
+
+              collection.weight.forEach(item => {
+                aux.data.push({
+                  weight: item.weight,
+                  name: item.residue_name,  
+                });
+              });
+
+              this.collections.push(aux);  
+            });
+            
+        }).catch(error => {
+          console.log(error.response);
+        });
+      },
       getClinics(){
         axios.get('/collector/clinics').then(res => {
             this.clinics = res.data.clinics;
@@ -228,36 +274,41 @@
                 });
               }); 
               this.datos.push(aux);
+              this.datos2.push(aux);
             });
 
             if(localStorage.getItem("collectionDataNonHazardous")){
               let localData = JSON.parse(localStorage.getItem("collectionDataNonHazardous"));
-              if(localData.length < this.datos.length){
-                for (let i = 0; i < this.datos.length; i++) {
+              if(localData.length < this.datos2.length){
+                for (let i = 0; i < this.datos2.length; i++) {
                   if(localData[i] == undefined){
-                    localData.push(this.datos[i]);
+                    localData.push(this.datos2[i]);
                   }
                 }
-                this.datos = localData;
+                this.datos2 = localData;
+                this.datos = this.datos2;
                 localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData)); 
               }else if(localData.length > this.datos.length){
 
                 //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
-                const objetosFaltantes = localData.filter((localDato) => !this.datos.some((dato) => dato.clinicNumber === localDato.clinicNumber));
+                const objetosFaltantes = localData.filter((localDato) => !this.datos2.some((dato) => dato.clinicNumber === localDato.clinicNumber));
 
                 
                 objetosFaltantes.forEach((objetoFaltante) => {
-                  localData.splice(this.datos.indexOf(objetoFaltante), 1);
+                  localData.splice(this.datos2.indexOf(objetoFaltante), 1);
                 });
 
-                this.datos = localData;
+                this.datos2 = localData;
+                this.datos = this.datos2;
                 localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData));
               }else{
-                this.datos = localData;
+                this.datos2 = localData;
+                this.datos = this.datos2      ;
               }
               
             }else{
               localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));    
+              this.datos  = this.datos2;
             }
         }).catch(error => {
             console.log('Error en axios: ');
@@ -267,7 +318,7 @@
       },
       save () {
         let request = {
-          datos: this.datos,
+          datos: this.datos2,
           data_general: this.general_data,
         }
         axios.post('/collector/saveCollection', request).then(resp => {
@@ -286,7 +337,7 @@
       },
       update(){
         let request = {
-          datos: this.datos,
+          datos: this.datos2,
           data_general: this.general_data,
         }
         axios.post('/collector/updateCollection', request).then(resp => {
@@ -311,95 +362,118 @@
         });
       },
       changeValue(){
-        localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
+        localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos2));
         const localData = JSON.parse(localStorage.getItem("collectionDataNonHazardous"));
       },
       filterClinics() {
 
+        let datosFiltrados = [];
+
         // Filtro para cuando el numero de la clinica sea diligenciada y los demas datos no
 
         if(this.clinicNumber != '' && this.towerNumber == '' && this.floorNumber == ''){
-         for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].clinicNumber.includes(this.clinicNumber)){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+         for (let i = 0; i < this.datos2.length; i++) {
+            if(this.datos2[i].clinicNumber.includes(this.clinicNumber.replace(/\./g, ','))){
+              datosFiltrados.push(this.datos2[i]);
+              this.datos2[i].show = true;
             }else{
-              this.datos[i].show = false;
+              
             }
           }
-        }
+          this.datos = datosFiltrados.slice();
 
-        // Filtro para cuando el numero de torre sea diligenciado y los demás no
+        }else if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
+          // Filtro para cuando el numero de torre sea diligenciado y los demás no
 
-        if(this.towerNumber != '' &&  this.clinicNumber == '' && this.floorNumber == ''){
-          for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].towerNumber == this.towerNumber){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+          for (let i = 0; i < this.datos2.length; i++) {
+            if(this.datos2[i].towerNumber == this.towerNumber){
+              this.datos2[i].show = true;
+              datosFiltrados.push(this.datos2[i])
             }else{
-              this.datos[i].show = false;
+              this.datos2[i].show = false;
             }
           }
-        }
+          this.datos = datosFiltrados.slice();
 
-        //Filtro para cuando el numero de piso sea diligenciado y los demás no
+        }else if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
+          //Filtro para cuando el numero de piso sea diligenciado y los demás no
 
-        if(this.floorNumber != '' && this.towerNumber == '' && this.clinicNumber == ''){
-          for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].floorNumber == this.floorNumber){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+          for (let i = 0; i < this.datos2.length; i++) {
+            if(this.datos2[i].floorNumber == this.floorNumber){
+              this.datos2[i].show = true;
+              datosFiltrados.push(this.datos2[i])
             }else{
-              this.datos[i].show = false;
+              this.datos2[i].show = false;
             }
           }
-        }
+          this.datos = datosFiltrados.slice();
+          
+        }else if(this.towerNumber != '' && this.floorNumber != ''){
+          //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
 
-        //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
-
-        if(this.towerNumber != '' && this.floorNumber != ''){
-          for (let i = 0; i < this.datos.length; i++) {
-            if(this.datos[i].towerNumber == this.towerNumber && this.datos[i].floorNumber.includes(this.floorNumber)){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+          for (let i = 0; i < this.datos2.length; i++) {
+            if(this.datos2[i].towerNumber == this.towerNumber && this.datos2[i].floorNumber.includes(this.floorNumber)){
+              this.datos2[i].show = true;
+              datosFiltrados.push(this.datos2[i])
             }else{
-              this.datos[i].show = false;
+              this.datos2[i].show = false;
             }
           }
-        }
 
-        // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
+          this.datos = datosFiltrados.slice();
 
-        if(this.clinicNumber != '' && this.floorNumber != ''){
-          for (let i = 0; i < this.datos.length; i++) {
-            if( this.datos[i].floorNumber == this.floorNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+        }else if(this.clinicNumber != '' && this.floorNumber != ''){
+          // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
+          
+          for (let i = 0; i < this.datos2.length; i++) {
+            if( this.datos2[i].floorNumber == this.floorNumber && this.datos2[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos2[i].show = true;
+              datosFiltrados.push(this.datos2[i])
             }else{
-              this.datos[i].show = false;
+              this.datos2[i].show = false;
             }
           }
-        }
 
-        // Filtro para cuando el numero de clinica y el numero de torre sean diligenciados a la vez, pero numero de piso no.
+          this.datos = datosFiltrados.slice();
 
-        if(this.clinicNumber != '' && this.towerNumber != ''){
-          for (let i = 0; i < this.datos.length; i++) {
-            if( this.datos[i].towerNumber == this.towerNumber && this.datos[i].clinicNumber.includes(this.clinicNumber)){
-              this.datos[i].show = true;
-              this.mostrarPaginador = false;
+        }else if(this.clinicNumber != '' && this.towerNumber != ''){
+          // Filtro para cuando el numero de clinica y el numero de torre sean diligenciados a la vez, pero numero de piso no.
+
+          for (let i = 0; i < this.datos2.length; i++) {
+            if( this.datos2[i].towerNumber == this.towerNumber && this.datos2[i].clinicNumber.includes(this.clinicNumber)){
+              this.datos2[i].show = true;
+              datosFiltrados.push(this.datos2[i])
             }else{
-              this.datos[i].show = false;
+              this.datos2[i].show = false;
             }
           }
+
+          this.datos = datosFiltrados.slice();
+          
+        }else if(this.clinicNumber != '' && this.towerNumber != '' && this.floorNumber != ''){
+          //Filtro para los 3 campos sean diligenciados
+
+          datosFiltrados = [];
+         for (let i = 0; i < this.datos2.length; i++) {
+            if(this.datos2[i].towerNumber == this.towerNumber && this.datos2[i].floorNumber == this.floorNumber && this.datos2[i].clinicNumber.includes(this.clinicNumber.replace(/\./g, ','))){
+              datosFiltrados.push(this.datos2[i]);
+              this.datos2[i].show = true;
+            }else{
+              this.datos2[i].show = false;
+            }
+          }
+          this.datos = datosFiltrados.slice();
+          console.log("Datos filtrados: ",datosFiltrados);
         }
 
-        //Filtro para cuando los 3 campos se encuentren sin diligenciar
+
+        // //Filtro para cuando los 3 campos se encuentren sin diligenciar
 
         if(this.towerNumber == '' && this.clinicNumber == '' && this.floorNumber == ''){
+          this.datos = [];
+          this.datos = this.datos2.slice();
           for (let i = 0; i < this.datos.length; i++) {
             this.datos[i].show = true;
-            this.mostrarPaginador = true;
           }
         }
       },
@@ -408,8 +482,7 @@
         console.log(this.general_data);
         for (let i = 0; i < this.datos.length; i++) {
           for (let j = 0; j < this.residues.length; j++) {
-            this.datos[i].data[j].bags = 0;
-            this.datos[i].data[j].weight = 0;
+            this.datos2[i].data[j].weight = 0;
             localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
           }
         }
