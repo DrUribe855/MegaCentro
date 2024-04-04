@@ -9,7 +9,10 @@ use App\Models\CollectionLog;
 use App\Models\Residue;
 use App\Models\Clinic;
 use App\Models\Waste_collection;
+use App\Models\ResidueType;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class CollectorController extends Controller
 {
@@ -33,8 +36,7 @@ class CollectorController extends Controller
         return view('Collector/residueChemical');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $clinics = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
@@ -101,25 +103,40 @@ class CollectorController extends Controller
             
     }
 
+    //Función para actualizar las recolecciones dependiendo del horario de recoleccion tomando la inserción más reciente
+
     public function updateCollection(Request $request){
 
 
         $collections = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
+        $actualDate = date('Y-m-d');
 
+        $items = '';    
 
         if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
-                    $collectionToUpdate = Waste_collection::join('collection_logs', 'collection_logs.id', '=', 'waste_collections.collection_logs_id')  
-                    ->where('month', $general_data["month"])
-                    ->where('year', $general_data["year"])
-                    ->where('schedule', $general_data["schedule"])
-                    ->value('collection_logs_id');
+
+                    if($general_data["schedule"] == 'Extra - 6:00 AM'){
+                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                        ->where('schedule', $general_data["schedule"])
+                        ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
+                        ->select('id', 'clinic_id')
+                        ->first();
+                    }else{
+                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                        ->where('schedule', $general_data["schedule"])
+                        ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
+                        ->select('id', 'clinic_id')
+                        ->first();
+                    }
+
+                    
 
                     foreach ($collection["data"] as $key2 => $residue) {
                         if($residue["weight"] > 0){
-                            Waste_collection::where('collection_logs_id', $collectionToUpdate)
+                            Waste_collection::where('collection_logs_id', $items["id"])
                             ->where('id_residue', $residue["residue_id"])
                             ->update(["weight" => $residue["weight"]]);    
                         }
@@ -129,12 +146,11 @@ class CollectorController extends Controller
                 }
 
                 $data = [
-                            'message' => 'Modificacion registrada',
-                            'status' => true,
-                            'collectionToUpdate' => $collectionToUpdate,
-                                           
-                        ];
-
+                    'message' => 'Modificacion registrada',
+                    'status' => true,
+                    'collection' => $actualDate,
+                                   
+                ];
 
                 return response()->json($data);
 
@@ -147,12 +163,91 @@ class CollectorController extends Controller
                     ];
 
             return response()->json($data);
+        }   
+            
+    }
+
+    // Función para obtener recolecciones en base al horario tomando el dato más reciente.
+
+    public function getCollections(Request $request){
+        $schedule = $request->data_general["schedule"];
+        if($request->type != 'METALES PESADOS'){
+            $residueType = ResidueType::where('residue_type', $request->type)->value('id');
         }
         
-            
+        $actualDate = date('Y-m-d');
+        
+
+        $collectionData = [];
+        $items = '';
+        
+
+        $collections = CollectionLog::where('schedule', $schedule)
+        ->select('clinic_id')
+        ->distinct()
+        ->get();
+
+
+        foreach ($collections as $collection){
+
+            if($schedule == 'Extra - 6:00 AM'){
+                $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                ->where('schedule', $schedule)
+                ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
+                ->select('id', 'clinic_id')
+                ->first();
+            }else{
+                $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                ->where('schedule', $schedule)
+                ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
+                ->select('id', 'clinic_id')
+                ->first();
+            }
             
 
+
+            if($request->type == 'METALES PESADOS'){
+                $weight = Waste_collection::join('residues', 'residues.id', '=', 'waste_collections.id_residue')
+                ->where('waste_collections.collection_logs_id', $items["id"])
+                ->whereIn('residues.residue_type_id', [3, 4])
+                ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
+                ->get();
+            }else{
+                if($items){
+                    $weight = Waste_collection::join('residues', 'residues.id', '=', 'waste_collections.id_residue')
+                    ->where('waste_collections.collection_logs_id', $items["id"])
+                    ->where('residues.residue_type_id', $residueType)
+                    ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
+                    ->get();
+                }
+                
+            }
             
+  
+            if($items){
+                $data2 = [
+
+                    'message' => 'items',
+                    'weight' => $weight,
+                    'clinic' => $items["clinic_id"],
+                    
+
+                ];
+
+                array_push($collectionData, $data2); 
+            }
+             
+        }
+
+        $data = [
+            'message' => 'INFORMACION DE RECOLECCION',
+            'datos' => $collectionData,
+        ];
+
+        return response()->json($data);
+
+
+        
     }
 
 

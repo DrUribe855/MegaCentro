@@ -33,6 +33,7 @@ Route::get('/', function(){
 
 Route::post('/login2', [AuthController::class, 'login']);
 Route::get('/index', [HomeController::class, 'index']);
+Route::get('/logout', [AuthController::class, 'logout']);
 
 // --------------------------- Rutas de modulo empleados --------------------------- \\
 
@@ -75,6 +76,7 @@ Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
 Route::post('/collector/saveCollection', [ CollectorController::class, 'store']);
 Route::get('/collector/getRole', [ CollectorController::class, 'getUserRole']);
 Route::post('/collector/updateCollection', [ CollectorController::class, 'updateCollection']);
+Route::post('/collector/getCollections', [ CollectorController::class, 'getCollections']);
 // ------------------------------- Rutas de encargado --------------------------------------- \\
 
 Route::get('/manager/index', [ ManagerController::class, 'index'])->middleware('can:manager.clinics.generalShow');
