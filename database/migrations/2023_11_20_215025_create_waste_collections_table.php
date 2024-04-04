@@ -15,8 +15,9 @@ return new class extends Migration
             $table->float('weight');
             $table->Integer('garbage_bags')->nullable();
             $table->timestamps();
-            $table->enum('yesOrNot', ['','SI', 'NO'])->nullable();
-            $table->enum('staffing', ['','SI', 'NO'])->nullable();
+            $table->enum('yesOrNot', ['SI', 'NO'])->nullable();
+            $table->enum('staffing', ['SI', 'NO'])->nullable();
+            $table->enum('treatmentType', ['Esterilización', 'Incineración'])->nullable();
             $table->string('hour')->nullable();
             
             $table->foreign('collection_logs_id')->references('id')->on('collection_logs');

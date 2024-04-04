@@ -5,14 +5,6 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-12 my-6">
-              <v-container class="col-6 v-alert-container">
-                <v-alert v-if="!showAlert && !alert" shaped type="info" transition="scale-transition">
-                  Ahora puede buscar el consultorio que desea consultar
-                </v-alert>
-                <v-alert v-if="!showAlert && alert" shaped type="info" transition="scale-transition">
-                  Ahora esta en el formualario general
-                </v-alert>
-              </v-container>
               <v-toolbar flat>
                 <div class="row">
                   <div>
@@ -60,24 +52,6 @@
                   </v-btn>
                 </div>
               </v-toolbar>
-              <div class="m-6" style="width: 200px !important;">
-                <v-autocomplete v-if="!alert" v-model="clinic" :items="items" label="Consultorio"
-                  @input="clinicSelected()" item-text="clinic_number" item-value='id'></v-autocomplete>
-                <v-btn v-if="!alert" class="ma-2" color="primary" dark
-                  @click="mounted(), alert = true, changeData(), showAlert = false">
-                  <v-icon dark left>
-                    mdi-arrow-left
-                  </v-icon>
-                  volver
-                </v-btn>
-                <v-btn v-if="alert" color="primary"
-                  @click="mounted(), alert = !alert, showAlert = !showAlert, changeData()">
-                  <v-icon left>
-                    fas fa-search
-                  </v-icon>
-                  Consultorios
-                </v-btn>
-              </div>
             </div>
             <div id="element-to-pdf" class="col-12 row">
               <div class="col-sm-12 my-6">
@@ -141,7 +115,7 @@
                   <div class="text-center mb-6">
                     <h4>TIPO DE RESIDUOS</h4>
                   </div>
-                  <table class="table table-bordered">
+                  <table class="table table-bordered" id="table">
                     <thead>
                       <tr>
                         <th rowspan="3" class="text-center px-0"
@@ -158,20 +132,20 @@
                         <th class="text-center px-0" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>
+                        <th class="text-center px-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">RECICLABES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">INERTES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS(Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">ANIMALES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">TÓNERES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">LUMINARIAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">RAEES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">PILAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">LIQUIDO FIJADOR (kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">TINTAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">AMALGAMAS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">HIDROCARBUROS (kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">FUENTES ABIERTAS (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">FUENTES CERRADAS (Kg)</th>
                       </tr>
@@ -180,7 +154,7 @@
                       <tr v-for="i in index">
                         <td class="text-center px-0">{{ i <= 9 ? '0' + i : i }}</td>
                         <td class="text-center px-0" v-for="residueId in residueIds">
-                          {{ revalidateResidue(residueId, i) }}
+                          {{ revalidateResidue(residueId, i,) }}
                         </td>
                       </tr>
                       <tr>
@@ -200,22 +174,12 @@
     </v-app>
   </div>
 </template>
-<style>
-  .v-alert-container {
-    position: fixed;
-    left: 50%;
-    top: 8%;
-    width: 500px !important;
-    z-index: 999;
-  }
-</style>
+
 <script>
   import html2pdf from "html2pdf.js";
-  import accounting from 'accounting'
   export default {
     data() {
       return {
-        search: '',
         clinic: '',
         role: '',
         clinic_number: '',
@@ -230,23 +194,11 @@
         alert: true,
         showAlert: true,
         list_residues: [],
-        list_residues_clinic: [],
-        list_residues_temp: [],
         total_weight: [],
-        total_weight_clinic: [],
-        total_weight_temp: [],
-        data_total: [],
         items: [],
-        data_residues: [[], []],
-        residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        residueIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         user: {},
-        typeToLabel: {
-          month: 'Month',
-          week: 'Week',
-          day: 'Day',
-          '4day': '4 Days',
-        },
-        index: 31,
+        index: 0,
         position: 0,
         focus: new Date(),
       }
@@ -323,97 +275,45 @@
 
       initialize(date){
         if (date != '') {
+          this.total_weight = [];
+          this.list_residues = [];
           axios.get(`/residue/generalShow/${date}`).then(res =>{
-            this.total_weight = res.data.total;
-            this.total_weight_temp = this.total_weight;
-            this.list_residues = res.data.residues;
-            this.list_residues_temp = this.list_residues;
+            if (res.data.residues.length != 0) {
+              this.total_weight = res.data.total;
+              this.list_residues = res.data.residues;
+            }
             this.user = res.data.user;
             this.role = res.data.role;
             this.index = res.data.date;
-            this.changeData();
           }).catch(error => {
+            console.log(error);
+            console.log(error.response);
           });
         }
-      },
-
-      clinicInitialize(id) {
-        if (this.dateAxios != '' && id != '') {
-          axios.get(`/residue/clinicSelected/${this.dateAxios}/${id}`).then(res => {
-            this.list_residues_clinic = res.data.clinicResidue;
-            this.total_weight_clinic = res.data.totalClinic;
-            this.changeData();
-          }).catch(error => {
-          });
-        }
-      },
-
-      changeData() {
-        if (this.alert) {
-          this.list_residues = this.list_residues_temp;
-          this.total_weight = this.total_weight_temp;
-        } else {
-          this.list_residues = this.list_residues_clinic;
-          this.total_weight = this.total_weight_clinic;
-        }
-        this.getResidueValue();
       },
 
       revalidateResidue(residueId, index) {
-        if (this.data_residues[residueId] && this.data_residues[residueId][index] !== undefined) {
-          return this.data_residues[residueId][index];
+        if (this.list_residues[index] && this.list_residues[index][residueId]) {
+          var length = this.list_residues[index][residueId].total_weight.toString();
+          if (length.length >= 5) {
+            return this.list_residues[index][residueId].total_weight.toFixed(2);
+          }else{
+            return this.list_residues[index][residueId].total_weight;
+          }
         }
         return '0';
       },
 
       revalidateTotal(residueId) {
-        if (this.data_total[residueId] !== undefined) {
-          return this.data_total[residueId];
+        if (this.total_weight[residueId]) {
+          var length = this.total_weight[residueId].total_weight.toString();
+          if (length.length >= 5) {
+            return this.total_weight[residueId].total_weight.toFixed(2);
+          }else{
+            return this.total_weight[residueId].total_weight;
+          }
         }
         return '0';
-      },
-
-      formater(total) {
-        total = accounting.formatMoney(total, {
-          symbol: '',
-          precision: '',
-          thousand: ',',
-          decimal: '.'
-        });
-        return total;
-      },
-
-      getResidueValue() {
-        this.data_total = [];
-        for (let i = 0; i < this.residueIds.length; i++) {
-          if (!this.data_total[i]) {
-            this.$set(this.data_total, i);
-          }
-          for (let j = 1; j <= this.index; j++) {
-            if (!this.data_residues[i]) {
-              this.$set(this.data_residues, i, []);
-            }
-            this.$set(this.data_residues[i], j, 0);
-          }
-        }
-        if (this.list_residues.length != 0) {
-          for (let i = 0; i < this.residueIds.length; i++) {
-            for (let p = 0; p < this.total_weight.length; p++) {
-              if (this.total_weight[p].id_residue == i) {
-                this.data_total[i] = this.total_weight[p].weight;
-                this.data_total[i] = this.formater(this.data_total[i]);
-              }
-            }
-            for (let j = 1; j <= this.index; j++) {
-              for (let l = 0; l < this.list_residues.length; l++) {
-                if (this.list_residues[l].day == j && this.list_residues[l].id_residue == i) {
-                  this.data_residues[i][j] = this.list_residues[l].total_weight;
-                  this.data_residues[i][j] = this.formater(this.data_residues[i][j]);
-                }
-              }
-            }
-          }
-        }
       },
 
       setToday() {
@@ -426,7 +326,6 @@
         this.date = month+ ' '+ year;
         this.dateAxios = year+'-'+monthNumber;
         this.initialize(this.dateAxios);
-        this.clinicInitialize(this.clinic);
       },
 
       prev () {
@@ -446,7 +345,6 @@
         }
         this.dateAxios = year+'-'+this.position;
         this.initialize(this.dateAxios);
-        this.clinicInitialize(this.clinic);
       },
 
       next () {
@@ -466,23 +364,6 @@
         }
         this.dateAxios = year+'-'+this.position;
         this.initialize(this.dateAxios);
-        this.clinicInitialize(this.clinic);
-      },
-
-      mounted() {
-        setTimeout(() => {
-          this.showAlert = true;
-        }, 5000);
-      },
-
-      clinicSelected() {
-        for (let i = 0; i < this.items.length; i++) {
-          if (this.items[i].id == this.clinic) {
-            this.clinic_number = this.items[i].clinic_number;
-            break;
-          }
-        }
-        this.clinicInitialize(this.clinic);
       },
 
       alertFalse(text){

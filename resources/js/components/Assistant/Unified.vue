@@ -134,20 +134,20 @@
                         <th class="text-center" colspan="2">RADIACTIVOS</th>
                       </tr>
                       <tr>
+                        <th class="text-center px-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">RECICLABES (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">INERTES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS(Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">ANIMALES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">TÓNERES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">LUMINARIAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">RAEES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">PILAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">LIQUIDO FIJADOR (kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">TINTAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">AMALGAMAS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">HIDROCARBUROS (kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">FUENTES ABIERTAS (Kg)</th>
                         <th class="text-center px-0" style="font-size: 10px;">FUENTES CERRADAS (Kg)</th>
                       </tr>
@@ -192,17 +192,15 @@ export default {
       loaderPdf: null,
       loadingPdf: false,
       list_residues: [],
-      data_residues: [[], []],
       user: {},
       role: '',
       index: ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',],
-      residueIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      residueIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       focus: new Date(),
       date: '',
       position: 0,
       bigTotal: 0,
       total_weight: [],
-      data_total: [],
     }
   },
   watch: {
@@ -250,73 +248,46 @@ export default {
 
     initialize(date) {
       if (date != '') {
+        this.total_weight = [];
+        this.list_residues = [];
         axios.get(`/residue/showUnified/${date}`).then(res => {
-          this.total_weight = res.data.total;
-          this.list_residues = res.data.residues;
+          console.log(res.data);
+          if (res.data.residues.length != 0) {
+            this.total_weight = res.data.total;
+            this.list_residues = res.data.residues;
+            this.bigTotal = res.data.bigTotal[0].weight.toFixed(2);
+          }
           this.user = res.data.user;
           this.role = res.data.role;
-          this.bigTotal = res.data.bigTotal[0].weight;
-          this.getResidueValue();
         }).catch(error => {
+          console.log(error);
+          console.log(error.response);
         });
       }
     },
 
     revalidateResidue(residueId, index) {
-      if (this.data_residues[residueId] && this.data_residues[residueId][index] !== undefined) {
-        return this.data_residues[residueId][index];
+      if (this.list_residues[index+1] && this.list_residues[index+1][residueId]) {
+        var length = this.list_residues[index+1][residueId].total_weight.toString();
+        if (length.length >= 5) {
+          return this.list_residues[index+1][residueId].total_weight.toFixed(2);
+        }else{
+          return this.list_residues[index+1][residueId].total_weight;
+        }
       }
       return '0';
     },
 
     revalidateTotal(residueId) {
-      if (this.data_total[residueId] !== undefined) {
-        return this.data_total[residueId];
+      if (this.total_weight[residueId]) {
+        var length = this.total_weight[residueId].total_weight.toString();
+        if (length.length >= 5) {
+          return this.total_weight[residueId].total_weight.toFixed(2);
+        }else{
+          return this.total_weight[residueId].total_weight;
+        }
       }
       return '0';
-    },
-
-    formater(total) {
-      total = accounting.formatMoney(total, {
-        symbol: '',
-        precision: '',
-        thousand: ',',
-        decimal: '.'
-      });
-      return total;
-    },
-
-    getResidueValue() {
-      this.data_total = [];
-      for (let i = 0; i < this.residueIds.length; i++) {
-        if (!this.data_total[i]) {
-          this.$set(this.data_total, i);
-        }
-        for (let j = 0; j < this.index.length; j++) {
-          if (!this.data_residues[i]) {
-            this.$set(this.data_residues, i, []);
-          }
-          this.$set(this.data_residues[i], j, 0);
-        }
-      }
-      if (this.list_residues.length != 0) {
-        for (let i = 0; i < this.residueIds.length; i++) {
-          for (let p = 0; p < this.total_weight.length; p++) {
-            if (this.total_weight[p].id_residue == i) {
-              this.data_total[i] = this.total_weight[p].weight;
-              this.data_total[i] = this.formater(this.data_total[i]);
-            }
-          }
-          for (let j = 0; j < this.index.length; j++) {
-            for (let l = 0; l < this.list_residues.length; l++) {
-              if (this.list_residues[l].month == j+1 && this.list_residues[l].id_residue == i) {
-                this.data_residues[i][j] = this.list_residues[l].total_weight;
-                this.data_residues[i][j] = this.formater(this.data_residues[i][j]);
-              }
-            }
-          }
-        }
-      }
     },
 
     setToday() {

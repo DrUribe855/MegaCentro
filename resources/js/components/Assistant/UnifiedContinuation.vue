@@ -205,14 +205,14 @@ export default {
 
         revalidateResidue(index, type) {
             if (this.data_residues[index] !== undefined && type == 0) {
-                return this.data_residues[index];
+                return this.data_residues[index].toFixed(2);
             }else if (this.data_garbage_bags[index] != undefined && type == 1){
-                return this.formater(this.data_garbage_bags[index]);
+                return this.data_garbage_bags[index];
             }else if (this.total[index] != undefined) {
                 if (type == 2) {
-                    return this.formater(this.total[index].total_weight)
+                    return  this.total[index].total_weight.toFixed(2);
                 }else if(type == 3){
-                    return this.formater(this.total[index].garbage_bags)
+                    return this.total[index].garbage_bags;
                 }
             }
             return 0;
@@ -242,7 +242,7 @@ export default {
                         if (this.list_residues[l].month == i + 1) {
                             this.data_residues[i] = this.list_residues[l].total_weight;
                             this.data_garbage_bags[i] = this.list_residues[l].garbage_bags;
-                            this.data_residues[i] = this.formater(this.data_residues[i]);
+                            this.data_residues[i] = this.data_residues[i];
                         }
                     }
                 }
