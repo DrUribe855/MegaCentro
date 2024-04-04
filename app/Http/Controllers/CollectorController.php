@@ -113,19 +113,30 @@ class CollectorController extends Controller
         $anioActual = getdate();
         $actualDate = date('Y-m-d');
 
+        $items = '';    
+
         if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
 
-                    $minDiffRecord = CollectionLog::where('clinic_id', $collection["clinic_id"])
-                    ->select('id', DB::raw('DATEDIFF(NOW(), created_at) AS days_diff'))
-                    ->orderBy('days_diff')
-                    ->first();
+                    if($general_data["schedule"] == 'Extra - 6:00 AM'){
+                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                        ->where('schedule', $general_data["schedule"])
+                        ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
+                        ->select('id', 'clinic_id')
+                        ->first();
+                    }else{
+                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                        ->where('schedule', $general_data["schedule"])
+                        ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
+                        ->select('id', 'clinic_id')
+                        ->first();
+                    }
 
                     
 
                     foreach ($collection["data"] as $key2 => $residue) {
                         if($residue["weight"] > 0){
-                            Waste_collection::where('collection_logs_id', $minDiffRecord["id"])
+                            Waste_collection::where('collection_logs_id', $items["id"])
                             ->where('id_residue', $residue["residue_id"])
                             ->update(["weight" => $residue["weight"]]);    
                         }
