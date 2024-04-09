@@ -31,23 +31,18 @@
                   </div>
                 </div>
                 <div class="ml-2">
-                  <!-- <v-btn
-                    :loading="loading3"
-                    :disabled="loading3"
-                    color="green"
-                    class="ma-2 white--text"
-                    @click="loader = 'loading3'">
+                  <v-btn color="green" class="ma-2 white--text" @click="downloadExcel">
                     EXCEL
                     <v-icon
-                        right
-                        dark>
-                        mdi-cloud-upload
+                      right
+                      dark>
+                      mdi-download
                     </v-icon>
-                  </v-btn> -->
-                  <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text" @click="pdf">
+                  </v-btn>
+                  <v-btn color="red" class="ma-2 white--text" @click="pdf">
                     PDF
                     <v-icon right dark>
-                      mdi-content-save
+                      mdi-download
                     </v-icon>
                   </v-btn>
                 </div>
@@ -57,7 +52,7 @@
               <div class="col-sm-12 my-6">
                 <div class="row flex justify-content-center mb-2">
                   <div class="text-center">
-                    <h1>FORMULARIO RH {{ !alert && clinic != null ? 'CONSULTORIO ' + clinic_number : '' }}</h1>
+                    <h1>FORMULARIO RH</h1>
                   </div>
                   <img src="../img/Imagen1.png" alt="Logo Megacentro" width="110em" class="ml-6 img-fluid">
                 </div>
@@ -177,6 +172,7 @@
 
 <script>
   import html2pdf from "html2pdf.js";
+  import * as XLSX from 'xlsx-js-style';
   export default {
     data() {
       return {
@@ -195,6 +191,7 @@
         showAlert: true,
         list_residues: [],
         total_weight: [],
+        list_residues_excel: [],
         items: [],
         residueIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         user: {},
@@ -246,7 +243,7 @@
             html2canvas: { scale: 3 },
             jsPDF: {
               unit: 'mm',
-              format: 'a4',
+              format: 'a5',
               orientation: 'landscape',
               width: 500,
               height: 297
@@ -260,7 +257,7 @@
             html2canvas: { scale: 3 },
             jsPDF: {
               unit: 'mm',
-              format: 'a4',
+              format: 'a5',
               orientation: 'landscape',
               width: 500,
               height: 297
@@ -277,6 +274,7 @@
         if (date != '') {
           this.total_weight = [];
           this.list_residues = [];
+          this.list_residues_excel = [];
           axios.get(`/residue/generalShow/${date}`).then(res =>{
             if (res.data.residues.length != 0) {
               this.total_weight = res.data.total;
@@ -286,8 +284,6 @@
             this.role = res.data.role;
             this.index = res.data.date;
           }).catch(error => {
-            console.log(error);
-            console.log(error.response);
           });
         }
       },
@@ -296,8 +292,10 @@
         if (this.list_residues[index] && this.list_residues[index][residueId]) {
           var length = this.list_residues[index][residueId].total_weight.toString();
           if (length.length >= 5) {
+            // this.list_residues_excel[index][residueId] = this.list_residues[index][residueId].total_weight.toFixed(2);
             return this.list_residues[index][residueId].total_weight.toFixed(2);
           }else{
+            // this.list_residues_excel[index][residueId] = this.list_residues[index][residueId].total_weight;
             return this.list_residues[index][residueId].total_weight;
           }
         }
@@ -373,6 +371,196 @@
           icon: "error",
         });
       },
+
+      downloadExcel(){
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.aoa_to_sheet([[]]);
+
+        const row0 = [ 
+          ['FORMULARIO RH', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''] 
+        ];
+
+        XLSX.utils.sheet_add_aoa(worksheet, row0, { origin: "A1" });
+
+        const row1 = [ 
+          ['FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row1, { origin: "A2" });
+
+        const row2 = [ 
+          ['NOMBRE DE LA INSTITUCIÓN:  MEGACENTRO PINARES PROPIEDAD HORIZONTAL']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row2, { origin: "A3" });
+
+        const row3 = [ 
+          ['DIRECCIÓN:  CARRERA 18 # 12-75 PINARES SAN MARTIN']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row3, { origin: "A4" });
+
+        const row4 = [ 
+          [`TELÉFONO:  ${this.user.phone}`]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row4, { origin: "A5" });
+        
+        const row5 = [ 
+          ['CIUDAD:  PEREIRA']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row5, { origin: "A6" });
+        
+        const row6 = [ 
+          [`PROFESIONAL RESPOSABLE:  ${this.user.name && this.user.last_name != undefined ? this.user.name.toUpperCase() + ' ' + this.user.last_name.toUpperCase() : ''}`]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row6, { origin: "A7" });
+
+        const row7 = [ 
+          [`CARGO:  ${this.role.toUpperCase()}`]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row7, { origin: "A8" });
+        
+        const row8 = [ 
+          ['NIVEL DE ATENCIÓN: ']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row8, { origin: "A9" });
+        
+        const row10 = [ 
+          [`FECHA:  ${this.date.toUpperCase()}`]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row10, { origin: "A10" });
+
+        const row11 = [ 
+          ['TIPO DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row11, { origin: "A11" });
+
+        const row12 = [ 
+          ['DÍA', 'RESIDUOS', '', '', '', 'RESIDUOS PELIGROSOS', '', '', '', '', '', '', '', '', '', '', '']
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A12" });
+        
+        const row13 = [ 
+          ['', 'NO PELIGROSOS', '', '', '', 'INFECCIOSOS O RIESGO BIOLOGICO', '', '', '', '', 'QUIMICOS', '', '', '', '', 'RADIACTIVOS', '',]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "A13" });
+
+        const row14 = [ 
+          ['' ,'BIODEGRADABLES', 'RECICLABES', 'INERTES', 'ORDINARIOS-COMUNES', 'BIOSANITARIOS', 'ANATOMOPATOLOGICOS', 'CORTOPUNZANTES', 'ANIMALES', 'FARMACOS', 'CITOTÓXICOS', 'METALES PESADOS', 'REACTIVOS', 'CONTENEDORES PRESURIZADOS', 'HIDROCARBUROS', 'FUENTES ABIERTAS', 'FUENTES CERRADAS',]
+        ];
+        XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "A14" });
+
+        const merges = [
+          { s: { r: 0, c: 0 }, e: { r: 0, c: 16 } }, // FORMULARIO RH
+          { s: { r: 1, c: 0 }, e: { r: 1, c: 16 } }, // FORMULARIO RH
+        
+          { s: { r: 10, c: 0 }, e: { r: 10, c: 16 } }, // TIPO DE RESIDUOS
+
+          { s: { r: 11, c: 0 }, e: { r: 13, c: 0 } }, // DÍA
+          { s: { r: 11, c: 1 }, e: { r: 11, c: 4 } }, // RESIDUOS 
+          { s: { r: 11, c: 5 }, e: { r: 11, c: 16 } }, // RESIDUOS PELIGROSOS
+
+          { s: { r: 12, c: 1 }, e: { r: 12, c: 4 } },  // NO PELIGROSOS
+          { s: { r: 12, c: 5 }, e: { r: 12, c: 9 } },  // INFECCIOSOS O RIESGO BIOLOGICO
+          { s: { r: 12, c: 10 }, e: { r: 12, c: 14 } }, // QUIMICOS
+          { s: { r: 12, c: 15 }, e: { r: 12, c: 16 } } // RADIACTIVOS
+        ];
+        worksheet['!merges'] = merges;
+        worksheet['!rows'] = [];
+        worksheet['!rows'][13] = { hpx: 30 };
+        worksheet['!cols'] = [];
+        worksheet['!cols'][13] = { wch: 12, vertical:"top", horizontal:"center" };
+
+        const colListResidue = ['B14', 'C14', 'D14', 'E14', 'F14', 'G14', 'H14', 'I14', 'J14', 'K14', 'L14', 'M14', 'N14', 'O14', 'P14', 'Q14'];
+        for (const itm of colListResidue) {
+          if (worksheet[itm]) {
+            worksheet[itm].s = {
+              font: {sz: 9},
+              alignment: {wrapText: true, horizontal:'center'},
+              // border: {top:{style:"thin", color:{rgb: '000000'}}, bottom:{style:"thin", color:{rgb: '000000'}}, left: {style:"thin", color:{rgb: '000000'}}, right: {style:"thin", color:{rgb: '000000'}}}
+            };
+          }
+        }
+
+        const colListTypeR = ['A12', 'B12', 'F12', 'B13', 'F13', 'K13', 'P13', 'A11'];
+        for (const itm of colListTypeR) {
+          if (worksheet[itm]) {
+            worksheet[itm].s = {
+              font: {bold: true},
+              alignment: {horizontal:'center'},
+            };
+          }
+        }
+
+        const colListTitle = ['A1', 'A2'];
+        for (const itm of colListTitle) {
+          if (worksheet[itm]) {
+            worksheet[itm].s = {
+              font: {sz: 20, bold:true},
+              alignment: {horizontal:'center'},
+            };
+          }
+        }
+        
+        for (let i = 1; i <= this.index; i++) {
+          for (let j = 0; j < this.residueIds.length; j++) {
+            if (!this.list_residues_excel[i]) {
+              this.$set(this.list_residues_excel, i, {});
+            }
+            this.list_residues_excel[i][j] = 0;
+            if (this.list_residues[i] && this.list_residues[i][j]) {
+              var length = this.list_residues[i][j].total_weight.toString();
+              if (length.length >= 5) {
+                this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight.toFixed(2);
+              }else{
+                this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight;
+              }
+            }
+          }
+        }
+
+        let data = this.list_residues_excel.map(item => {
+          return Object.values(item);
+        });
+        XLSX.utils.sheet_add_aoa(worksheet, data, { origin: "B14" });
+
+        let day = 1;
+        for (let i = 15; i <= 15+this.index-1; i++) {
+          const row15 = [ 
+            [day]
+          ];
+          XLSX.utils.sheet_add_aoa(worksheet, row15, { origin: "A"+i });
+          day++;
+        }
+
+
+        let total = new Array(this.residueIds.length).fill(0);
+        for (let j = 0; j < this.residueIds.length; j++) {
+          if (this.total_weight[j]) {
+            var length = this.total_weight[j].total_weight.toString();
+            if (length.length >= 5) {
+              total[j] = this.total_weight[j].total_weight.toFixed(2);
+            }else{
+              total[j] = this.total_weight[j].total_weight;
+            }
+          }
+        }
+        total.splice(0, 0, 'Total');
+        let dataT = [total];
+        XLSX.utils.sheet_add_aoa(worksheet, dataT, { origin: "A"+(15+this.index) });
+
+        let colList = 0;
+        for (let i = 15; i <= this.index+15; i++) {
+          colList = ['A'+i, 'B'+i, 'C'+i, 'D'+i, 'E'+i, 'F'+i, 'G'+i, 'H'+i, 'I'+i, 'J'+i, 'K'+i, 'L'+i, 'M'+i, 'N'+i, 'O'+i, 'P'+i, 'Q'+i,];
+          for (const itm of colList) {
+            if (worksheet[itm]) {
+              worksheet[itm].s = {
+                alignment: {horizontal:'center'},
+              };
+            }
+          } 
+        }
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, `Datos Excel`);
+        XLSX.writeFile(workbook, `Reporte RH mensual ${this.date}.xlsx`);
+      }
     }
   }
 </script>

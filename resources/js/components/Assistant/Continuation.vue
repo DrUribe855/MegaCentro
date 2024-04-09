@@ -30,18 +30,16 @@
                                 </div>
                             </div>
                             <div class="ml-2">
-                                <!-- <v-btn :loading="loading3" :disabled="loading3" color="green" class="ma-2 white--text"
-                                    @click="loader = 'loading3'">
+                                <v-btn color="green" class="ma-2 white--text" @click="downloadExcel">
                                     EXCEL
                                     <v-icon right dark>
-                                        mdi-cloud-upload
+                                        mdi-download
                                     </v-icon>
-                                </v-btn> -->
-                                <v-btn v-if="isAdmin == true" :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
-                                    @click="pdf">
+                                </v-btn>
+                                <v-btn v-if="isAdmin == true" color="red" class="ma-2 white--text" @click="pdf">
                                     PDF
                                     <v-icon right dark>
-                                        mdi-file-download
+                                        mdi-download
                                     </v-icon>
                                 </v-btn>
                             </div>
@@ -185,6 +183,7 @@
 <script>
 import html2pdf from "html2pdf.js";
 import accounting from 'accounting'
+import * as XLSX from 'xlsx-js-style';
 export default {
     data() {
         return {
@@ -318,7 +317,6 @@ export default {
         initialize(date) {
             if (date != '') {
                 axios.get(`/residue/showContinuation/${date}`).then(res => {
-                    console.log(res.data);
                     this.list_residues = res.data.residues;
                     this.index = res.data.date;
                     this.total = res.data.total;
@@ -327,7 +325,6 @@ export default {
                     this.totalGarbageBags = res.data.totalGarbageBags;
                     this.changeData();
                 }).catch(error => {
-                    console.log(error.response);
                 });
             }
         },
@@ -511,11 +508,7 @@ export default {
                 }else{
                     this.isAdmin = false;
                 }
-                console.log(this.isAdmin);
             }).catch(error => {
-                console.log("Error en axios");
-                console.log(error);
-                console.log(error.response);
             })
         },
 
@@ -539,7 +532,6 @@ export default {
             let requests = [];
             let validateHour = true;
             for (let i = 0; i < size; i++) {
-                console.log("01", this.data_residues[i]);
                 if (this.data_residues[i] != undefined) {
                     let hour = null;
                     let selectYesOrNot = null;
@@ -572,9 +564,7 @@ export default {
                     }
                     if (this.treatmentType[i] != undefined) {
                         treatmentType = this.treatmentType[i];
-                        console.log(this.treatmentType[i]);
                     }
-                    console.log(staffing);
                     let data = {
                         'yesOrNot': selectYesOrNot,
                         'hour': hour,
@@ -585,9 +575,7 @@ export default {
                     };  
                     if (validateHour) {
                         let request = axios.post(`/residue/registerDateCollector/${i}`, data).then(res => {
-                            console.log(res.data);
                         }).catch(error => {
-                            console.log(error.response);
                         })
                         requests.push(request);
                     }
@@ -632,6 +620,162 @@ export default {
                 icon: "error",
             });
         },
+
+        downloadExcel(){
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet([[]]);
+
+            const row0 = [ 
+                ['FORMULARIO RH CONTINUACIÓN', '', '', '', '', '', '', '', '', '', '', '', ''] 
+            ];
+
+            XLSX.utils.sheet_add_aoa(worksheet, row0, { origin: "A1" });
+
+            const row1 = [ 
+                ['REGISTRO DIARIO DE GENERACIÓN DE RESIDUOS HOSPITALARIOS Y SIMILARES', '', '', '', '', '', '', '', '', '', '', '', '', '']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row1, { origin: "A2" });
+
+            const row2 = [ 
+                ['DÍA', 'KG/Residuo', 'Camas ocupadas/día', 'No. Consultas/día', 'No. Bolsas Entregadas', 'Pretratamiento usado de desactivación', 'Almacena miento (días)', 'Tipo de tratamiento', 'Hora de recolección', 'Dotación personal General', 'Dotación PSEA adecuada?', 'Color bolsa utilizada', 'Proceso productivo', 'Residuos similar (KG / día)']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row2, { origin: "A3" });
+
+            const merges = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 13 } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 13 } },
+            ];
+            worksheet['!merges'] = merges;
+            worksheet['!rows'] = [];
+            worksheet['!rows'][2] = { hpx: 60 };
+
+            const colListTitle = ['A1', 'A2'];
+            for (const itm of colListTitle) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        font: {sz: 20, bold:true},
+                        alignment: {horizontal:'center'},
+                    };
+                }
+            }
+
+            const colListType = ['A3', 'B3', 'C3', 'D3', 'E3', 'F3', 'G3', 'H3', 'I3', 'J3', 'K3', 'L3', 'M3', 'N3'];
+            for (const itm of colListType) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        font: {sz: 12, bold:true},
+                        alignment: {horizontal:'center', wrapText:true},
+                    };
+                }
+            }
+
+            for (let i = 1; i <= this.index; i++) {
+                if (this.data_residues[i] == undefined) {
+                    this.data_residues[i] = 0;
+                }
+                if (this.garbageBags[i] == undefined) {
+                    this.garbageBags[i] = 0;
+                }
+
+                const rowD = [ 
+                    [i]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, rowD, { origin: "A"+(i+3) });
+                
+                const row3 = [ 
+                    [this.data_residues[i]]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row3, { origin: "B"+(i+3) });
+
+                const row4 = [ 
+                    [this.garbageBags[i]]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row4, { origin: "E"+(i+3) });
+                
+                const row5 = [ 
+                    ['Amonio']
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row5, { origin: "F"+(i+3) });
+                
+                if (this.dateStorage[i] != undefined) {
+                    const row6 = [ 
+                        [this.dateStorage[i]]
+                    ];
+                    XLSX.utils.sheet_add_aoa(worksheet, row6, { origin: "G"+(i+3) });
+                }
+                
+                if (this.treatmentType[i] != undefined) {
+                    const row7 = [ 
+                        [this.treatmentType[i]]
+                    ];
+                    XLSX.utils.sheet_add_aoa(worksheet, row7, { origin: "H"+(i+3) });
+                }
+
+                if (this.hoursText[i] != undefined) {
+                    const row8 = [ 
+                        [this.hoursText[i]]
+                    ];
+                    XLSX.utils.sheet_add_aoa(worksheet, row8, { origin: "I"+(i+3) });
+                }
+                
+                if (this.staffing[i] != undefined) {
+                    const row9 = [ 
+                        [this.staffing[i]]
+                    ];
+                    XLSX.utils.sheet_add_aoa(worksheet, row9, { origin: "J"+(i+3) });
+                }
+                
+                if (this.selectYesOrNot[i] != undefined) {
+                    const row10 = [ 
+                        [this.selectYesOrNot[i]]
+                    ];
+                    XLSX.utils.sheet_add_aoa(worksheet, row10, { origin: "K"+(i+3) });
+                }
+
+                const row11 = [ 
+                    ['ROJO']
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row11, { origin: "L"+(i+3) });
+                
+                const colListType = ['A'+(i+3), 'B'+(i+3), 'C'+(i+3), 'D'+(i+3), 'E'+(i+3), 'F'+(i+3), 'G'+(i+3), 'H'+(i+3), 'I'+(i+3), 'J'+(i+3), 'K'+(i+3), 'L'+(i+3), 'M'+(i+3), 'N'+(i+3),];
+                for (const itm of colListType) {
+                    if (worksheet[itm]) {
+                        worksheet[itm].s = {
+                            alignment: {horizontal:'center'},
+                        };
+                    }
+                }
+            }
+            
+            const row12 = [ 
+                ['Total']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A"+(this.index+4) });
+
+            if (this.total[0] != undefined) {
+                const row13 = [ 
+                    [this.total[0].total_weight.toFixed(2)]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "B"+(this.index+4) });
+            }   
+            
+            const row14 = [ 
+                [this.totalGarbageBags]
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "E"+(this.index+4) });
+
+            const colListT = ['A'+(this.index+4), 'B'+(this.index+4), 'E'+(this.index+4)];
+            for (const itm of colListT) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        alignment: {horizontal:'center'},
+                    };
+                }
+            }
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, `Datos Excel`);
+            XLSX.writeFile(workbook, `Reporte RH constinuacion ${this.date}.xlsx`);
+        }
     }
 }
 </script>

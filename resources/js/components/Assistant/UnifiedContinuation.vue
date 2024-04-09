@@ -31,26 +31,26 @@
                                     </div>
                                 </div>
                                 <div class="ml-2">
-                                    <!-- <v-btn
+                                    <v-btn
                                         :loading="loading3"
                                         :disabled="loading3"
                                         color="green"
                                         class="ma-2 white--text"
-                                        @click="loader = 'loading3'"
+                                        @click="downloadExcel"
                                         >
                                         EXCEL
                                         <v-icon
                                             right
                                             dark
                                         >
-                                            mdi-cloud-upload
+                                            mdi-download
                                         </v-icon>
-                                    </v-btn> -->
+                                    </v-btn>
                                     <v-btn :loading="loadingPdf" :disabled="loadingPdf" color="red" class="ma-2 white--text"
                                         @click="pdf">
                                         PDF
                                         <v-icon right dark>
-                                            mdi-content-save
+                                            mdi-download
                                         </v-icon>
                                     </v-btn>
                                 </div>
@@ -85,7 +85,7 @@
                                                 <td class="text-center p-1" style="font-size: 13px;">TIPO DE TRATAMIENTO</td>
                                                 <td class="text-center p-1" style="font-size: 13px;">HORA DE RECOLECCIÓN</td>
                                                 <td class="text-center p-1" style="font-size: 13px;">DOT. PERSONAL GENERADOR ADECUADA</td>
-                                                <td class="text-center p-1" style="font-size: 13px;">DOT PERSONAL PSEG ADECUADA</td>
+                                                <td class="text-center p-1" style="font-size: 13px;">DOT PERSONAL PSE ADECUADA</td>
                                                 <td class="text-center p-1" style="font-size: 13px;">COLOR DE BOLSA UTILIZADA</td>
                                                 <td class="text-center p-1" style="font-size: 13px;">PROCESO PRODUCTIVO</td>
                                                 <td class="text-center p-1" style="font-size: 13px;">RESIDUOS SIMILAR KG/DIA</td>
@@ -127,6 +127,7 @@
 <script>
 import html2pdf from "html2pdf.js";
 import accounting from 'accounting'
+import * as XLSX from 'xlsx-js-style';
 export default {
     data() {
         return {
@@ -192,13 +193,12 @@ export default {
 
         initialize(date) {
             if (date != '') {
+                this.total = [];
                 axios.get(`/residue/showUnifiedContinuation/${date}`).then(res => {
-                    console.log(res.data);
                     this.total = res.data.total;
                     this.list_residues = res.data.residues;
                     this.getResidueValue();
                 }).catch(error => {
-                    console.log(error.response);
                 });
             }
         },
@@ -268,6 +268,129 @@ export default {
             this.date = this.position
             this.initialize(this.position);
         },
+
+        downloadExcel(){
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet([[]]);
+
+            const row0 = [ 
+                ['FORMULARIO RH - CONSOLIDADO ANUAL CONTINUACIÓN', '', '', '', '', '', '', '', '', '', ''] 
+            ];
+
+            XLSX.utils.sheet_add_aoa(worksheet, row0, { origin: "A1" });
+
+            const row1 = [ 
+                ['REGISTRO MENSUAL DE GENERACIÓN DE RESIDUOS HOSPITALARIOS Y SIMILARES', '', '', '', '', '', '', '', '', '', '']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row1, { origin: "A2" });
+
+            const row2 = [ 
+                ['MES', 'KG/Residuo', 'No. Bolsas Entregadas', 'Pretratamiento usado de desactivación', 'Almacena miento (días)', 'Tipo de tratamiento', 'Hora de recolección', 'Dotación personal General', 'Dotación PSEA adecuada?', 'Color bolsa utilizada', 'Proceso productivo', 'Residuos similar (KG/día)']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row2, { origin: "A3" });
+
+            const merges = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 11 } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 11 } },
+                
+                { s: { r: 2, c: 3 }, e: { r: 15, c: 3 } }, // Pretratamiento usado de desactivación
+                { s: { r: 2, c: 4 }, e: { r: 15, c: 4 } }, // Almacena miento (días)
+                { s: { r: 2, c: 5 }, e: { r: 15, c: 5 } }, // Tipo de tratamiento
+                { s: { r: 2, c: 6 }, e: { r: 15, c: 6 } }, // Hora de recolección
+                { s: { r: 2, c: 7 }, e: { r: 15, c: 7 } }, // Dotación personal Genera
+                { s: { r: 2, c: 8 }, e: { r: 15, c: 8 } }, //  Dotación PSEA adecuada?
+                { s: { r: 2, c: 9 }, e: { r: 15, c: 9 } }, // Color bolsa utilizada
+                { s: { r: 2, c: 10 }, e: { r: 15, c: 10 } }, // Proceso productivo
+                { s: { r: 2, c: 11 }, e: { r: 15, c: 11 } }, // Residuos similar (KG/día)
+            ];
+            worksheet['!merges'] = merges;
+
+            const colListTitle = ['A1', 'A2'];
+            for (const itm of colListTitle) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        font: {sz: 20, bold:true},
+                        alignment: {horizontal:'center'},
+                    };
+                }
+            }
+
+            const colListType = ['A3', 'B3', 'C3', 'D3', 'E3', 'F3', 'G3', 'H3', 'I3', 'J3', 'K3', 'L3'];
+            for (const itm of colListType) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        font: {sz: 12, bold:true},
+                        alignment: {horizontal:'center', wrapText:true, vertical:'top'},
+                    };
+                }
+            }
+
+            for (let i = 0; i < this.index.length; i++) {
+                if (this.data_residues[i] == undefined) {
+                    this.data_residues[i] = 0;
+                }
+                if (this.data_garbage_bags[i] == undefined) {
+                    this.data_garbage_bags[i] = 0;
+                }
+
+                const rowM = [ 
+                    [this.index[i]]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, rowM, { origin: "A"+(i+4) });
+                
+                const row3 = [ 
+                    [this.data_residues[i]]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row3, { origin: "B"+(i+4) });
+
+                const row4 = [ 
+                    [this.data_garbage_bags[i]]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row4, { origin: "C"+(i+4) });
+                
+                const colListType = ['A'+(i+4), 'B'+(i+4), 'C'+(i+4)];
+                for (const itm of colListType) {
+                    if (worksheet[itm]) {
+                        worksheet[itm].s = {
+                            alignment: {horizontal:'center'},
+                        };
+                    }
+                }
+            }
+            
+            const row12 = [ 
+                ['TOTAL']
+            ];
+            XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A"+(this.index.length+4) });
+
+            if (this.total[0] != undefined) {
+                const row13 = [ 
+                    [this.total[0].total_weight.toFixed(2)]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "B"+(this.index.length+4) });
+
+            }
+            
+            if (this.total[0] != undefined) {
+                const row14 = [ 
+                    [this.total[0].garbage_bags]
+                ];
+                XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "C"+(this.index.length+4) });
+            }
+            
+
+            const colListT = ['A'+(this.index.length+4), 'B'+(this.index.length+4), 'C'+(this.index.length+4)];
+            for (const itm of colListT) {
+                if (worksheet[itm]) {
+                    worksheet[itm].s = {
+                        alignment: {horizontal:'center'},
+                    };
+                }
+            }
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, `Datos Excel`);
+            XLSX.writeFile(workbook, `Reporte RH anual continuación ${this.date}.xlsx`);
+        }
     }
 }
 </script>
