@@ -117,34 +117,32 @@
                   </div>
                   <table class="table table-bordered">
                     <thead>
-                      <tr>
-                        <th rowspan="3" style="padding-bottom: 5em; padding-left: 1em; width: 0.2%">MES</th>
-                        <th colspan="4" class="text-center" style="width: 10%;">RESIDUOS NO PELIGROSOS</th>
-                        <th colspan="12" class="text-center" style="width: 20%;">RESIDUOS PELIGROSOS</th>
+                       <tr>
+                        <th rowspan="2" class="text-center px-0"
+                          style="padding-bottom: 5em; padding-left: 1em; width: 0.2%">Mes</th>
+                        <th colspan="4" class="text-center px-0" style="width: 10%;">Residuos no peligrosos</th>
+                        <th colspan="5" class="text-center px-0" style="width: 10%;">Residuos con riesgo biológico o infeccioso</th>
+                        <th colspan="1" rowspan="2" class="text-center px-0" style="width: 10%;">Radioactivos</th>
+                        <th colspan="6" class="text-center px-0" style="width: 20%;">Otros residuos o desechos peligrosos</th>
+                        <th class="text-center px-0" style="width: 5%;">Total mes</th>
                       </tr>
                       <tr>
-                        <th class="text-center" colspan="4"></th>
-                        <th class="text-center" colspan="4">INFECCIOSOS O RIESGO BIOLOGICO</th>
-                        <th class="text-center" colspan="6">QUIMICOS</th>
-                        <th class="text-center" colspan="2">RADIACTIVOS</th>
-                      </tr>
-                      <tr>
-                        <th class="text-center px-0" style="font-size: 10px;">BIODEGRADABLES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">RECICLABES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">INERTES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">ORDINARIOS-COMUNES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">BIOSANITARIOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">ANATOMOPATOLOGICOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">CORTOPUNZANTES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">ANIMALES (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">FARMACOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">CITOTÓXICOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">METALES PESADOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">REACTIVOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">CONTENEDORES PRESURIZADOS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">HIDROCARBUROS (kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">FUENTES ABIERTAS (Kg)</th>
-                        <th class="text-center px-0" style="font-size: 10px;">FUENTES CERRADAS (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Aprovechables (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Aprovechables orgánicos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">No aprovechables (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Total</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Biosanitarios (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Anatomopatalogicos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Cortopunzantse (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">De animales (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Total</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Corrosivos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Explosivos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Reactivos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Toxicos (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Inflamables (Kg)</th>
+                        <th class="text-center px-0" style="font-size: 10px;">Total</th>
+                        <th class="text-center px-0" style="font-size: 10px;"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -160,10 +158,6 @@
                           {{ revalidateTotal(residueId) }}
                         </td>
                       </tr>
-                      <tr>
-                        <td class="px-0">GRAN TOTAL</td>
-                        <td colspan="23">{{ bigTotal }}</td>
-                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -175,7 +169,7 @@
     </v-app>
   </div>
 </template>
-  
+
 <script>
 import html2pdf from "html2pdf.js";
 import * as XLSX from 'xlsx-js-style';
@@ -190,7 +184,7 @@ export default {
       user: {},
       role: '',
       index: ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',],
-      residueIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      residueIds: [1, 0, 2, 20, 3, 4, 5, 6, 21, 0, 8, 0, 0, 11, 0, 0, 22],
       list_residues_excel: [],
       focus: new Date(),
       date: '',
@@ -262,7 +256,53 @@ export default {
     },
 
     revalidateResidue(residueId, index) {
+      if(this.list_residues[index+1]){
+        if(residueId == 20){
+          let total = 0
+          if(this.list_residues[index+1][1].total_weight){
+            total += this.list_residues[index+1][1].total_weight
+          }
+          if(this.list_residues[index+1][2].total_weight){
+            total += this.list_residues[index+1][2].total_weight
+
+          }
+          return total
+        }
+      }
+      if(this.list_residues[index+1]){
+        if(residueId == 21){
+          let total = 0
+          if(this.list_residues[index+1][3].total_weight){
+            total += this.list_residues[index+1][3].total_weight
+          }
+          if(this.list_residues[index+1][4].total_weight){
+            total += this.list_residues[index+1][4].total_weight
+          }
+          if(this.list_residues[index+1][5].total_weight){
+            total += this.list_residues[index+1][5].total_weight
+          }
+          if(this.list_residues[index+1][6].total_weight){
+            total += this.list_residues[index+1][6].total_weight
+          }
+          return total
+        }
+      }
+
+      if(this.list_residues[index+1]){
+        if(residueId == 22){
+          let total = 0
+          if(this.list_residues[index+1][8].total_weight){
+            total += this.list_residues[index+1][8].total_weight
+          }
+          if(this.list_residues[index+1][11].total_weight){
+            total += this.list_residues[index+1][11].total_weight
+          }
+          return total
+        }
+      }
+
       if (this.list_residues[index+1] && this.list_residues[index+1][residueId]) {
+
         var length = this.list_residues[index+1][residueId].total_weight.toString();
         if (length.length >= 5) {
           return this.list_residues[index+1][residueId].total_weight.toFixed(2);
@@ -274,6 +314,42 @@ export default {
     },
 
     revalidateTotal(residueId) {
+      if(residueId == 20){
+        let total = 0
+        if(this.total_weight[1]){
+          total+= this.total_weight[1].total_weight
+        }
+        if(this.total_weight[2]){
+          total+= this.total_weight[2].total_weight
+        }
+        return total
+      }
+      if(residueId == 21){
+        let total = 0
+        if(this.total_weight[3]){
+          total+= this.total_weight[3].total_weight
+        }
+        if(this.total_weight[4]){
+          total+= this.total_weight[4].total_weight
+        }
+        if(this.total_weight[5]){
+          total+= this.total_weight[5].total_weight
+        }
+        if(this.total_weight[6]){
+          total+= this.total_weight[6].total_weight
+        }
+        return total
+      }
+      if(residueId == 22){
+        let total = 0
+        if(this.total_weight[8]){
+          total+= this.total_weight[8].total_weight
+        }
+        if(this.total_weight[11]){
+          total+= this.total_weight[11].total_weight
+        }
+        return total
+      }
       if (this.total_weight[residueId]) {
         var length = this.total_weight[residueId].total_weight.toString();
         if (length.length >= 5) {
@@ -309,73 +385,73 @@ export default {
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.aoa_to_sheet([[]]);
 
-      const row0 = [ 
-        ['FORMULARIO RH - CONSOLIDADO ANUAL', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''] 
+      const row0 = [
+        ['FORMULARIO RH - CONSOLIDADO ANUAL', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
       ];
 
       XLSX.utils.sheet_add_aoa(worksheet, row0, { origin: "A1" });
 
-      const row1 = [ 
+      const row1 = [
         ['FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row1, { origin: "A2" });
 
-      const row2 = [ 
+      const row2 = [
         ['NOMBRE DE LA INSTITUCIÓN:  MEGACENTRO PINARES PROPIEDAD HORIZONTAL']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row2, { origin: "A3" });
 
-      const row3 = [ 
+      const row3 = [
         ['DIRECCIÓN:  CARRERA 18 # 12-75 PINARES SAN MARTIN']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row3, { origin: "A4" });
 
-      const row4 = [ 
+      const row4 = [
         [`TELÉFONO:  ${this.user.phone}`]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row4, { origin: "A5" });
-      
-      const row5 = [ 
+
+      const row5 = [
         ['CIUDAD:  PEREIRA']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row5, { origin: "A6" });
-      
-      const row6 = [ 
+
+      const row6 = [
         [`PROFESIONAL RESPOSABLE:  ${this.user.name && this.user.last_name != undefined ? this.user.name.toUpperCase() + ' ' + this.user.last_name.toUpperCase() : ''}`]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row6, { origin: "A7" });
 
-      const row7 = [ 
+      const row7 = [
         [`CARGO:  ${this.role.toUpperCase()}`]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row7, { origin: "A8" });
-      
-      const row8 = [ 
+
+      const row8 = [
         ['NIVEL DE ATENCIÓN: ']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row8, { origin: "A9" });
-      
-      const row10 = [ 
+
+      const row10 = [
         [`AÑO:  ${this.date}`]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row10, { origin: "A10" });
 
-      const row11 = [ 
+      const row11 = [
         ['TIPO DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row11, { origin: "A11" });
 
-      const row12 = [ 
+      const row12 = [
         ['MES', 'RESIDUOS', '', '', '', 'RESIDUOS PELIGROSOS', '', '', '', '', '', '', '', '', '', '', '']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A12" });
-      
-      const row13 = [ 
+
+      const row13 = [
         ['', 'NO PELIGROSOS', '', '', '', 'INFECCIOSOS O RIESGO BIOLOGICO', '', '', '', '', 'QUIMICOS', '', '', '', '', 'RADIACTIVOS', '',]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "A13" });
 
-      const row14 = [ 
+      const row14 = [
         ['' ,'BIODEGRADABLES', 'RECICLABES', 'INERTES', 'ORDINARIOS-COMUNES', 'BIOSANITARIOS', 'ANATOMOPATOLOGICOS', 'CORTOPUNZANTES', 'ANIMALES', 'FARMACOS', 'CITOTÓXICOS', 'METALES PESADOS', 'REACTIVOS', 'CONTENEDORES PRESURIZADOS', 'HIDROCARBUROS', 'FUENTES ABIERTAS', 'FUENTES CERRADAS',]
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "A14" });
@@ -435,7 +511,7 @@ export default {
 
       let day = 0;
       for (let i = 15; i <= 15+this.index.length-1; i++) {
-        const row15 = [ 
+        const row15 = [
           [this.index[day]]
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row15, { origin: "A"+i });
@@ -458,7 +534,7 @@ export default {
       let dataT = [total];
       XLSX.utils.sheet_add_aoa(worksheet, dataT, { origin: "A"+(15+this.index.length) });
 
-      const row16 = [ 
+      const row16 = [
         ['GRAN TOTAL', this.bigTotal, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row16, { origin: "A"+(16+this.index.length) });
@@ -473,17 +549,17 @@ export default {
               alignment: {horizontal:'center'},
             };
           }
-        } 
+        }
       }
-      
+
       const merges = [
         { s: { r: 0, c: 0 }, e: { r: 0, c: 16 } }, // FORMULARIO RH
         { s: { r: 1, c: 0 }, e: { r: 1, c: 16 } }, // FORMULARIO RH
-      
+
         { s: { r: 10, c: 0 }, e: { r: 10, c: 16 } }, // TIPO DE RESIDUOS
 
         { s: { r: 11, c: 0 }, e: { r: 13, c: 0 } }, // DÍA
-        { s: { r: 11, c: 1 }, e: { r: 11, c: 4 } }, // RESIDUOS 
+        { s: { r: 11, c: 1 }, e: { r: 11, c: 4 } }, // RESIDUOS
         { s: { r: 11, c: 5 }, e: { r: 11, c: 16 } }, // RESIDUOS PELIGROSOS
 
         { s: { r: 12, c: 1 }, e: { r: 12, c: 4 } },  // NO PELIGROSOS
