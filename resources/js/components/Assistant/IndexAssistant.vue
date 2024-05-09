@@ -367,13 +367,13 @@
         const worksheet = XLSX.utils.aoa_to_sheet([[]]);
 
         const row0 = [
-          ['FORMULARIO RH', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+          ['FORMULARIO RH', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
 
         XLSX.utils.sheet_add_aoa(worksheet, row0, { origin: "A1" });
 
         const row1 = [
-          ['FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+          ['FUENTES DE GENERACIÓN Y CLASES DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row1, { origin: "A2" });
 
@@ -418,58 +418,57 @@
         XLSX.utils.sheet_add_aoa(worksheet, row10, { origin: "A10" });
 
         const row11 = [
-          ['TIPO DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+          ['TIPO DE RESIDUOS', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row11, { origin: "A11" });
 
         const row12 = [
-          ['DÍA', 'RESIDUOS', '', '', '', 'RESIDUOS PELIGROSOS', '', '', '', '', '', '', '', '', '', '', '']
+          ['DÍA', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A12" });
 
         const row13 = [
-          ['', 'NO PELIGROSOS', '', '', '', 'INFECCIOSOS O RIESGO BIOLOGICO', '', '', '', '', 'QUIMICOS', '', '', '', '', 'RADIACTIVOS', '',]
+          ['', 'Residuos no peligrosos', '', '', 'Residuos con riesgo biológico o infeccioso', '', '', '', 'Radioactivos', 'Otros residuos o desechos peligrosos', '', '', '', '',]
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "A13" });
 
         const row14 = [
-          ['' ,'BIODEGRADABLES', 'RECICLABES', 'INERTES', 'ORDINARIOS-COMUNES', 'BIOSANITARIOS', 'ANATOMOPATOLOGICOS', 'CORTOPUNZANTES', 'ANIMALES', 'FARMACOS', 'CITOTÓXICOS', 'METALES PESADOS', 'REACTIVOS', 'CONTENEDORES PRESURIZADOS', 'HIDROCARBUROS', 'FUENTES ABIERTAS', 'FUENTES CERRADAS',]
+          ['' ,'Aprovechables ', 'Aprovechables orgánicos', 'No aprovechables', 'Biosanitarios', 'Anatomopatalogicos ', 'Cortopunzantse', 'De animales', '', 'Corrosivos', 'Explosivos ', 'Reactivos', 'Toxicos ', 'Inflamables']
         ];
         XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "A14" });
 
         const merges = [
-          { s: { r: 0, c: 0 }, e: { r: 0, c: 16 } }, // FORMULARIO RH
-          { s: { r: 1, c: 0 }, e: { r: 1, c: 16 } }, // FORMULARIO RH
+          { s: { r: 0, c: 0 }, e: { r: 0, c: 13 } }, // FORMULARIO RH
+          { s: { r: 1, c: 0 }, e: { r: 1, c: 13 } }, // FORMULARIO RH
 
-          { s: { r: 10, c: 0 }, e: { r: 10, c: 16 } }, // TIPO DE RESIDUOS
+          { s: { r: 10, c: 0 }, e: { r: 10, c: 13 } }, // TIPO DE RESIDUOS
 
           { s: { r: 11, c: 0 }, e: { r: 13, c: 0 } }, // DÍA
           { s: { r: 11, c: 1 }, e: { r: 11, c: 4 } }, // RESIDUOS
-          { s: { r: 11, c: 5 }, e: { r: 11, c: 16 } }, // RESIDUOS PELIGROSOS
+          { s: { r: 11, c: 5 }, e: { r: 11, c: 13 } }, // RESIDUOS PELIGROSOS
 
-          { s: { r: 12, c: 1 }, e: { r: 12, c: 4 } },  // NO PELIGROSOS
-          { s: { r: 12, c: 5 }, e: { r: 12, c: 9 } },  // INFECCIOSOS O RIESGO BIOLOGICO
-          { s: { r: 12, c: 10 }, e: { r: 12, c: 14 } }, // QUIMICOS
-          { s: { r: 12, c: 15 }, e: { r: 12, c: 16 } } // RADIACTIVOS
+          { s: { r: 12, c: 1 }, e: { r: 12, c: 3 } },  // NO PELIGROSOS
+          { s: { r: 12, c: 4 }, e: { r: 12, c: 7 } },  // INFECCIOSOS O RIESGO BIOLOGICO
+          { s: { r: 12, c: 8 }, e: { r: 13, c: 8 } }, // QUIMICOS
+          { s: { r: 12, c: 9 }, e: { r: 12, c: 13 } } // RADIACTIVOS
         ];
         worksheet['!merges'] = merges;
         worksheet['!rows'] = [];
         worksheet['!rows'][13] = { hpx: 30 };
         worksheet['!cols'] = [];
-        worksheet['!cols'][13] = { wch: 12, vertical:"top", horizontal:"center" };
+        worksheet['!cols'][13] = { wch: 15, vertical:"top", horizontal:"center" };
 
         const colListResidue = ['B14', 'C14', 'D14', 'E14', 'F14', 'G14', 'H14', 'I14', 'J14', 'K14', 'L14', 'M14', 'N14', 'O14', 'P14', 'Q14'];
         for (const itm of colListResidue) {
           if (worksheet[itm]) {
             worksheet[itm].s = {
-              font: {sz: 9},
+              font: {sz: 8},
               alignment: {wrapText: true, horizontal:'center'},
-              // border: {top:{style:"thin", color:{rgb: '000000'}}, bottom:{style:"thin", color:{rgb: '000000'}}, left: {style:"thin", color:{rgb: '000000'}}, right: {style:"thin", color:{rgb: '000000'}}}
             };
           }
         }
 
-        const colListTypeR = ['A12', 'B12', 'F12', 'B13', 'F13', 'K13', 'P13', 'A11'];
+        const colListTypeR = ['A12', 'B12', 'F12', 'B13', 'F13', 'K13', 'P13', 'A11', 'E13','I13', 'J13'];
         for (const itm of colListTypeR) {
           if (worksheet[itm]) {
             worksheet[itm].s = {
@@ -498,14 +497,33 @@
             if (this.list_residues[i] && this.list_residues[i][j]) {
               var length = this.list_residues[i][j].total_weight.toString();
               if (length.length >= 5) {
-                this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight.toFixed(2);
+                if(j == 1){
+                  this.list_residues_excel[i][0] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][1] = 0;
+                }else if(j == 2){
+                  this.list_residues_excel[i][2] = this.list_residues[i][j].total_weight.toFixed(2);
+                }else if(j == 10){
+                  this.list_residues_excel[i][8] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][10] = 0;
+                }else{
+                  this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight.toFixed(2);
+                }
               }else{
-                this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight;
+                if(j == 1){
+                  this.list_residues_excel[i][0] = this.list_residues[i][j].total_weight;
+                  this.list_residues_excel[i][1] = 0;
+                }else if(j == 2){
+                  this.list_residues_excel[i][2] = this.list_residues[i][j].total_weight;
+                }else if(j == 10){
+                  this.list_residues_excel[i][8] = this.list_residues[i][j].total_weight;
+                  this.list_residues_excel[i][10] = 0;
+                }else{
+                  this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight;
+                }
               }
             }
           }
         }
-
         let data = this.list_residues_excel.map(item => {
           return Object.values(item);
         });
@@ -528,7 +546,15 @@
             if (length.length >= 5) {
               total[j] = this.total_weight[j].total_weight.toFixed(2);
             }else{
-              total[j] = this.total_weight[j].total_weight;
+              if(j == 1){
+                total[0] = this.total_weight[j].total_weight;
+                total[j] = 0;
+              }else if(j == 10){
+                total[8] = this.total_weight[j].total_weight;
+                total[10] = 0;
+              }else{
+                total[j] = this.total_weight[j].total_weight;
+              }
             }
           }
         }

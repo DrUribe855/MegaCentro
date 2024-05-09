@@ -442,17 +442,17 @@ export default {
       XLSX.utils.sheet_add_aoa(worksheet, row11, { origin: "A11" });
 
       const row12 = [
-        ['MES', 'RESIDUOS', '', '', '', 'RESIDUOS PELIGROSOS', '', '', '', '', '', '', '', '', '', '', '']
+        ['MES', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row12, { origin: "A12" });
 
       const row13 = [
-        ['', 'NO PELIGROSOS', '', '', '', 'INFECCIOSOS O RIESGO BIOLOGICO', '', '', '', '', 'QUIMICOS', '', '', '', '', 'RADIACTIVOS', '',]
+        ['', 'Residuos no peligrosos', '', '', '', 'Residuos con riesgo biológico o infeccioso', '','', '', '', 'Radioactivos', 'Otros residuos o desechos peligrosos', '', '', '', '','']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row13, { origin: "A13" });
 
       const row14 = [
-        ['' ,'BIODEGRADABLES', 'RECICLABES', 'INERTES', 'ORDINARIOS-COMUNES', 'BIOSANITARIOS', 'ANATOMOPATOLOGICOS', 'CORTOPUNZANTES', 'ANIMALES', 'FARMACOS', 'CITOTÓXICOS', 'METALES PESADOS', 'REACTIVOS', 'CONTENEDORES PRESURIZADOS', 'HIDROCARBUROS', 'FUENTES ABIERTAS', 'FUENTES CERRADAS',]
+        ['' ,'Aprovechables ', 'Aprovechables orgánicos', 'No aprovechables','Total', 'Biosanitarios', 'Anatomopatalogicos ', 'Cortopunzantse', 'De animales', 'Total', '', 'Corrosivos', 'Explosivos ', 'Reactivos', 'Toxicos ', 'Inflamables', 'Total']
       ];
       XLSX.utils.sheet_add_aoa(worksheet, row14, { origin: "A14" });
 
@@ -467,7 +467,7 @@ export default {
         }
       }
 
-      const colListTypeR = ['A12', 'B12', 'F12', 'B13', 'F13', 'K13', 'P13', 'A11'];
+      const colListTypeR = ['A12', 'B13', 'F12', 'B13', 'F13', 'K13', 'P13', 'A11', 'L13'];
       for (const itm of colListTypeR) {
         if (worksheet[itm]) {
           worksheet[itm].s = {
@@ -486,22 +486,46 @@ export default {
           };
         }
       }
-
       for (let i = 1; i <= this.index.length; i++) {
-        for (let j = 0; j < this.residueIds.length; j++) {
           if (!this.list_residues_excel[i]) {
             this.$set(this.list_residues_excel, i, {});
           }
-          this.list_residues_excel[i][j] = 0;
-          if (this.list_residues[i] && this.list_residues[i][j]) {
-            var length = this.list_residues[i][j].total_weight.toString();
-            if (length.length >= 5) {
-              this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight.toFixed(2);
-            }else{
-              this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight;
-            }
+          if(this.list_residues[i]){
+            this.list_residues_excel[i][0] = this.list_residues[i][1] ? this.list_residues[i][1].total_weight : 0;
+            this.list_residues_excel[i][1] = 0;
+            this.list_residues_excel[i][2] = this.list_residues[i][2] ? this.list_residues[i][2].total_weight : 0;
+            this.list_residues_excel[i][3] = this.list_residues_excel[i][0] + this.list_residues_excel[i][2];
+            this.list_residues_excel[i][4] = this.list_residues[i][3] ? this.list_residues[i][3].total_weight : 0;
+            this.list_residues_excel[i][5] = this.list_residues[i][4] ? this.list_residues[i][4].total_weight : 0;
+            this.list_residues_excel[i][6] = this.list_residues[i][5] ? this.list_residues[i][5].total_weight : 0;
+            this.list_residues_excel[i][7] = this.list_residues[i][6] ? this.list_residues[i][6].total_weight : 0;
+            this.list_residues_excel[i][8] = this.list_residues_excel[i][4] + this.list_residues_excel[i][5] + this.list_residues_excel[i][6] + this.list_residues_excel[i][7];
+            this.list_residues_excel[i][9] = 0;
+            this.list_residues_excel[i][10] = this.list_residues[i][8] ? this.list_residues[i][8].total_weight : 0;
+            this.list_residues_excel[i][11] = 0;
+            this.list_residues_excel[i][12] = 0;
+            this.list_residues_excel[i][13] = this.list_residues[i][11] ? this.list_residues[i][11].total_weight : 0;
+            this.list_residues_excel[i][14] = 0;
+            this.list_residues_excel[i][15] = this.list_residues_excel[i][10] + this.list_residues_excel[i][13];
+          }else {
+            this.list_residues_excel[i][0] = 0;
+            this.list_residues_excel[i][1] = 0;
+            this.list_residues_excel[i][2] = 0;
+            this.list_residues_excel[i][3] = 0;
+            this.list_residues_excel[i][4] = 0;
+            this.list_residues_excel[i][5] = 0;
+            this.list_residues_excel[i][6] = 0;
+            this.list_residues_excel[i][7] = 0;
+            this.list_residues_excel[i][8] = 0;
+            this.list_residues_excel[i][9] = 0;
+            this.list_residues_excel[i][10] = 0;
+            this.list_residues_excel[i][11] = 0;
+            this.list_residues_excel[i][12] = 0;
+            this.list_residues_excel[i][13] = 0;
+            this.list_residues_excel[i][14] = 0;
+            this.list_residues_excel[i][15] = 0;
           }
-        }
+
       }
 
       let data = this.list_residues_excel.map(item => {
@@ -519,17 +543,25 @@ export default {
       }
 
 
-      let total = new Array(this.residueIds.length).fill(0);;
-      for (let j = 0; j < this.residueIds.length; j++) {
-        if (this.total_weight[j]) {
-          var length = this.total_weight[j].total_weight.toString();
-          if (length.length >= 5) {
-            total[j] = this.total_weight[j].total_weight.toFixed(2);
-          }else{
-            total[j] = this.total_weight[j].total_weight;
-          }
-        }
-      }
+      let total = new Array(16).fill(0);
+      total[0] = (this.total_weight[1].total_weight) ? this.total_weight[1].total_weight : 0
+      total[2] = (this.total_weight[2].total_weight) ? this.total_weight[2].total_weight : 0
+      total[3] = 0
+      total[8] = 0
+      total[15] = 0
+      this.list_residues_excel.forEach(element => {
+        total[3] += element[3]
+        total[8] += element[8]
+        total[15] += element[15]
+      })
+      total[4] = (this.total_weight[3].total_weight) ? this.total_weight[3].total_weight : 0
+      total[5] = (this.total_weight[4].total_weight) ? this.total_weight[4].total_weight : 0
+      total[6] = (this.total_weight[5].total_weight) ? this.total_weight[5].total_weight : 0
+      total[7] = (this.total_weight[6].total_weight) ? this.total_weight[6].total_weight : 0
+      total[10] = (this.total_weight[8].total_weight) ? this.total_weight[8].total_weight : 0
+      total[13] = (this.total_weight[11].total_weight) ? this.total_weight[11].total_weight : 0
+
+
       total.splice(0, 0, 'TOTAL');
       let dataT = [total];
       XLSX.utils.sheet_add_aoa(worksheet, dataT, { origin: "A"+(15+this.index.length) });
@@ -564,8 +596,8 @@ export default {
 
         { s: { r: 12, c: 1 }, e: { r: 12, c: 4 } },  // NO PELIGROSOS
         { s: { r: 12, c: 5 }, e: { r: 12, c: 9 } },  // INFECCIOSOS O RIESGO BIOLOGICO
-        { s: { r: 12, c: 10 }, e: { r: 12, c: 14 } }, // QUIMICOS
-        { s: { r: 12, c: 15 }, e: { r: 12, c: 16 } }, // RADIACTIVOS
+        { s: { r: 12, c: 10 }, e: { r: 13, c: 10 } }, // QUIMICOS
+        { s: { r: 12, c: 11 }, e: { r: 12, c: 16 } }, // RADIACTIVOS
 
         { s: { r: 15+this.index.length, c: 1 }, e: { r: 15+this.index.length, c: 16 } } // GRAN TOTAL
       ];
@@ -573,7 +605,8 @@ export default {
       worksheet['!rows'] = [];
       worksheet['!rows'][13] = { hpx: 30 };
       worksheet['!cols'] = [];
-      worksheet['!cols'][13] = { wch: 12, vertical:"top", horizontal:"center" };
+      worksheet['!cols'][13] =  { wch: 15, vertical:"top", horizontal:"center" };
+
 
       XLSX.utils.book_append_sheet(workbook, worksheet, `Datos Excel`);
       XLSX.writeFile(workbook, `Reporte RH anual ${this.date}.xlsx`);
