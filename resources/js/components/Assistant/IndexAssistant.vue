@@ -280,26 +280,18 @@
 
       revalidateResidue(residueId, index) {
         if (this.list_residues[index] && this.list_residues[index][residueId]) {
-          var length = this.list_residues[index][residueId].total_weight.toString();
-          if (length.length >= 5) {
-            // this.list_residues_excel[index][residueId] = this.list_residues[index][residueId].total_weight.toFixed(2);
-            return this.list_residues[index][residueId].total_weight.toFixed(2);
-          }else{
-            // this.list_residues_excel[index][residueId] = this.list_residues[index][residueId].total_weight;
-            return this.list_residues[index][residueId].total_weight;
-          }
+          console.log(this.list_residues[index][residueId])
+          return (this.list_residues[index][residueId].total_weight) ? this.list_residues[index][residueId].total_weight : 0;
+
         }
         return '0';
       },
 
       revalidateTotal(residueId) {
         if (this.total_weight[residueId]) {
-          var length = this.total_weight[residueId].total_weight.toString();
-          if (length.length >= 5) {
-            return this.total_weight[residueId].total_weight.toFixed(2);
-          }else{
-            return this.total_weight[residueId].total_weight;
-          }
+
+          return (this.total_weight[residueId].total_weight) ? this.total_weight[residueId].total_weight : 0
+
         }
         return '0';
       },
@@ -498,15 +490,15 @@
               var length = this.list_residues[i][j].total_weight.toString();
               if (length.length >= 5) {
                 if(j == 1){
-                  this.list_residues_excel[i][0] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][0] = this.list_residues[i][j].total_weight;
                   this.list_residues_excel[i][1] = 0;
                 }else if(j == 2){
-                  this.list_residues_excel[i][2] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][2] = this.list_residues[i][j].total_weight;
                 }else if(j == 10){
-                  this.list_residues_excel[i][8] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][8] = this.list_residues[i][j].total_weight;
                   this.list_residues_excel[i][10] = 0;
                 }else{
-                  this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight.toFixed(2);
+                  this.list_residues_excel[i][j] = this.list_residues[i][j].total_weight;
                 }
               }else{
                 if(j == 1){
@@ -542,19 +534,15 @@
         let total = new Array(this.residueIds.length).fill(0);
         for (let j = 0; j < this.residueIds.length; j++) {
           if (this.total_weight[j]) {
-            var length = this.total_weight[j].total_weight.toString();
-            if (length.length >= 5) {
-              total[j] = this.total_weight[j].total_weight.toFixed(2);
+
+            if(j == 1){
+              total[0] = this.total_weight[j].total_weight;
+              total[j] = 0;
+            }else if(j == 10){
+              total[8] = this.total_weight[j].total_weight;
+              total[10] = 0;
             }else{
-              if(j == 1){
-                total[0] = this.total_weight[j].total_weight;
-                total[j] = 0;
-              }else if(j == 10){
-                total[8] = this.total_weight[j].total_weight;
-                total[10] = 0;
-              }else{
-                total[j] = this.total_weight[j].total_weight;
-              }
+              total[j] = this.total_weight[j].total_weight;
             }
           }
         }

@@ -246,7 +246,7 @@ export default {
           if (res.data.residues.length != 0) {
             this.total_weight = res.data.total;
             this.list_residues = res.data.residues;
-            this.bigTotal = res.data.bigTotal[0].weight.toFixed(2);
+            this.bigTotal = res.data.bigTotal[0].weight
           }
           this.user = res.data.user;
           this.role = res.data.role;
@@ -303,12 +303,9 @@ export default {
 
       if (this.list_residues[index+1] && this.list_residues[index+1][residueId]) {
 
-        var length = this.list_residues[index+1][residueId].total_weight.toString();
-        if (length.length >= 5) {
-          return this.list_residues[index+1][residueId].total_weight.toFixed(2);
-        }else{
-          return this.list_residues[index+1][residueId].total_weight;
-        }
+
+          return (this.list_residues[index+1][residueId].total_weight) ?  this.list_residues[index+1][residueId].total_weight : 0
+
       }
       return '0';
     },
@@ -351,12 +348,8 @@ export default {
         return total
       }
       if (this.total_weight[residueId]) {
-        var length = this.total_weight[residueId].total_weight.toString();
-        if (length.length >= 5) {
-          return this.total_weight[residueId].total_weight.toFixed(2);
-        }else{
-          return this.total_weight[residueId].total_weight;
-        }
+          return (this.total_weight[residueId].total_weight) ? this.total_weight[residueId].total_weight : 0;
+
       }
       return '0';
     },
