@@ -240,13 +240,13 @@
               collection.weight.forEach(item => {
                 aux.data.push({
                   weight: item.weight,
-                  name: item.residue_name,  
+                  name: item.residue_name,
                 });
               });
 
-              this.collections.push(aux);  
+              this.collections.push(aux);
             });
-            
+
         }).catch(error => {
           console.log(error.response);
         });
@@ -270,7 +270,7 @@
               res.data.residueChemical.forEach(residue => {
                 aux.data.push({
                     residue_id: residue.id,
-                    weight: 0,
+                    weight: "0.0",
                 });
               });
               this.datos.push(aux);
@@ -377,7 +377,7 @@
               datosFiltrados.push(this.datos2[i]);
               this.datos2[i].show = true;
             }else{
-              
+
             }
           }
           this.datos = datosFiltrados.slice();
@@ -407,7 +407,7 @@
             }
           }
           this.datos = datosFiltrados.slice();
-          
+
         }else if(this.towerNumber != '' && this.floorNumber != ''){
           //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
 
@@ -424,7 +424,7 @@
 
         }else if(this.clinicNumber != '' && this.floorNumber != ''){
           // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
-          
+
           for (let i = 0; i < this.datos2.length; i++) {
             if( this.datos2[i].floorNumber == this.floorNumber && this.datos2[i].clinicNumber.includes(this.clinicNumber)){
               this.datos2[i].show = true;
@@ -449,7 +449,7 @@
           }
 
           this.datos = datosFiltrados.slice();
-          
+
         }else if(this.clinicNumber != '' && this.towerNumber != '' && this.floorNumber != ''){
           //Filtro para los 3 campos sean diligenciados
 
@@ -481,7 +481,7 @@
         this.general_data.schedule = '';
         for (let i = 0; i < this.datos2.length; i++) {
           for (let j = 0; j < this.residues.length; j++) {
-            this.datos2[i].data[j].weight = 0;
+            this.datos2[i].data[j].weight = "0.0";
             localStorage.setItem("residueChemicalCollection", JSON.stringify(this.datos));
           }
         }

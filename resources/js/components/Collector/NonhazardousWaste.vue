@@ -157,7 +157,7 @@
                   </v-form>
                 </v-expansion-panel-content>
               </v-expansion-panel>
-            </v-expansion-panels> 
+            </v-expansion-panels>
           </div>
           <v-pagination v-model="currentPage" :length="Math.ceil(clinics.length / itemsPerPage)"></v-pagination>
         </div>
@@ -178,7 +178,7 @@
       itemsPerPage: 15,
       items: ['Extra - 6:00 AM','Día','Tarde'],
       indexLocalStorage: 0,
-      clinics: [], 
+      clinics: [],
       searchTimer: '',
       clinicNumber: '',
       towerNumber: '',
@@ -193,7 +193,7 @@
       },
       role: '',
       collections: [],
-      
+
     }),
 
     computed: {
@@ -240,13 +240,13 @@
               collection.weight.forEach(item => {
                 aux.data.push({
                   weight: item.weight,
-                  name: item.residue_name,  
+                  name: item.residue_name,
                 });
               });
 
-              this.collections.push(aux);  
+              this.collections.push(aux);
             });
-            
+
         }).catch(error => {
           console.log(error.response);
         });
@@ -265,14 +265,14 @@
                 towerNumber: clinic.tower_id,
                 clinicNumber: clinic.clinic_number,
                 floorNumber: clinic.floor,
-                
+
               };
               res.data.hazardouswaste.forEach(residue => {
                 aux.data.push({
                     residue_id: residue.id,
-                    weight: 0,
+                    weight: "0.0",
                 });
-              }); 
+              });
               this.datos.push(aux);
               this.datos2.push(aux);
             });
@@ -287,13 +287,13 @@
                 }
                 this.datos2 = localData;
                 this.datos = this.datos2;
-                localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData)); 
+                localStorage.setItem("collectionDataNonHazardous", JSON.stringify(localData));
               }else if(localData.length > this.datos.length){
 
                 //Filtro para encontrar el o los objetos faltantes en el arreglo datos.
                 const objetosFaltantes = localData.filter((localDato) => !this.datos2.some((dato) => dato.clinicNumber === localDato.clinicNumber));
 
-                
+
                 objetosFaltantes.forEach((objetoFaltante) => {
                   localData.splice(this.datos2.indexOf(objetoFaltante), 1);
                 });
@@ -305,9 +305,9 @@
                 this.datos2 = localData;
                 this.datos = this.datos2      ;
               }
-              
+
             }else{
-              localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));    
+              localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
               this.datos  = this.datos2;
             }
         }).catch(error => {
@@ -333,7 +333,7 @@
           }
         }).catch(error => {
           console.log(error.response);
-        }); 
+        });
       },
       update(){
         let request = {
@@ -377,7 +377,7 @@
               datosFiltrados.push(this.datos2[i]);
               this.datos2[i].show = true;
             }else{
-              
+
             }
           }
           this.datos = datosFiltrados.slice();
@@ -407,7 +407,7 @@
             }
           }
           this.datos = datosFiltrados.slice();
-          
+
         }else if(this.towerNumber != '' && this.floorNumber != ''){
           //Filtro para cuando el numero de torre y el numero de piso sean diligenciados a la vez, pero numero de clinica no.
 
@@ -424,7 +424,7 @@
 
         }else if(this.clinicNumber != '' && this.floorNumber != ''){
           // Filtro para cuando el numero de clinica y el numero de piso sean diligenciados a la vez, pero numero de torre no.
-          
+
           for (let i = 0; i < this.datos2.length; i++) {
             if( this.datos2[i].floorNumber == this.floorNumber && this.datos2[i].clinicNumber.includes(this.clinicNumber)){
               this.datos2[i].show = true;
@@ -449,7 +449,7 @@
           }
 
           this.datos = datosFiltrados.slice();
-          
+
         }else if(this.clinicNumber != '' && this.towerNumber != '' && this.floorNumber != ''){
           //Filtro para los 3 campos sean diligenciados
 
@@ -482,7 +482,7 @@
         console.log(this.general_data);
         for (let i = 0; i < this.datos.length; i++) {
           for (let j = 0; j < this.residues.length; j++) {
-            this.datos2[i].data[j].weight = 0;
+            this.datos2[i].data[j].weight = "0.0";
             localStorage.setItem("collectionDataNonHazardous", JSON.stringify(this.datos));
           }
         }
