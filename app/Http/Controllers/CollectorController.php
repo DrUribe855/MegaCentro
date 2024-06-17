@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 
 class CollectorController extends Controller
 {
-    
+
     // Vista de residuos no peligrosos
 
     public function index(){
@@ -41,8 +41,8 @@ class CollectorController extends Controller
         $general_data = $request->data_general;
         $anioActual = getdate();
         $currentDate = date('Y-m-d');
-        
-        
+
+
         if($this->dateValidations($general_data, $anioActual)){
             foreach ($clinics as $key => $clinic) {
                 if(!$this->collectionExists($general_data, $clinic)){
@@ -78,9 +78,9 @@ class CollectorController extends Controller
                                 $residues->save();
 
                             }
-                            
+
                         }
-                       
+
                     }
                 }
             }
@@ -88,19 +88,70 @@ class CollectorController extends Controller
             $data = [
                             'message' => 'Recolección registrada',
                             'status' => true,
-                            'datos' => $clinics,    
+                            'datos' => $clinics,
                     ];
 
             return response()->json($data);
-            
+
         }else{
             $data = [
                 'message' => "Datos incorrectos en la fecha",
                 'status' => false,
             ];
             return response()->json($data);
-        }  
-            
+        }
+
+    }
+
+    public function storeAPI(Request $request){
+      $general_data = $request->data;
+      $currentDate = date('Y-m-d');
+      $type = $request->type;
+      $dates = $request->general;
+
+      foreach ($general_data as $key => $clinic) {
+        if(!$this->collectionExists($dates, $clinic)){
+          if($this->clinicValidate($clinic)){
+            if($type == 'extra'){
+              $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
+              $collection = new CollectionLog();
+              $collection->user_id = 1;
+              $collection->clinic_id = $clinic["clinic_id"];
+              $collection->year = $dates["year"];
+              $collection->month = $dates["month"];
+              $collection->schedule = $type;
+              $collection->created_at = $lastDate;
+              $collection->save();
+            }else{
+              $collection = new CollectionLog();
+              $collection->user_id = 1;
+              $collection->clinic_id = $clinic["clinic_id"];
+              $collection->year = $dates["year"];
+              $collection->month = $dates["month"];
+              $collection->schedule = $type;
+              $collection->save();
+            }
+            foreach ($clinic["data"] as $key => $residue) {
+              if($residue["weight"] > 0){
+                $residues = new Waste_collection();
+                $residues->collection_logs_id = $collection->id;
+                $residues->id_residue = $residue["residue_id"];
+                $residues->weight = $residue["weight"];
+                if ($type == 'Extra') {
+                  $residues->created_at = $lastDate;
+                }
+                $residues->save();
+              }
+            }
+          }
+        }
+      }
+
+      $data = [
+        'message' => 'Recolección registrada',
+        'status' => true,
+      ];
+      return response()->json($data);
     }
 
     //Función para actualizar las recolecciones dependiendo del horario de recoleccion tomando la inserción más reciente
@@ -113,7 +164,7 @@ class CollectorController extends Controller
         $anioActual = getdate();
         $actualDate = date('Y-m-d');
 
-        $items = '';    
+        $items = '';
 
         if($this->dateValidations($general_data, $anioActual)){
                  foreach ($collections as $key => $collection) {
@@ -132,39 +183,39 @@ class CollectorController extends Controller
                         ->first();
                     }
 
-                    
+
 
                     foreach ($collection["data"] as $key2 => $residue) {
                         if($residue["weight"] > 0){
                             Waste_collection::where('collection_logs_id', $items["id"])
                             ->where('id_residue', $residue["residue_id"])
-                            ->update(["weight" => $residue["weight"]]);    
+                            ->update(["weight" => $residue["weight"]]);
                         }
 
                     }
-   
+
                 }
 
                 $data = [
                     'message' => 'Modificacion registrada',
                     'status' => true,
                     'collection' => $actualDate,
-                                   
+
                 ];
 
                 return response()->json($data);
 
-               
+
         }else{
             $data = [
                         'message' => 'Informacion de modificacion incompleta',
                         'status' => true,
-                                           
+
                     ];
 
             return response()->json($data);
-        }   
-            
+        }
+
     }
 
     // Función para obtener recolecciones en base al horario tomando el dato más reciente.
@@ -174,13 +225,13 @@ class CollectorController extends Controller
         if($request->type != 'METALES PESADOS'){
             $residueType = ResidueType::where('residue_type', $request->type)->value('id');
         }
-        
+
         $actualDate = date('Y-m-d');
-        
+
 
         $collectionData = [];
         $items = '';
-        
+
 
         $collections = CollectionLog::where('schedule', $schedule)
         ->select('clinic_id')
@@ -203,7 +254,7 @@ class CollectorController extends Controller
                 ->select('id', 'clinic_id')
                 ->first();
             }
-            
+
 
 
             if($request->type == 'METALES PESADOS'){
@@ -220,23 +271,23 @@ class CollectorController extends Controller
                     ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
                     ->get();
                 }
-                
+
             }
-            
-  
+
+
             if($items){
                 $data2 = [
 
                     'message' => 'items',
                     'weight' => $weight,
                     'clinic' => $items["clinic_id"],
-                    
+
 
                 ];
 
-                array_push($collectionData, $data2); 
+                array_push($collectionData, $data2);
             }
-             
+
         }
 
         $data = [
@@ -247,7 +298,7 @@ class CollectorController extends Controller
         return response()->json($data);
 
 
-        
+
     }
 
 
@@ -256,9 +307,9 @@ class CollectorController extends Controller
     public function dateValidations($general_data, $anioActual){
 
 
-        if($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == ''){     
+        if($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == ''){
             return false;
-        } 
+        }
 
         if($general_data['month'] > 12 || $general_data['month'] < 1){
             return false;
@@ -269,7 +320,7 @@ class CollectorController extends Controller
         }
 
         return true;
-        
+
     }
 
 
@@ -280,9 +331,9 @@ class CollectorController extends Controller
             if($residue["weight"] != 0){
                 return true;
             }
-        }  
+        }
 
-        return false; 
+        return false;
     }
 
     // Función para validar la existencia de una recolección
@@ -321,7 +372,7 @@ class CollectorController extends Controller
         $towerNumber = $request->towerNumber;
 
         $id = auth()->user()->id;
-        
+
         $clinics = Clinic::get();
 
 
