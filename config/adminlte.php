@@ -316,7 +316,7 @@ return [
                 [
                     'text' => 'Formulario RH',
                     'url'  => '/assistant/index',
-                    'can' => 'assistant.statistics.generalShow'
+                    'can' => 'assistant.statistics.rhcontinuation'
                 ],
                 [
                     'text' => 'RH Continuación',

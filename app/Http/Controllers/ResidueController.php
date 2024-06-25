@@ -16,6 +16,7 @@ class ResidueController extends Controller
 {
     // Reportes
     public function generalShow($date){
+      if(auth()->user()->roles->first()->name != "Recolector"){
         $dateTime = DateTime::createFromFormat('Y-n', $date);
         $formattedDate = $dateTime->format('Y-m');
         $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
@@ -194,7 +195,193 @@ class ResidueController extends Controller
         ];
 
         return response()->json($data);
+      }
+
+      $dateTime = DateTime::createFromFormat('Y-n', $date);
+      $formattedDate = $dateTime->format('Y-m');
+      $residues = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, id_residue, SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->whereNot('id_residue', 8)
+          ->whereNot('id_residue', 9)
+          ->whereNot('id_residue', 10)
+          ->whereNot('id_residue', 11)
+          ->whereNot('id_residue', 12)
+          ->whereNot('id_residue', 13)
+          ->whereNot('id_residue', 15)
+          ->whereNot('id_residue', 16);
+      })
+      ->groupBy('year', 'month', 'day', 'id_residue')
+      ->get();
+      // Suma de los metales pesados 14,17
+      $heavyMetals = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->where('id_residue',14)
+          ->orWhere('id_residue', 17);
+      })
+      ->groupBy('year', 'month', 'day')
+      ->get();
+
+      // Suma de los reactivos 8,9,10,11,12,13,15
+      $reactive = Waste_collection::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, DAY(created_at) as day, SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->where('id_residue', 8)
+          ->orWhere('id_residue', 9)
+          ->orWhere('id_residue', 10)
+          ->orWhere('id_residue', 11)
+          ->orWhere('id_residue', 12)
+          ->orWhere('id_residue', 13)
+          ->orWhere('id_residue', 14)
+          ->orWhere('id_residue', 15)
+          ->orWhere('id_residue', 16)
+          ->orWhere('id_residue', 17);
+      })
+      ->groupBy('year', 'month', 'day', 'id_residue')
+      ->get();
+
+      $total = Waste_collection::selectRaw('id_residue, SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->whereNot('id_residue', 8)
+          ->whereNot('id_residue', 9)
+          ->whereNot('id_residue', 10)
+          ->whereNot('id_residue', 11)
+          ->whereNot('id_residue', 12)
+          ->whereNot('id_residue', 13)
+          ->whereNot('id_residue', 15)
+          ->whereNot('id_residue', 16);
+      })
+      ->groupBy('id_residue')
+      ->get();
+
+      // Suma total de los inflamables
+      $totalHeavyMetals = Waste_collection::selectRaw('SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->where('id_residue',14)
+          ->orWhere('id_residue', 17);
+      })
+      ->get();
+
+      // Suma total de los reactivos
+      $totalReactive = Waste_collection::selectRaw('SUM(weight) as total_weight')
+      ->where('created_at', 'LIKE',  $formattedDate. '%')
+      ->where(function($query){
+          $query->where('id_residue', 8)
+          ->orWhere('id_residue', 9)
+          ->orWhere('id_residue', 10)
+          ->orWhere('id_residue', 11)
+          ->orWhere('id_residue', 12)
+          ->orWhere('id_residue', 13)
+          ->orWhere('id_residue', 14)
+          ->orWhere('id_residue', 15)
+          ->orWhere('id_residue', 16)
+          ->orWhere('id_residue', 17);
+      })
+      ->groupBy('id_residue')
+      ->get();
+
+      $dateParts = explode("-", $formattedDate);
+      $year = $dateParts[0];
+      $month = $dateParts[1];
+      $numberDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+      $residuesList = [];
+
+      foreach ($residues as $residue) {
+          $day = $residue['day'];
+          $id_residue = $residue['id_residue'];
+          $residuesList[$day][$id_residue] = $residue;
+      }
+
+      $object = array(
+          'total_weight' => 0
+      );
+
+      $pos = 0;
+
+      foreach ($residuesList as $day => $data) {
+          $residuesTemps = array_fill(0, 17, 0);
+
+          if (!empty($data[1])) {
+              $residuesTemps[1] = $data[1];
+          }
+          if (!empty($data[2])) {
+              $residuesTemps[2] = $data[2];
+          }
+          if (!empty($data[3])) {
+              $residuesTemps[3] = $data[3];
+          }
+          if (!empty($data[4])) {
+              $residuesTemps[4] = $data[4];
+          }
+          if (!empty($data[5])) {
+              $residuesTemps[5] = $data[5];
+          }
+          if (!empty($data[6])) {
+              $residuesTemps[6] = $data[6];
+          }
+
+
+          if (count($heavyMetals) != 0 && count($heavyMetals) > $pos) {
+              $residuesTemps[10] = $heavyMetals[$pos];
+          }
+
+          foreach ($heavyMetals as $heavyMet) {
+              if ($heavyMet['day'] == $day) {
+                  $residuesTemps[10] = $heavyMet;
+                  break;
+              }
+          }
+          foreach ($reactive as $react) {
+            if ($react['day'] == $day) {
+                $residuesTemps[11] = $react;
+                break;
+            }
+        }
+          $residuesList[$day] = $residuesTemps;
+      }
+
+      $totalTemp = array_fill(0, 17, 0);
+
+      foreach ($total as $data) {
+          if ($data['id_residue'] == 1) {
+              $totalTemp[1] = $data;
+          } else if ($data['id_residue'] == 2) {
+              $totalTemp[2] = $data;
+          } else if ($data['id_residue'] == 3) {
+              $totalTemp[3] = $data;
+          } else if ($data['id_residue'] == 4) {
+              $totalTemp[4] = $data;
+          } else if ($data['id_residue'] == 5) {
+              $totalTemp[5] = $data;
+          } else if ($data['id_residue'] == 6) {
+              $totalTemp[6] = $data;
+          }
+      }
+
+      $totalTemp[10] = $totalHeavyMetals[0];
+      $totalTemp[11] = $totalReactive[0];
+
+      $residues = $residuesList;
+      $total = $totalTemp;
+
+      $data = [
+          'status' => true,
+          'total' => $total,
+          'residues' => $residues,
+          'heavyMetals' => $heavyMetals,
+          'reactive' => $reactive,
+          'user' => auth()->user(),
+          'role' => auth()->user()->roles->first()->name,
+          'date' => $numberDay,
+      ];
+
+      return response()->json($data);
     }
+
 
     public function showContinuation($date){
         $dateTime = DateTime::createFromFormat('Y-n', $date);

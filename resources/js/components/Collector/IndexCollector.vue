@@ -197,9 +197,9 @@
 
     computed: {
       paginationRange() {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage - 1;
-      return { startIndex, endIndex };
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage - 1;
+        return { startIndex, endIndex };
       },
       filteredPanels() {
         let datos = this.datos.slice(this.paginationRange.startIndex, this.paginationRange.endIndex + 1);
