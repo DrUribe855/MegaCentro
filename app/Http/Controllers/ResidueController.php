@@ -238,7 +238,7 @@ class ResidueController extends Controller
           ->orWhere('id_residue', 16)
           ->orWhere('id_residue', 17);
       })
-      ->groupBy('year', 'month', 'day', 'id_residue')
+      ->groupBy('year', 'month', 'day')
       ->get();
 
       $total = Waste_collection::selectRaw('id_residue, SUM(weight) as total_weight')
@@ -251,7 +251,8 @@ class ResidueController extends Controller
           ->whereNot('id_residue', 12)
           ->whereNot('id_residue', 13)
           ->whereNot('id_residue', 15)
-          ->whereNot('id_residue', 16);
+          ->whereNot('id_residue', 16)
+          ->whereNot('id_residue', 17);
       })
       ->groupBy('id_residue')
       ->get();
@@ -303,7 +304,7 @@ class ResidueController extends Controller
       $pos = 0;
 
       foreach ($residuesList as $day => $data) {
-          $residuesTemps = array_fill(0, 17, 0);
+          $residuesTemps = array_fill(0, 15, 0);
 
           if (!empty($data[1])) {
               $residuesTemps[1] = $data[1];
