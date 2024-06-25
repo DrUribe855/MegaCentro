@@ -281,7 +281,6 @@ class ResidueController extends Controller
           ->orWhere('id_residue', 16)
           ->orWhere('id_residue', 17);
       })
-      ->groupBy('id_residue')
       ->get();
 
       $dateParts = explode("-", $formattedDate);
@@ -362,10 +361,11 @@ class ResidueController extends Controller
               $totalTemp[6] = $data;
           }
       }
-
-      $totalTemp[10] = $totalHeavyMetals[0];
-      $totalTemp[11] = $totalReactive[0];
-
+      if(is_null($totalReactive[0]["total_weight"])){
+        $totalTemp[11] = ['total_weight' => 0];
+      }else{
+        $totalTemp[11] = $totalReactive[0];
+      }
       $residues = $residuesList;
       $total = $totalTemp;
 
