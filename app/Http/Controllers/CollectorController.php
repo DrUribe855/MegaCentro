@@ -13,41 +13,46 @@ use App\Models\ResidueType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class CollectorController extends Controller
 {
 
     // Vista de residuos no peligrosos
 
-    public function index(){
+    public function index()
+    {
         return view('Collector/index');
     }
 
     // Vista de residuos biologicos
 
-    public function noHazardousView(){
+    public function noHazardousView()
+    {
         return view('Collector/nonhazardous');
     }
 
 
     //Vista de residuos: Quimicos - Respel
 
-    public function residueChemical(){
+    public function residueChemical()
+    {
         return view('Collector/residueChemical');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $clinics = $request->datos;
         $general_data = $request->data_general;
         $anioActual = getdate();
         $currentDate = date('Y-m-d');
 
 
-        if($this->dateValidations($general_data, $anioActual)){
+        if ($this->dateValidations($general_data, $anioActual)) {
             foreach ($clinics as $key => $clinic) {
-                if(!$this->collectionExists($general_data, $clinic)){
-                    if($this->clinicValidate($clinic)){
-                        if($general_data["schedule"] == 'Extra - 6:00 AM'){
+                if (!$this->collectionExists($general_data, $clinic)) {
+                    if ($this->clinicValidate($clinic)) {
+                        if ($general_data["schedule"] == 'Extra - 6:00 AM') {
                             $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
                             $collection = new CollectionLog();
                             $collection->user_id = auth()->user()->id;
@@ -57,7 +62,7 @@ class CollectorController extends Controller
                             $collection->schedule = $general_data["schedule"];
                             $collection->created_at = $lastDate;
                             $collection->save();
-                        }else{
+                        } else {
                             $collection = new CollectionLog();
                             $collection->user_id = auth()->user()->id;
                             $collection->clinic_id = $clinic["clinic_id"];
@@ -67,7 +72,7 @@ class CollectorController extends Controller
                             $collection->save();
                         }
                         foreach ($clinic["data"] as $key => $residue) {
-                            if($residue["weight"] > 0){
+                            if ($residue["weight"] > 0) {
                                 $residues = new Waste_collection();
                                 $residues->collection_logs_id = $collection->id;
                                 $residues->id_residue = $residue["residue_id"];
@@ -76,87 +81,96 @@ class CollectorController extends Controller
                                     $residues->created_at = $lastDate;
                                 }
                                 $residues->save();
-
                             }
-
                         }
-
                     }
                 }
             }
 
             $data = [
-                            'message' => 'Recolección registrada',
-                            'status' => true,
-                            'datos' => $clinics,
-                    ];
+                'message' => 'Recolección registrada',
+                'status' => true,
+                'datos' => $clinics,
+            ];
 
             return response()->json($data);
-
-        }else{
+        } else {
             $data = [
                 'message' => "Datos incorrectos en la fecha",
                 'status' => false,
             ];
             return response()->json($data);
         }
-
     }
 
-    public function storeAPI(Request $request){
-      $general_data = $request->data;
-      $currentDate = date('Y-m-d');
-      $type = $request->type;
-      $dates = $request->general;
+    public function storeAPI(Request $request)
+    {
+        $email = $request->user['user'];
+        $password = $request->user['password'];
 
-      foreach ($general_data as $key => $clinic) {
-        if(!$this->collectionExists($dates, $clinic)){
-          if($this->clinicValidate($clinic)){
-            if($type == 'extra'){
-              $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
-              $collection = new CollectionLog();
-              $collection->user_id = 1;
-              $collection->clinic_id = $clinic["clinic_id"];
-              $collection->year = $dates["year"];
-              $collection->month = $dates["month"];
-              $collection->schedule = $type;
-              $collection->created_at = $lastDate;
-              $collection->save();
-            }else{
-              $collection = new CollectionLog();
-              $collection->user_id = 1;
-              $collection->clinic_id = $clinic["clinic_id"];
-              $collection->year = $dates["year"];
-              $collection->month = $dates["month"];
-              $collection->schedule = $type;
-              $collection->save();
-            }
-            foreach ($clinic["data"] as $key => $residue) {
-              if($residue["weight"] > 0){
-                $residues = new Waste_collection();
-                $residues->collection_logs_id = $collection->id;
-                $residues->id_residue = $residue["residue_id"];
-                $residues->weight = $residue["weight"];
-                if ($type == 'Extra') {
-                  $residues->created_at = $lastDate;
-                }
-                $residues->save();
-              }
-            }
-          }
+        // Validar las credenciales del usuario
+        $user = User::where('email', $email)->first();
+        if (!$user || !Hash::check($password, $user->password)) {
+            return response()->json([
+                'message' => 'Usuario o contraseña incorrectos',
+                'status' => false,
+            ], 401);
         }
-      }
 
-      $data = [
-        'message' => 'Recolección registrada',
-        'status' => true,
-      ];
-      return response()->json($data);
+        $general_data = $request->data;
+        $currentDate = date('Y-m-d');
+        $type = $request->type;
+        $dates = $request->general;
+
+        foreach ($general_data as $key => $clinic) {
+            if (!$this->collectionExists($dates, $clinic)) {
+                if ($this->clinicValidate($clinic)) {
+                    if ($type == 'extra') {
+                        $lastDate = date('Y-m-d', strtotime($currentDate . ' -1 day'));
+                        $collection = new CollectionLog();
+                        $collection->user_id = $user->id; // Usar el ID del usuario autenticado
+                        $collection->clinic_id = $clinic["clinic_id"];
+                        $collection->year = $dates["year"];
+                        $collection->month = $dates["month"];
+                        $collection->schedule = $type;
+                        $collection->created_at = $lastDate;
+                        $collection->save();
+                    } else {
+                        $collection = new CollectionLog();
+                        $collection->user_id = $user->id; // Usar el ID del usuario autenticado
+                        $collection->clinic_id = $clinic["clinic_id"];
+                        $collection->year = $dates["year"];
+                        $collection->month = $dates["month"];
+                        $collection->schedule = $type;
+                        $collection->save();
+                    }
+                    foreach ($clinic["data"] as $key => $residue) {
+                        if ($residue["weight"] > 0) {
+                            $residues = new Waste_collection();
+                            $residues->collection_logs_id = $collection->id;
+                            $residues->id_residue = $residue["residue_id"];
+                            $residues->weight = $residue["weight"];
+                            if ($type == 'extra') {
+                                $residues->created_at = $lastDate;
+                            }
+                            $residues->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        $data = [
+            'message' => 'Recolección registrada',
+            'status' => true,
+        ];
+        return response()->json($data);
     }
 
     //Función para actualizar las recolecciones dependiendo del horario de recoleccion tomando la inserción más reciente
 
-    public function updateCollection(Request $request){
+    public function updateCollection(Request $request)
+    {
 
 
         $collections = $request->datos;
@@ -166,63 +180,59 @@ class CollectorController extends Controller
 
         $items = '';
 
-        if($this->dateValidations($general_data, $anioActual)){
-                 foreach ($collections as $key => $collection) {
+        if ($this->dateValidations($general_data, $anioActual)) {
+            foreach ($collections as $key => $collection) {
 
-                    if($general_data["schedule"] == 'Extra - 6:00 AM'){
-                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                if ($general_data["schedule"] == 'Extra - 6:00 AM') {
+                    $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
                         ->where('schedule', $general_data["schedule"])
                         ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
                         ->select('id', 'clinic_id')
                         ->first();
-                    }else{
-                        $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
+                } else {
+                    $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
                         ->where('schedule', $general_data["schedule"])
                         ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
                         ->select('id', 'clinic_id')
                         ->first();
-                    }
-
-
-
-                    foreach ($collection["data"] as $key2 => $residue) {
-                        if($residue["weight"] > 0){
-                            Waste_collection::where('collection_logs_id', $items["id"])
-                            ->where('id_residue', $residue["residue_id"])
-                            ->update(["weight" => $residue["weight"]]);
-                        }
-
-                    }
-
                 }
 
-                $data = [
-                    'message' => 'Modificacion registrada',
-                    'status' => true,
-                    'collection' => $actualDate,
-
-                ];
-
-                return response()->json($data);
 
 
-        }else{
+                foreach ($collection["data"] as $key2 => $residue) {
+                    if ($residue["weight"] > 0) {
+                        Waste_collection::where('collection_logs_id', $items["id"])
+                            ->where('id_residue', $residue["residue_id"])
+                            ->update(["weight" => $residue["weight"]]);
+                    }
+                }
+            }
+
             $data = [
-                        'message' => 'Informacion de modificacion incompleta',
-                        'status' => true,
+                'message' => 'Modificacion registrada',
+                'status' => true,
+                'collection' => $actualDate,
 
-                    ];
+            ];
+
+            return response()->json($data);
+        } else {
+            $data = [
+                'message' => 'Informacion de modificacion incompleta',
+                'status' => true,
+
+            ];
 
             return response()->json($data);
         }
-
     }
 
     // Función para obtener recolecciones en base al horario tomando el dato más reciente.
 
-    public function getCollections(Request $request){
+    public function getCollections(Request $request)
+    {
         $schedule = $request->data_general["schedule"];
-        if($request->type != 'METALES PESADOS'){
+        if ($request->type != 'METALES PESADOS') {
             $residueType = ResidueType::where('residue_type', $request->type)->value('id');
         }
 
@@ -234,48 +244,47 @@ class CollectorController extends Controller
 
 
         $collections = CollectionLog::where('schedule', $schedule)
-        ->select('clinic_id')
-        ->distinct()
-        ->get();
+            ->select('clinic_id')
+            ->distinct()
+            ->get();
 
 
-        foreach ($collections as $collection){
+        foreach ($collections as $collection) {
 
-            if($schedule == 'Extra - 6:00 AM'){
+            if ($schedule == 'Extra - 6:00 AM') {
                 $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
-                ->where('schedule', $schedule)
-                ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
-                ->select('id', 'clinic_id')
-                ->first();
-            }else{
+                    ->where('schedule', $schedule)
+                    ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->subDay()->toDateString())
+                    ->select('id', 'clinic_id')
+                    ->first();
+            } else {
                 $items = CollectionLog::where('clinic_id', $collection["clinic_id"])
-                ->where('schedule', $schedule)
-                ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
-                ->select('id', 'clinic_id')
-                ->first();
+                    ->where('schedule', $schedule)
+                    ->whereDate(DB::raw('DATE(created_at)'), Carbon::today()->toDateString())
+                    ->select('id', 'clinic_id')
+                    ->first();
             }
 
 
 
-            if($request->type == 'METALES PESADOS'){
+            if ($request->type == 'METALES PESADOS') {
                 $weight = Waste_collection::join('residues', 'residues.id', '=', 'waste_collections.id_residue')
-                ->where('waste_collections.collection_logs_id', $items["id"])
-                ->whereIn('residues.residue_type_id', [3, 4])
-                ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
-                ->get();
-            }else{
-                if($items){
-                    $weight = Waste_collection::join('residues', 'residues.id', '=', 'waste_collections.id_residue')
                     ->where('waste_collections.collection_logs_id', $items["id"])
-                    ->where('residues.residue_type_id', $residueType)
+                    ->whereIn('residues.residue_type_id', [3, 4])
                     ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
                     ->get();
+            } else {
+                if ($items) {
+                    $weight = Waste_collection::join('residues', 'residues.id', '=', 'waste_collections.id_residue')
+                        ->where('waste_collections.collection_logs_id', $items["id"])
+                        ->where('residues.residue_type_id', $residueType)
+                        ->select('waste_collections.weight', 'waste_collections.id_residue', 'residues.residue_name')
+                        ->get();
                 }
-
             }
 
 
-            if($items){
+            if ($items) {
                 $data2 = [
 
                     'message' => 'items',
@@ -287,7 +296,6 @@ class CollectorController extends Controller
 
                 array_push($collectionData, $data2);
             }
-
         }
 
         $data = [
@@ -296,39 +304,37 @@ class CollectorController extends Controller
         ];
 
         return response()->json($data);
-
-
-
     }
 
 
     // Funcion para validar que las fechas sean correctas y se haya diligenciado un horario
 
-    public function dateValidations($general_data, $anioActual){
+    public function dateValidations($general_data, $anioActual)
+    {
 
 
-        if($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == ''){
+        if ($anioActual["year"] > $general_data["year"] || $anioActual["year"] < $general_data["year"] || $general_data["year"] == '') {
             return false;
         }
 
-        if($general_data['month'] > 12 || $general_data['month'] < 1){
+        if ($general_data['month'] > 12 || $general_data['month'] < 1) {
             return false;
         }
 
-        if($general_data['schedule'] == '' || $general_data["schedule"] == null || $general_data["schedule"] == "undefined")  {
+        if ($general_data['schedule'] == '' || $general_data["schedule"] == null || $general_data["schedule"] == "undefined") {
             return false;
         }
 
         return true;
-
     }
 
 
     // Funcion para validar que los campos se encuentren diligenciados
 
-    public function clinicValidate($clinic){
+    public function clinicValidate($clinic)
+    {
         foreach ($clinic["data"] as $key => $residue) {
-            if($residue["weight"] != 0){
+            if ($residue["weight"] != 0) {
                 return true;
             }
         }
@@ -338,35 +344,40 @@ class CollectorController extends Controller
 
     // Función para validar la existencia de una recolección
 
-    public function collectionExists($date, $clinic){
+    public function collectionExists($date, $clinic)
+    {
 
 
         $exists =  CollectionLog::where('year', $date["year"])
-        ->where('month', $date["month"])
-        ->where('schedule', $date["schedule"])
-        ->whereDay('created_at', date('d'))
-        ->where('clinic_id', $clinic["clinic_id"])
-        ->exists();
+            ->where('month', $date["month"])
+            ->where('schedule', $date["schedule"])
+            ->whereDay('created_at', date('d'))
+            ->where('clinic_id', $clinic["clinic_id"])
+            ->exists();
 
         return $exists;
     }
 
 
-    public function edit($id){
+    public function edit($id)
+    {
         //
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         //
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         //
     }
 
     // Función para traer las consultorios registrados en el sistema y los residuos.
 
-    public function getClinics(Request $request){
+    public function getClinics(Request $request)
+    {
 
         $clinicNumber = $request->clinicNumber;
         $towerNumber = $request->towerNumber;
@@ -399,14 +410,15 @@ class CollectorController extends Controller
 
     // Funcion para traer el rol del usuario
 
-    public function getUserRole(){
+    public function getUserRole()
+    {
 
-       $user = Auth::user();
-       $role = $user->getRoleNames();
+        $user = Auth::user();
+        $role = $user->getRoleNames();
         $data = [
             'status' => true,
             'role' => $role,
-       ];
+        ];
 
         return response()->json($data);
     }
