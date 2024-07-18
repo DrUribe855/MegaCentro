@@ -75,6 +75,9 @@ Route::get('/collector/non-hazardous-waste', [CollectorController::class, 'resid
 Route::get('/collector/clinics', [ CollectorController::class, 'getClinics']);
 Route::post('/collector/saveCollection', [ CollectorController::class, 'store']);
 Route::get('/collector/getRole', [ CollectorController::class, 'getUserRole']);
+Route::get('/collector/get/admin', [ CollectorController::class, 'getAdmin']);
+Route::put('/collector/update/admin/{collector}', [ CollectorController::class, 'updateWasteResidues']);
+
 Route::post('/collector/updateCollection', [ CollectorController::class, 'updateCollection']);
 Route::post('/collector/getCollections', [ CollectorController::class, 'getCollections']);
 // ------------------------------- Rutas de encargado --------------------------------------- \\

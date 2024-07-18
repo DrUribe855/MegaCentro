@@ -422,4 +422,57 @@ class CollectorController extends Controller
 
         return response()->json($data);
     }
+
+    public function getAdmin(){
+      return response()->json([
+        'collectors' => CollectionLog::with('clinic', 'user', 'waste_collection.residues')->has('waste_collection')->get(),
+        'residues' => Residue::get()
+      ]);
+    }
+
+    public function updateWasteResidues(Request $request, CollectionLog $collector)
+    {
+        // Validar los datos recibidos
+        $request->validate([
+            'waste_collection' => 'required|array',
+            'waste_collection.*.id_residue' => 'required|exists:residues,id',
+            'waste_collection.*.weight' => 'required|numeric',
+        ]);
+
+        $wasteCollections = $request->input('waste_collection');
+
+        // IDs de los residuos existentes
+        $existingWasteIds = Waste_collection::where('collection_logs_id', $collector->id)->pluck('id')->toArray();
+        $updatedWasteIds = [];
+
+        // Actualizar o crear waste collections
+        foreach ($wasteCollections as $wasteData) {
+            if (isset($wasteData['id'])) {
+                // Actualizar el residuo existente
+                $wasteCollection = Waste_collection::find($wasteData['id']);
+                if ($wasteCollection) {
+                    $wasteCollection->update([
+                        'id_residue' => $wasteData['id_residue'],
+                        'weight' => $wasteData['weight']
+                    ]);
+                    $updatedWasteIds[] = $wasteData['id'];
+                }
+            } else {
+                // Crear un nuevo residuo
+                $newWaste = Waste_collection::create([
+                    'collection_logs_id' => $collector->id,
+                    'id_residue' => $wasteData['id_residue'],
+                    'weight' => $wasteData['weight']
+                ]);
+                $updatedWasteIds[] = $newWaste->id;
+            }
+        }
+
+        // Eliminar los residuos que no están en la lista de entrada
+        Waste_collection::where('collection_logs_id', $collector->id)
+            ->whereNotIn('id', $updatedWasteIds)
+            ->delete();
+
+        return response()->json(['message' => 'Waste collections updated successfully']);
+    }
 }

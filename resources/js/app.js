@@ -2,10 +2,10 @@ require('./bootstrap');
 
 import Vue from 'vue';
 import Vuetify from "vuetify";
- 
+
 
 Vue.use(Vuetify);
- 
+
 window.Vue = require('vue');
 
 Vue.component('index', require('./components/Index.vue').default);
@@ -30,13 +30,16 @@ Vue.component('unified-continuation', require('./components/Assistant/UnifiedCon
 Vue.component('index-collector', require('./components/Collector/IndexCollector.vue').default);
 Vue.component('non-hazardous-vue', require('./components/Collector/NonhazardousWaste.vue').default);
 Vue.component('residue-chemical-vue', require('./components/Collector/ResidueChemical.vue').default);
- 
+
 //Manager
 Vue.component('index-manager', require('./components/Manager/IndexManager.vue').default);
 Vue.component('collector-residue', require('./components/Manager/CollectorResidue.vue').default);
 Vue.component('residue-price', require('./components/Manager/ResidePrice.vue').default);
 
 Vue.component('login', require('./components/Login.vue').default);
+
+Vue.component('collector-index-admin', require('./components/Collector/CollectorAdminIndex.vue').default);
+
 
 const app = new Vue({
     el: '#app',

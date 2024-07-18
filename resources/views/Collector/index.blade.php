@@ -8,14 +8,19 @@
 @section('title', 'Inicio')
 
 @section('content')
-	<div id="app">
-		<index-collector></index-collector>
-	</div>
+    <div id="app">
+        @if (auth()->user()->hasRole('Administrador'))
+            <collector-index-admin></collector-index-admin>
+        @else
+            <index-collector></index-collector>
+        @endif
+
+    </div>
 @stop
 @section('css')
     <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 @stop
 
 @section('js')
-    <script src="{{ mix('/js/app.js') }}"> </script>
+    <script src="{{ mix('/js/app.js') }}"></script>
 @stop
