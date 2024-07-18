@@ -5,9 +5,31 @@
         {{ snackbarMessage }}
       </v-snackbar>
 
+      <v-row>
+        <v-col cols="12" sm="4">
+          <v-select
+            v-model="selectedClinic"
+            :items="clinics"
+            item-text="clinic_number"
+            item-value="clinic_number"
+            label="Filtrar por Clínica"
+          ></v-select>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-select
+            v-model="selectedSchedule"
+            :items="schedules"
+            label="Filtrar por Jornada"
+          ></v-select>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-btn @click="clearFilters">Limpiar Filtros</v-btn>
+        </v-col>
+      </v-row>
+
       <v-data-table
         :headers="headers"
-        :items="collectors"
+        :items="filteredCollectors"
         item-key="id"
         class="elevation-1"
       >
@@ -99,6 +121,10 @@ export default {
       ],
       collectors: [],
       residues: [],
+      clinics: [],
+      schedules: ["Día", "Tarde", "Extra - 6:00 AM"], // Ajusta según tus datos
+      selectedClinic: null,
+      selectedSchedule: null,
       editedIndex: -1,
       editedItem: {
         user: {
@@ -127,6 +153,7 @@ export default {
             total_weight: this.calculateTotalWeight(collector.waste_collection),
           }));
           this.residues = res.data.residues;
+          this.clinics = [...new Set(res.data.collectors.map(collector => collector.clinic))];
         })
         .catch((error) => {
           console.log(error.response);
@@ -172,6 +199,20 @@ export default {
     },
     removeWaste(index) {
       this.editedItem.waste_collection.splice(index, 1);
+    },
+    clearFilters() {
+      this.selectedClinic = null;
+      this.selectedSchedule = null;
+    },
+  },
+  computed: {
+    filteredCollectors() {
+      return this.collectors.filter((collector) => {
+        return (
+          (!this.selectedClinic || collector.clinic.clinic_number === this.selectedClinic) &&
+          (!this.selectedSchedule || collector.schedule === this.selectedSchedule)
+        );
+      });
     },
   },
 };
