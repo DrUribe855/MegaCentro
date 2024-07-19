@@ -497,7 +497,7 @@ export default {
     revalidateResidue(residueId, index) {
       if (this.list_residues[index] && this.list_residues[index][residueId]) {
         return this.list_residues[index][residueId].total_weight
-          ? this.list_residues[index][residueId].total_weight
+          ? parseFloat(this.list_residues[index][residueId].total_weight).toFixed(1)
           : 0;
       }
       return "0";
@@ -506,7 +506,7 @@ export default {
     revalidateTotal(residueId) {
       if (this.total_weight[residueId]) {
         return this.total_weight[residueId].total_weight
-          ? this.total_weight[residueId].total_weight
+          ? parseFloat(this.total_weight[residueId].total_weight).toFixed(1)
           : 0;
       }
       return "0";

@@ -266,7 +266,7 @@ export default {
             total += this.list_residues[index+1][2].total_weight
 
           }
-          return total
+          return total.toFixed(1)
         }
       }
       if(this.list_residues[index+1]){
@@ -284,7 +284,7 @@ export default {
           if(this.list_residues[index+1][6].total_weight){
             total += this.list_residues[index+1][6].total_weight
           }
-          return total
+          return total.toFixed(1)
         }
       }
 
@@ -297,14 +297,14 @@ export default {
           if(this.list_residues[index+1][11].total_weight){
             total += this.list_residues[index+1][11].total_weight
           }
-          return total
+          return total.toFixed(1)
         }
       }
 
       if (this.list_residues[index+1] && this.list_residues[index+1][residueId]) {
 
 
-          return (this.list_residues[index+1][residueId].total_weight) ?  this.list_residues[index+1][residueId].total_weight : 0
+          return (this.list_residues[index+1][residueId].total_weight) ?  parseFloat(this.list_residues[index+1][residueId].total_weight).toFixed(1) : 0
 
       }
       return '0';
@@ -319,7 +319,7 @@ export default {
         if(this.total_weight[2]){
           total+= this.total_weight[2].total_weight
         }
-        return total
+        return total.toFixed(1)
       }
       if(residueId == 21){
         let total = 0
@@ -335,7 +335,7 @@ export default {
         if(this.total_weight[6]){
           total+= this.total_weight[6].total_weight
         }
-        return total
+        return total.toFixed(1)
       }
       if(residueId == 22){
         let total = 0
@@ -345,10 +345,10 @@ export default {
         if(this.total_weight[11]){
           total+= this.total_weight[11].total_weight
         }
-        return total
+        return total.toFixed(1)
       }
       if (this.total_weight[residueId]) {
-          return (this.total_weight[residueId].total_weight) ? this.total_weight[residueId].total_weight : 0;
+          return (this.total_weight[residueId].total_weight) ? parseFloat(this.total_weight[residueId].total_weight).toFixed(1) : 0;
 
       }
       return '0';
